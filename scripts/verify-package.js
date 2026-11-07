@@ -43,7 +43,10 @@ try {
     assert.ok(report.items.some((entry) => entry.name === '<button>'));
     const reportHtml = await fs.readFile(path.join(consumer, '.ui-sheet', 'index.html'), 'utf8');
     const mark = await fs.readFile(path.join(consumer, 'node_modules', 'pieceboard', 'docs', 'images', 'pieceboard-mark.svg'), 'utf8');
-    assert.ok(reportHtml.includes(mark.replace('<svg ', '<svg class="brand-mark" aria-hidden="true" ')), 'report must use the packaged brand mark');
+    const logo = await fs.readFile(path.join(consumer, 'node_modules', 'pieceboard', 'docs', 'images', 'pieceboard-logo.png'));
+    const embeddedMark = mark.replace('<svg ', '<svg class="brand-mark" aria-hidden="true" ')
+      .replace('href="pieceboard-logo.png"', `href="data:image/png;base64,${logo.toString('base64')}"`);
+    assert.ok(reportHtml.includes(embeddedMark), 'report must embed the exact packaged logo inside its compact mark');
     const catalog = JSON.parse(runNpm(['exec', '--', 'ui-sheet', 'catalog', '.ui-sheet', '--kind', 'components', '--search', 'button'], consumer));
     assert.ok(catalog.entries.some((entry) => entry.name === '<button>'));
     const tokens = JSON.parse(runNpm(['exec', '--', 'ui-sheet', 'tokens', '.ui-sheet', '--name', '--accent'], consumer));

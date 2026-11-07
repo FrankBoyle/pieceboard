@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-alpha.5 — 2026-11-07
+
+- Use the owner-approved sharp Pieceboard artwork as the single packaged logo source, preserving the smooth blue-to-amber connection.
+- Embed that exact image in generated reports and keep the SVG entry points as wrappers so the large logo and small mark cannot drift apart.
+- Check the packaged image bytes in the report smoke test.
+
 ## 0.1.0-alpha.4 — 2026-11-07
 
 - Replace the soft-glow README logo with crisp vector artwork and a small raster fallback for npm.

@@ -23,12 +23,15 @@ export async function writeReport(data, outputDir) {
   await fs.mkdir(outputDir, { recursive: true });
   await canReplace(htmlPath, 'html');
   await canReplace(dataPath, 'json');
-  const [css, js, mark] = await Promise.all([
+  const [css, js, mark, logo] = await Promise.all([
     fs.readFile(new URL('./viewer.css', import.meta.url), 'utf8'),
     fs.readFile(new URL('./viewer.js', import.meta.url), 'utf8'),
     fs.readFile(new URL('../docs/images/pieceboard-mark.svg', import.meta.url), 'utf8'),
+    fs.readFile(new URL('../docs/images/pieceboard-logo.png', import.meta.url)),
   ]);
-  const brandMark = mark.replace('<svg ', '<svg class="brand-mark" aria-hidden="true" ');
+  const brandMark = mark
+    .replace('<svg ', '<svg class="brand-mark" aria-hidden="true" ')
+    .replace('href="pieceboard-logo.png"', `href="data:image/png;base64,${logo.toString('base64')}"`);
   // Prevent project content from ending the script element in the generated report.
   const serialized = JSON.stringify(data).replaceAll('<', '\\u003c').replaceAll('\u2028', '\\u2028').replaceAll('\u2029', '\\u2029');
   const html = `${MARKER}

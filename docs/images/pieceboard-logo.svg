@@ -1,11 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 1024" role="img" aria-labelledby="title desc">
   <title id="title">Pieceboard</title>
-  <desc id="desc">Crisp navy, blue, and amber connected-piece mark on a dark background.</desc>
-  <rect width="300" height="200" fill="#0b1621"/>
-  <g transform="translate(73 23) scale(1.6)">
-    <path d="M63 8h17q8 0 8 8v23q0 8-8 8H69v6q0 8-8 8H48q-6 0-6 6v13q0 8-8 8H16q-8 0-8-8V65q0-8 8-8h16q6 0 6-6v-4q0-8 8-8h1q8 0 8-8V16q0-8 8-8Z" fill="#2b7898"/>
-    <rect x="30" y="50" width="23" height="17" rx="4" fill="#2b7898"/>
-    <rect x="8" y="8" width="43" height="39" rx="8" fill="#17385b" stroke="#0b1621" stroke-width="2"/>
-    <rect x="48" y="57" width="40" height="31" rx="8" fill="#f2b344"/>
-  </g>
+  <desc id="desc">The approved crisp navy, connected cyan, and amber Pieceboard mark on black.</desc>
+  <image x="0" y="0" width="1536" height="1024" href="pieceboard-logo.png"/>
 </svg>
