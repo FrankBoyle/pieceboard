@@ -1355,6 +1355,9 @@ summary:focus-visible {
   .library-heading {
     display: block;
   }
+  .consistency-header {
+    flex-direction: column;
+  }
   .search-wrap {
     width: 100%;
     margin-top: 20px;
