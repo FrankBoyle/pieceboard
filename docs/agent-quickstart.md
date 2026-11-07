@@ -4,7 +4,7 @@ This guide is for someone who wants an agent to install Pieceboard and run a UI 
 
 Tell the agent which project or projects to inspect and the UI journey that matters. For example:
 
-> Install Pieceboard in a separate tools folder and start its local page on my computer. Help me choose the projects and the UI source I want to review, then walk me through the sheet. If I provide an authorized demo page, capture it and explain what was and was not observed. Use a separate test account and let me sign in myself. Do not change my application code unless I ask.
+> Install Pieceboard in a separate tools folder. Review the projects I identify and walk me through actual A/B choices for matching UI elements. Use authorized test screens and a separate test account; let me sign in myself. If the automatic report has no useful pairs, help me identify comparable examples and build a choice board. Do not stop at a list of UI elements, and do not change my application code unless I ask.
 
 The agent should inspect project instructions and reuse existing checkouts when available. If a needed path, test URL, or test-account access cannot be determined, it should ask for that detail. It should not assume that a public website or its signed-in data is available for capture.
 
@@ -79,6 +79,8 @@ The state file can contain credentials; keep it private and never commit or shar
 
 ## 4. Review together
 
+- Start with the report's **Which version should we use?** choices when both real captured examples are available. The reviewer can choose A or B, add notes, and download a Markdown answer file. These answers are discussion input and do not automatically change code or approve a baseline.
+- If the needed comparison is between pages, repositories, or workflows that the scanner did not pair, create a deliberate choice board using `pieceboard choices --manifest choices.json --out review.html`. Use screenshots the user is authorized to share, describe their capture date and context, and compare the same UI item or workflow. The [README](../README.md#make-a-shareable-ab-review) shows the manifest. Keep the manifest and images in a private folder; the output embeds images in one offline HTML file. Do not invent comparisons or present an unrendered source scan as a screenshot.
 - Open the report's `index.html`, read its warnings and captured-page context, and browse the relevant UI type. Use **Possible button differences** and **Browse observed button appearances** when available.
 - Compare the same control or destination in the same role, state, theme, and viewport. A suggested difference or a source association is a lead; a common appearance is not automatically the right choice. Non-button comparisons need explicit configured groups.
 - Multiple `--page` options put selected pages in one report, but ordinary checks analyze each page separately. Cross-page button checks need explicitly configured comparable groups and sufficient observations; they are not automatic comparison of two arbitrary sites.

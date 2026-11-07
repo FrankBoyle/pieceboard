@@ -20,6 +20,7 @@ try {
   for (const file of ['schemas/report-v1.schema.json', 'schemas/check-v1.schema.json', 'schemas/elements-v1.schema.json', 'schemas/baselines-v4.schema.json', 'schemas/element-baselines-v2.schema.json', 'schemas/error-v1.schema.json', 'docs/schema.md', 'docs/element-groups.md', 'scripts/demo-elements.js', 'examples/ui-groups/index.html', 'scripts/evaluate-independent.js', 'evaluation/independent-button-cases.json']) assert.ok(included.has(file), `package is missing ${file}`);
   for (const file of ['README.md', 'PROJECT_PLAN.md', 'vite.js', 'docs/data-format.md', 'docs/images/pieceboard-logo.png', 'docs/images/pieceboard-logo.svg', 'docs/images/pieceboard-mark.svg', 'docs/images/button-review.png', 'docs/images/button-zoom.png', 'docs/images/approve-appearance.png', 'docs/images/cross-page.png', 'evaluation/README.md', 'evaluation/browser-holdout.json', 'evaluation/browser-evaluate.js', 'evaluation/results/browser-fe560ff.json', 'examples/button-review/index.html', 'examples/cross-page/profile.html', 'scripts/evaluate-browser.js', 'scripts/evaluate-public-source.js']) assert.ok(included.has(file), `package is missing ${file}`);
   for (const file of ['src/launcher.js', 'src/launcher/index.html', 'src/launcher/app.js', 'src/launcher/style.css', 'docs/agent-quickstart.md']) assert.ok(included.has(file), `package is missing ${file}`);
+  for (const file of ['src/choice-board.js', 'src/choice-board-viewer.js', 'src/choice-board.css']) assert.ok(included.has(file), `package is missing ${file}`);
   const packageVersion = JSON.parse(await fs.readFile(path.join(repo, 'package.json'), 'utf8')).version;
   const readme = await fs.readFile(path.join(repo, 'README.md'), 'utf8');
   assert.ok(readme.includes(`src="https://raw.githubusercontent.com/FrankBoyle/pieceboard/v${packageVersion}/docs/images/pieceboard-logo.png"`), 'npm README must display this release\'s logo');
@@ -67,6 +68,9 @@ try {
     runNpm(['exec', '--', 'ui-sheet', 'install-skill', '--agent', 'codex'], consumer);
     await fs.access(path.join(consumer, '.agents', 'skills', 'ui-consistency', 'SKILL.md'));
     await fs.writeFile(path.join(consumer, 'preview.png'), Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLttAAAAABJRU5ErkJggg==', 'base64'));
+    await fs.writeFile(path.join(consumer, 'choices.json'), JSON.stringify({ title: 'Choose a style', choices: [{ question: 'Which?', options: [{ label: 'First', image: 'preview.png' }, { label: 'Second' }] }] }));
+    runNpm(['exec', '--', 'pieceboard', 'choices', '--manifest', 'choices.json', '--out', 'choices.html'], consumer);
+    assert.match(await fs.readFile(path.join(consumer, 'choices.html'), 'utf8'), /Choose A or B/);
     await fs.writeFile(path.join(consumer, 'previews.json'), JSON.stringify({ previews: [{ item: 'component:HTML#button', image: 'preview.png', source: { file: 'App.jsx', line: 1 }, label: 'Example' }] }));
     runNpm(['exec', '--', 'ui-sheet', 'add-previews', '.ui-sheet', '--manifest', 'previews.json'], consumer);
     const updated = JSON.parse(await fs.readFile(path.join(consumer, '.ui-sheet', 'ui-sheet.json'), 'utf8'));

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-alpha.7 — 2026-11-07
+
+- Lead captured reports with selectable A/B choices and a downloadable answer file when both examples are available.
+- Add `pieceboard choices` to create an offline choice board from deliberately paired screenshots or text options.
+- Clarify when a source-only scan lacks the visual evidence needed for comparison.
+
 ## 0.1.0-alpha.6 — 2026-11-07
 
 - Add a loopback-only local start page for selecting and scoping repositories, capturing an optional test page, and opening the resulting sheet.

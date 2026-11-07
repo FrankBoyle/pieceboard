@@ -298,6 +298,99 @@
     }
   }
 
+  function renderChoices() {
+    const area = byId('choice-review');
+    if (!area) return;
+    const buttonPages = data.consistency ? (data.consistency.pages || [data.consistency]) : [];
+    const elementPages = data.elementConsistency?.pages || [];
+    const candidates = [];
+    let missing = 0;
+    const picture = (page, observation) => {
+      const image = page?.previews?.[observation]?.image;
+      return typeof image === 'string' && /^data:image\/(?:png|jpeg|webp);base64,/i.test(image) ? image : null;
+    };
+    function add(finding, firstPage, firstId, secondPage, secondId, context) {
+      const a = picture(firstPage, firstId);
+      const b = picture(secondPage, secondId);
+      if (!a || !b) { missing++; return; }
+      const group = finding.group || {};
+      const name = [group.family, group.variant, group.type].filter(Boolean).join(' · ') || 'UI appearance';
+      candidates.push({ id: finding.id || `choice-${candidates.length + 1}`, name, context, a, b,
+        aLabel: finding.reference === 'approved' ? 'Previously approved appearance' : 'More common appearance',
+        bLabel: 'Different appearance' });
+    }
+    for (const [kind, pages] of [['Button', buttonPages], ['UI group', elementPages]]) {
+      for (const [index, page] of pages.entries()) {
+        for (const finding of page.findings || []) {
+          const scope = page.scope || {};
+          const viewport = scope.viewport ? `${scope.viewport.width} × ${scope.viewport.height}` : 'viewport unknown';
+          add(finding, page, finding.common?.example, page, finding.outlier?.example,
+            `${kind} · page ${index + 1} · ${scope.url || 'page unknown'} · ${viewport} · ${scope.theme || 'theme unknown'}`);
+        }
+      }
+    }
+    for (const finding of data.crossPageConsistency?.findings || []) {
+      const a = finding.common?.example, b = finding.outlier?.example;
+      add(finding, buttonPages[(a?.page || 0) - 1], a?.observation, buttonPages[(b?.page || 0) - 1], b?.observation,
+        `Button across selected pages ${a?.page || '?'} and ${b?.page || '?'}`);
+    }
+    area.append(el('div', 'section-kicker', 'START HERE · THIS OR THAT'), el('h2', '', 'Which version should we use?'));
+    if (!candidates.length) {
+      area.append(el('p', 'choice-empty', data.consistency || data.elementConsistency
+        ? 'No side-by-side choices are available from the captured evidence. A comparison needs two actual screenshots; check the capture and its coverage below.'
+        : 'This is a source inventory, so it does not yet contain visual choices. Ask your agent to capture authorized test screens and compare the same interface in each one.'));
+      return;
+    }
+    area.append(el('p', 'choice-intro', 'Choose A or B for each comparison, add an optional note, and download your answers. These are suggestions from the captured pages; a common style is not automatically correct.'));
+    if (missing) area.append(el('p', 'choice-empty', `${plural(missing, 'additional comparison')} could not be shown because an image is unavailable.`));
+    let saved = {};
+    const storageKey = `pieceboard:choices:${data.scanRunId || 'report'}`;
+    try { saved = JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch { /* Browser storage can be unavailable. */ }
+    const answers = {};
+    const status = el('p', 'choice-status'); status.setAttribute('role', 'status');
+    const save = () => {
+      try { localStorage.setItem(storageKey, JSON.stringify(answers)); status.textContent = 'Saved on this device. Download your answers to share them.'; }
+      catch { status.textContent = 'Download your answers to keep them.'; }
+    };
+    const list = el('div', 'choice-list');
+    candidates.forEach((choice, index) => {
+      const key = `${index}:${choice.id}`;
+      const previous = saved?.[key] || {};
+      answers[key] = { selection: ['a', 'b'].includes(previous.selection) ? previous.selection : '', note: typeof previous.note === 'string' ? previous.note.slice(0, 1000) : '' };
+      const card = el('fieldset', 'choice-card');
+      card.append(el('legend', '', `${index + 1}. Which ${choice.name} should we use?`), el('p', 'choice-context', choice.context));
+      const pair = el('div', 'choice-pair');
+      for (const [value, name, image] of [['a', choice.aLabel, choice.a], ['b', choice.bLabel, choice.b]]) {
+        const label = el('label', 'choice-option');
+        const input = document.createElement('input'); input.type = 'radio'; input.name = `choice-${index}`; input.value = value; input.checked = answers[key].selection === value;
+        const copy = el('span', 'choice-option-copy');
+        copy.append(el('strong', '', `Choose ${value.toUpperCase()} · ${name}`));
+        const preview = document.createElement('img'); preview.src = image; preview.alt = `${name} captured from the selected test page`; preview.loading = 'lazy';
+        copy.append(preview); label.append(input, copy); pair.append(label);
+        input.addEventListener('change', () => { answers[key].selection = value; save(); });
+      }
+      const noteLabel = el('label', 'choice-note', 'Optional note');
+      const note = document.createElement('textarea'); note.maxLength = 1000; note.rows = 2; note.value = answers[key].note; noteLabel.append(note);
+      note.addEventListener('input', () => { answers[key].note = note.value; save(); });
+      card.append(pair, noteLabel); list.append(card);
+    });
+    const download = el('button', 'review-button choice-download', 'Download my answers'); download.type = 'button';
+    download.addEventListener('click', () => {
+      const lines = ['# Pieceboard visual choices', '', `Saved: ${new Date().toISOString()}`, '', 'These are review notes, not applied approvals or application changes.', ''];
+      candidates.forEach((choice, index) => {
+        const answer = answers[`${index}:${choice.id}`];
+        lines.push(`## ${index + 1}. ${choice.name}`, '', `- Context: ${choice.context}`,
+          `- Finding: ${choice.id}`, `- Choice: ${answer.selection ? `${answer.selection.toUpperCase()} · ${answer.selection === 'a' ? choice.aLabel : choice.bLabel}` : 'Not answered'}`);
+        if (answer.note.trim()) lines.push(`- Note: ${answer.note.trim().replaceAll('\n', '\n  ')}`);
+        lines.push('');
+      });
+      const url = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8' }));
+      const link = el('a'); link.href = url; link.download = 'pieceboard-choices.md'; document.body.append(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000); status.textContent = 'Answers downloaded. Share the file with your team.';
+    });
+    area.append(list, download, status);
+  }
+
   function renderConsistency() {
     const review = byId('consistency-review');
     const result = data.consistency;
@@ -1060,6 +1153,7 @@
   renderSummary();
   renderTypes();
   renderGrid();
+  renderChoices();
   renderResponsive();
   renderLayout();
   renderConsistency();

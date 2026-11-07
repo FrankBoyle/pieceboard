@@ -60,6 +60,7 @@ export async function writeReport(data, outputDir) {
       <div class="content">
         <div class="eyebrow"><span></span> YOUR UI, ALL TOGETHER</div>
         <section class="intro"><div><h1>A place for every <em>piece.</em></h1><p>Explore the pieces in your UI, compare observed differences, and choose which version to keep.</p></div><div class="intro-stamp" aria-hidden="true"><span>✳</span><small>COLLECTED<br>WITH CARE</small></div></section>
+        <section id="choice-review" class="choice-review" aria-label="This or that choices"></section>
         <section id="responsive-review" class="consistency-review" aria-label="Responsive layout inspection" hidden></section>
         <section id="layout-review" class="consistency-review" aria-label="Layout and brand checks" hidden></section>
         <section id="consistency-review" class="consistency-review" aria-label="Button consistency review" hidden></section>

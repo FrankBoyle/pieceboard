@@ -25,6 +25,8 @@ The alpha scans JSX/TSX, static HTML and PHP template markup, CSS custom propert
 
 The alpha.6 release includes a local start page for selecting repositories, limiting source paths, and optionally capturing one test page with a separate user-led sign-in. The launcher and its local-request boundaries have synthetic browser checks; user onboarding, actual assisted reviews, complex sign-in flows, and complete joined-application coverage still need real-world evaluation. It is not part of the previously published alpha.5 package.
 
+Guided reviews lead with selectable A/B choices for findings with two captured examples. A separate portable choice board can be assembled from deliberately paired, authorized screenshots or clearly described options. Source-only inventories cannot automatically show rendered differences; capturing and matching broader workflows still needs human or agent work.
+
 ## Milestone 1: protect the prototype and establish the baseline
 
 - [x] Review and preserve the existing prototype and its tests; keep local reports and screenshots out of the public repository.

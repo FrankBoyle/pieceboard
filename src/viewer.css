@@ -1395,3 +1395,23 @@ summary:focus-visible {
     letter-spacing: 0.5px;
   }
 }
+/* Put actual, actionable choices before the source inventory. */
+.choice-review{margin:24px 0;padding:26px;border:1px solid #c7d9e7;border-radius:14px;background:#fff;box-shadow:0 5px 24px #1737580b}
+.choice-review h2{margin:8px 0 10px;font-size:clamp(24px,2.3vw,32px);color:#142f4b}
+.choice-intro,.choice-empty,.choice-context,.choice-status{color:#526d80;line-height:1.5}
+.choice-empty{padding:14px;background:#f5f9fc;border-radius:8px}
+.choice-list{display:grid;gap:18px;margin:20px 0}
+.choice-card{margin:0;padding:20px;border:1px solid #cbdce9;border-radius:10px;min-width:0}
+.choice-card legend{padding:0 6px;font-size:18px;font-weight:700;color:#173a59}
+.choice-context{font-size:13px;overflow-wrap:anywhere}
+.choice-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.choice-option{display:flex;gap:10px;align-items:flex-start;min-width:0;padding:14px;border:2px solid #c9dce9;border-radius:8px;cursor:pointer;background:#f8fbfd;color:#1a4564}
+.choice-option:has(input:checked){border-color:#2475a6;background:#e9f5fc}
+.choice-option:focus-within{outline:3px solid #e4a137;outline-offset:2px}
+.choice-option input{width:18px;height:18px;flex:none;accent-color:#246f9f}
+.choice-option-copy{display:grid;gap:12px;min-width:0;line-height:1.4}
+.choice-option img{max-width:100%;max-height:230px;object-fit:contain;object-position:left top}
+.choice-note{display:grid;gap:7px;margin-top:15px;font-weight:700;font-size:13px;color:#355a73}
+.choice-note textarea{width:100%;padding:10px;border:1px solid #adc4d6;border-radius:6px;font:inherit;font-weight:400;resize:vertical}
+.choice-download{min-height:44px}.choice-status{font-size:13px}
+@media(max-width:650px){.choice-review{padding:18px}.choice-pair{grid-template-columns:1fr}}

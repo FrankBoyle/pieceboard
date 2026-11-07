@@ -27,6 +27,7 @@ import { listTokens, setTokenBaseline, checkTokens } from '../src/token-baseline
 import { checkLayout } from '../src/layout-check.js';
 import { DEFAULT_RESPONSIVE_VIEWPORTS, validateResponsiveViewports } from '../src/responsive-audit.js';
 import { startLauncher, openLauncher } from '../src/launcher.js';
+import { writeChoiceBoard } from '../src/choice-board.js';
 
 async function configuredProjectFile(root, input, label) {
   const realRoot = await fs.realpath(root);
@@ -40,6 +41,7 @@ const help = `Pieceboard — a visual inventory for your UI
 
 Usage:
   pieceboard start [--workspace directory] [--browser path] [--no-open]
+  pieceboard choices --manifest choices.json --out review.html
   pieceboard scan [project-directory] [--out output-directory] [--include path ...] [--exclude path ...] [--page URL ...] [--capture] [--responsive] [--responsive-viewport WIDTHxHEIGHT ...] [--cross-page] [--viewport WIDTHxHEIGHT] [--color-scheme light|dark] [--pixel-ratio 1|2|3|4] [--mask-selector CSS ...] [--browser path] [--storage-state file] [--baseline file] [--decisions file]
   pieceboard init [project-directory]
   pieceboard auth --url URL --out state.json [--browser path]
@@ -63,6 +65,7 @@ Usage:
 
 Scans JSX/TSX, HTML/PHP templates, CSS, images, and fonts without running them.
 start opens a local page for choosing projects and creating a report.
+choices creates a portable A/B review from deliberately paired examples.
 The legacy ui-sheet command remains available for existing integrations.
 The default project is the current directory; the default output is .ui-sheet.
 Repeat --include to scan only specific files or directories within the project.
@@ -101,6 +104,18 @@ async function main(args) {
     && !(args[0] === 'tokens' && index > 0 && args[index - 1] === '--name'));
   if (args.length === 0 || helpRequested) {
     console.log(help);
+    return;
+  }
+  if (args[0] === 'choices') {
+    const values = {};
+    for (let i = 1; i < args.length; i++) {
+      const option = args[i];
+      if (!['--manifest', '--out'].includes(option) || values[option] || !args[i + 1] || args[i + 1].startsWith('-')) throw new Error(`Unknown, repeated, or incomplete choices option: ${option}`);
+      values[option] = args[++i];
+    }
+    if (!values['--manifest'] || !values['--out']) throw new Error('choices requires --manifest and --out.');
+    const result = await writeChoiceBoard(values['--manifest'], values['--out']);
+    console.log(`Created ${result.choices} A/B choice(s). Open ${result.output}`);
     return;
   }
   if (args[0] === 'start') {
