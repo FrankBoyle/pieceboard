@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0-alpha.2 — 2026-11-07
+
+- Fix all README images and source links on the npm package page by pointing them to this release's immutable GitHub tag.
+
 ## 0.1.0-alpha.1 — 2026-11-07
 
 - Rename the public package and primary CLI to Pieceboard, retain the `ui-sheet` command and serialized format for existing projects, and ship the owner-selected connected-piece logo.

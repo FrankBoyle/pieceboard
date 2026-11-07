@@ -1,6 +1,6 @@
 {
   "name": "pieceboard",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "Compare real interface differences side by side and make clear this-or-that design decisions.",
   "repository": {
     "type": "git",
