@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/element-appearances-v1.schema.json",
+  "title": "UI Sheet compact configured-family appearances",
+  "description": "Bounded facts recomputed from measured observations, without screenshot payloads or approval templates.",
+  "type": "object",
+  "required": [
+    "format",
+    "scanStatus",
+    "page",
+    "pageCount",
+    "scope",
+    "coverage",
+    "totalAppearances",
+    "truncated",
+    "appearances"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/element-appearances-v1"
+    },
+    "scanStatus": {
+      "enum": [
+        "completed",
+        "unverified"
+      ]
+    },
+    "page": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "pageCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "scope": {
+      "$ref": "common-v1.schema.json#/$defs/elementQueryScope"
+    },
+    "coverage": {
+      "$ref": "common-v1.schema.json#/$defs/coverage"
+    },
+    "totalAppearances": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "truncated": {
+      "type": "boolean"
+    },
+    "appearances": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "required": [
+          "group",
+          "count",
+          "example",
+          "style",
+          "source",
+          "previewAvailable"
+        ],
+        "properties": {
+          "group": {
+            "$ref": "common-v1.schema.json#/$defs/elementGroup"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "example": {
+            "$ref": "common-v1.schema.json#/$defs/elementObservationId"
+          },
+          "style": {
+            "$ref": "common-v1.schema.json#/$defs/style"
+          },
+          "source": {
+            "$ref": "common-v1.schema.json#/$defs/source"
+          },
+          "previewAvailable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

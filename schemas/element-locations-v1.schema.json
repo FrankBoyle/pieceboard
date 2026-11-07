@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/element-locations-v1.schema.json",
+  "title": "UI Sheet compact configured-family occurrences",
+  "description": "Bounded occurrences actually observed on selected captured pages, not whole-app usage or a complete dependency graph.",
+  "type": "object",
+  "required": [
+    "format",
+    "scanStatus",
+    "family",
+    "variant",
+    "type",
+    "pagesVisited",
+    "matchingPages",
+    "scopes",
+    "total",
+    "truncated",
+    "occurrences"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/element-locations-v1"
+    },
+    "scanStatus": {
+      "enum": [
+        "completed",
+        "unverified"
+      ]
+    },
+    "family": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_. -]{0,79}$"
+    },
+    "variant": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_. -]{0,79}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "type": {
+      "anyOf": [
+        {
+          "enum": [
+            "inputs",
+            "dropdowns",
+            "selectors",
+            "tabs",
+            "headers",
+            "sidebars",
+            "navigation",
+            "headings",
+            "text"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "pagesVisited": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "matchingPages": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "scopes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "page",
+          "scope",
+          "coverage"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "scope": {
+            "$ref": "common-v1.schema.json#/$defs/elementQueryScope"
+          },
+          "coverage": {
+            "$ref": "common-v1.schema.json#/$defs/coverage"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "truncated": {
+      "type": "boolean"
+    },
+    "occurrences": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "required": [
+          "page",
+          "scope",
+          "observationId",
+          "group",
+          "source",
+          "previewAvailable"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "scope": {
+            "$ref": "common-v1.schema.json#/$defs/elementQueryScope"
+          },
+          "observationId": {
+            "$ref": "common-v1.schema.json#/$defs/elementObservationId"
+          },
+          "group": {
+            "$ref": "common-v1.schema.json#/$defs/elementGroup"
+          },
+          "source": {
+            "$ref": "common-v1.schema.json#/$defs/source"
+          },
+          "previewAvailable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

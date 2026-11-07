@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/catalog-v1.schema.json",
+  "title": "UI Sheet compact source inventory",
+  "type": "object",
+  "required": [
+    "format",
+    "name",
+    "generatedAt",
+    "scanScope",
+    "total",
+    "truncated",
+    "entries"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/catalog-v1"
+    },
+    "name": {
+      "type": "string"
+    },
+    "generatedAt": {
+      "type": "string"
+    },
+    "scanScope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "truncated": {
+      "type": "boolean"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "subtype",
+          "source",
+          "definitions",
+          "usageCount",
+          "usages",
+          "usagesTruncated",
+          "previewAvailable"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "components",
+              "colors",
+              "typography",
+              "assets",
+              "tokens"
+            ]
+          },
+          "subtype": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "definitions": {
+            "type": "array",
+            "items": {
+              "$ref": "common-v1.schema.json#/$defs/location"
+            }
+          },
+          "usageCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "usages": {
+            "type": "array",
+            "items": {
+              "$ref": "common-v1.schema.json#/$defs/location"
+            }
+          },
+          "usagesTruncated": {
+            "type": "boolean"
+          },
+          "previewAvailable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

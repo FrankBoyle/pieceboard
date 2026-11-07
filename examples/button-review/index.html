@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Button consistency example</title>
+    <style>
+      body { font-family: Arial, sans-serif; color: #25364a; background: #f4f7fb; margin: 0; padding: 48px; }
+      main { max-width: 720px; margin: 0 auto; }
+      .panel { padding: 28px; background: white; border: 1px solid #dce4f0; border-radius: 12px; }
+      .button { border: 1px solid #2563eb; border-radius: 8px; background: #2563eb; color: white; font: 600 16px/24px Arial, sans-serif; padding: 8px 16px; margin: 8px 8px 8px 0; }
+      .different { border-radius: 3px; }
+      .danger { background: #b42318; border-color: #b42318; }
+      .button:disabled { opacity: .45; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Account settings</h1>
+      <p>This is a synthetic example. One primary action intentionally has a different border radius.</p>
+      <section class="panel" aria-label="Account actions">
+        <button id="save-profile" type="button" class="button" data-ui-sheet-group="account actions" data-ui-sheet-variant="primary">Save profile</button>
+        <button id="save-email" type="button" class="button" data-ui-sheet-group="account actions" data-ui-sheet-variant="primary">Save email</button>
+        <button id="save-alerts" type="button" class="button different" data-ui-sheet-group="account actions" data-ui-sheet-variant="primary">Save alerts</button>
+        <button id="delete-account" type="button" class="button danger" data-ui-sheet-group="account actions" data-ui-sheet-variant="danger">Delete account</button>
+        <button id="disabled-action" type="button" class="button" disabled>Unavailable</button>
+      </section>
+    </main>
+  </body>
+</html>

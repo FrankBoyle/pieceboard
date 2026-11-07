@@ -1,0 +1,10 @@
+{
+  "name": "Juniper UI consistency lab",
+  "include": ["index.html", "mark.svg"],
+  "elementGroups": [
+    { "selector": ".workspace-field", "family": "workspace fields", "type": "inputs", "variant": "regular" },
+    { "selector": ".workspace-select", "family": "workspace choices", "type": "dropdowns", "variant": "regular" },
+    { "selector": ".workspace-tab", "family": "workspace tabs", "type": "tabs", "variant": "regular" },
+    { "selector": ".workspace-chip", "family": "workspace selectors", "type": "selectors", "variant": "regular" }
+  ]
+}

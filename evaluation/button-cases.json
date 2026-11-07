@@ -1,0 +1,84 @@
+{
+  "format": "ui-sheet/button-evaluation-v1",
+  "cases": [
+    {
+      "id": "single-radius-drift",
+      "description": "One action has a different corner radius.",
+      "buttons": [{}, {}, { "radius": "3px" }],
+      "expected": [2]
+    },
+    {
+      "id": "single-color-drift",
+      "description": "One comparable action has an unintended text color.",
+      "buttons": [{}, { "color": "rgb(0, 0, 0)" }, {}],
+      "expected": [1]
+    },
+    {
+      "id": "intentional-danger-variant",
+      "description": "A separately identified destructive variant is deliberate.",
+      "buttons": [{}, {}, { "variant": "danger", "backgroundColor": "rgb(180, 35, 24)" }],
+      "expected": []
+    },
+    {
+      "id": "disabled-appearance",
+      "description": "A disabled control is not comparable to enabled controls.",
+      "buttons": [{}, {}, { "disabled": true, "color": "rgb(128, 128, 128)" }],
+      "expected": []
+    },
+    {
+      "id": "intentional-size-variant",
+      "description": "An explicitly large variant is a separate group.",
+      "buttons": [{}, {}, { "sizeHint": "large", "fontSize": "20px" }],
+      "expected": []
+    },
+    {
+      "id": "consistent-actions",
+      "description": "Three matching controls should not generate a finding.",
+      "buttons": [{}, {}, {}],
+      "expected": []
+    },
+    {
+      "id": "tied-intentional-variants",
+      "description": "Two equally frequent appearances do not establish a default.",
+      "buttons": [{}, {}, { "radius": "3px" }, { "radius": "3px" }],
+      "expected": []
+    },
+    {
+      "id": "wrong-style-becomes-majority",
+      "description": "The approved design occurs once but two incorrect controls match each other; frequency alone points at the wrong control.",
+      "buttons": [{}, { "radius": "3px" }, { "radius": "3px" }],
+      "expected": [1, 2]
+    },
+    {
+      "id": "intentional-unmarked-variation",
+      "description": "A deliberately different action has no variant hint; appearance alone cannot establish intent.",
+      "buttons": [{}, {}, { "backgroundColor": "rgb(180, 35, 24)" }],
+      "expected": []
+    },
+    {
+      "id": "approved-reference-beats-majority",
+      "description": "An explicit approved reference identifies two matching regressions.",
+      "approvedDefault": true,
+      "buttons": [{}, { "radius": "3px" }, { "radius": "3px" }],
+      "expected": [1, 2]
+    },
+    {
+      "id": "configured-add-actions",
+      "description": "One of three explicitly grouped add actions differs in color and font size.",
+      "buttons": [{ "color": "rgb(25, 60, 84)", "fontSize": "20px" }, { "color": "rgb(0, 0, 0)", "fontSize": "19.2px" }, { "color": "rgb(0, 0, 0)", "fontSize": "19.2px" }],
+      "expected": [0]
+    },
+    {
+      "id": "undersampled-regression",
+      "description": "With one example of each style and no approved baseline, the labeled regression is not identifiable from frequency.",
+      "buttons": [{}, { "radius": "3px" }],
+      "expected": [1]
+    },
+    {
+      "id": "multiple-singleton-drifts",
+      "description": "Two independently different controls appear alongside a repeated reference.",
+      "buttons": [{}, {}, {}, { "radius": "3px" }, { "color": "rgb(0, 0, 0)" }],
+      "expected": [3, 4]
+    }
+  ]
+}

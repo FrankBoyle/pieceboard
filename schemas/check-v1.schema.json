@@ -1,0 +1,430 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/check-v1.schema.json",
+  "title": "UI Sheet compact check output",
+  "type": "object",
+  "required": [
+    "format",
+    "result",
+    "coverage",
+    "scanStatus",
+    "actionable",
+    "totalFindings",
+    "sourceWarnings",
+    "sourceRevision",
+    "pages",
+    "findings"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/check-v1"
+    },
+    "result": {
+      "enum": [
+        "findings",
+        "no-findings",
+        "insufficient-evidence"
+      ]
+    },
+    "coverage": {
+      "$ref": "common-v1.schema.json#/$defs/coverage"
+    },
+    "scanStatus": {
+      "enum": [
+        "completed",
+        "unverified"
+      ]
+    },
+    "actionable": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "totalFindings": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "sourceWarnings": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sourceRevision": {
+      "anyOf": [
+        {
+          "$ref": "common-v1.schema.json#/$defs/sourceRevision"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "baselines": {
+      "$ref": "common-v1.schema.json#/$defs/baselineSummary"
+    },
+    "decisions": {
+      "$ref": "common-v1.schema.json#/$defs/decisionSummary"
+    },
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "url",
+          "viewport",
+          "theme",
+          "pixelRatio",
+          "browser",
+          "instrumentedSources",
+          "instrumentation",
+          "findingIdentity",
+          "coverage",
+          "counts",
+          "previews"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "viewport": {
+            "anyOf": [
+              {
+                "$ref": "common-v1.schema.json#/$defs/viewport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "theme": {
+            "type": "string"
+          },
+          "pixelRatio": {
+            "$ref": "common-v1.schema.json#/$defs/pixelRatio"
+          },
+          "browser": {
+            "anyOf": [
+              {
+                "$ref": "common-v1.schema.json#/$defs/browser"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "instrumentedSources": {
+            "type": "boolean"
+          },
+          "instrumentation": {
+            "anyOf": [
+              {
+                "$ref": "common-v1.schema.json#/$defs/instrumentation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "findingIdentity": {
+            "type": "string"
+          },
+          "coverage": {
+            "$ref": "common-v1.schema.json#/$defs/coverage"
+          },
+          "counts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "previews": {
+            "anyOf": [
+              {
+                "$ref": "common-v1.schema.json#/$defs/previewCoverage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "actions": {
+            "$ref": "common-v1.schema.json#/$defs/captureActions"
+          },
+          "buttonGroups": {
+            "$ref": "common-v1.schema.json#/$defs/buttonGroups"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "page",
+          "group",
+          "evidence",
+          "reference",
+          "commonCount",
+          "outlierCount",
+          "differences",
+          "source",
+          "anchored",
+          "review",
+          "actionable"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "common-v1.schema.json#/$defs/id"
+          },
+          "kind": {
+            "enum": [
+              "button-style-outlier",
+              "cross-page-button-style-outlier",
+              "configured-element-style-outlier"
+            ]
+          },
+          "page": {
+            "type": "string"
+          },
+          "group": {
+            "$ref": "common-v1.schema.json#/$defs/group"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "reference": {
+            "enum": [
+              "inferred",
+              "approved"
+            ]
+          },
+          "commonCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "outlierCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "commonPageCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "outlierPageCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "differences": {
+            "type": "array",
+            "items": {
+              "$ref": "common-v1.schema.json#/$defs/difference"
+            }
+          },
+          "source": {
+            "$ref": "common-v1.schema.json#/$defs/source"
+          },
+          "anchored": {
+            "type": "boolean"
+          },
+          "review": {
+            "anyOf": [
+              {
+                "$ref": "common-v1.schema.json#/$defs/review"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "actionable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "configured-element-style-outlier"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "group": {
+                  "$ref": "common-v1.schema.json#/$defs/elementGroup"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "crossPage": {
+      "type": "object",
+      "required": [
+        "findingIdentity",
+        "coverage",
+        "counts"
+      ],
+      "properties": {
+        "findingIdentity": {
+          "type": "string"
+        },
+        "coverage": {
+          "$ref": "common-v1.schema.json#/$defs/coverage"
+        },
+        "counts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "comparison": {
+      "type": "object",
+      "required": [
+        "status",
+        "newActionable",
+        "newFindingIds",
+        "unverifiable",
+        "unverifiablePrevious",
+        "currentCoverage",
+        "previousCoverage"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "incomplete",
+            "new-findings",
+            "no-new-findings"
+          ]
+        },
+        "newActionable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "newFindingIds": {
+          "type": "array",
+          "items": {
+            "$ref": "common-v1.schema.json#/$defs/id"
+          }
+        },
+        "unverifiable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unverifiablePrevious": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "currentCoverage": {
+          "$ref": "common-v1.schema.json#/$defs/coverage"
+        },
+        "previousCoverage": {
+          "$ref": "common-v1.schema.json#/$defs/coverage"
+        }
+      },
+      "additionalProperties": true
+    },
+    "elementPages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "allOf": [
+          {
+            "$ref": "common-v1.schema.json#/$defs/scope"
+          },
+          {
+            "type": "object",
+            "required": [
+              "findingIdentity",
+              "coverage",
+              "counts",
+              "previews"
+            ],
+            "properties": {
+              "findingIdentity": {
+                "type": "string"
+              },
+              "coverage": {
+                "$ref": "common-v1.schema.json#/$defs/coverage"
+              },
+              "counts": {
+                "$ref": "common-v1.schema.json#/$defs/elementCounts"
+              },
+              "previews": {
+                "anyOf": [
+                  {
+                    "$ref": "common-v1.schema.json#/$defs/previewCoverage"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": true
+          }
+        ]
+      }
+    },
+    "elementBaselines": {
+      "$ref": "common-v1.schema.json#/$defs/baselineSummary"
+    },
+    "pageProgress": {
+      "allOf": [
+        {
+          "$ref": "common-v1.schema.json#/$defs/pageProgress"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "active": {
+              "type": "null"
+            },
+            "failed": {
+              "type": "null"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "scanStatus"
+        ],
+        "properties": {
+          "scanStatus": {
+            "const": "unverified"
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "pageProgress"
+          ]
+        }
+      }
+    }
+  ]
+}

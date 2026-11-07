@@ -1,0 +1,85 @@
+{
+  "name": "pieceboard",
+  "version": "0.1.0-alpha.1",
+  "description": "Compare real interface differences side by side and make clear this-or-that design decisions.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FrankBoyle/pieceboard.git"
+  },
+  "homepage": "https://github.com/FrankBoyle/pieceboard#readme",
+  "bugs": "https://github.com/FrankBoyle/pieceboard/issues",
+  "keywords": [
+    "ui",
+    "design-system",
+    "components",
+    "consistency",
+    "developer-tools"
+  ],
+  "type": "module",
+  "bin": {
+    "pieceboard": "bin/ui-sheet.js",
+    "ui-sheet": "bin/ui-sheet.js"
+  },
+  "files": [
+    "bin",
+    "vite.js",
+    "src",
+    "skills",
+    "docs/images",
+    "docs/data-format.md",
+    "docs/schema.md",
+    "docs/element-groups.md",
+    "docs/token-contracts.md",
+    "docs/layout-checks.md",
+    "docs/privacy.md",
+    "schemas",
+    "examples/button-review",
+    "examples/cross-page",
+    "examples/harbor",
+    "examples/layout-review",
+    "examples/ui-groups",
+    "evaluation",
+    "scripts",
+    "PROJECT_PLAN.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "demo": "node scripts/demo-elements.js",
+    "demo:inventory": "node bin/ui-sheet.js scan examples/harbor --out .ui-sheet-demo",
+    "demo:consistency": "node scripts/demo-consistency.js",
+    "demo:cross-page": "node scripts/demo-cross-page.js",
+    "demo:elements": "node scripts/demo-elements.js",
+    "demo:layout": "node scripts/demo-layout.js",
+    "screenshot:demo": "node scripts/export-demo-image.js",
+    "screenshot:cross-page": "node scripts/export-demo-image.js --cross-page",
+    "evaluate:buttons": "node scripts/evaluate-buttons.js",
+    "evaluate:browser": "node scripts/evaluate-browser.js",
+    "evaluate:independent": "node scripts/evaluate-independent.js",
+    "evaluate:public-source": "node scripts/evaluate-public-source.js",
+    "test": "node --test --test-concurrency=2 --test-timeout=180000",
+    "test:package": "node scripts/verify-package.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.28.0",
+    "@babel/traverse": "^7.28.0",
+    "magic-string": "1.4.5",
+    "parse5": "^8.1.0",
+    "php-parser": "^3.7.0",
+    "playwright": "^1.64.1",
+    "postcss": "^8.5.0",
+    "postcss-selector-parser": "^7.1.7"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "ajv": "8.20.0",
+    "vite": "6.4.5"
+  }
+}

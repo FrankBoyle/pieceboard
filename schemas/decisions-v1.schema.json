@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/decisions-v1.schema.json",
+  "title": "UI Sheet finding review decisions",
+  "type": "object",
+  "required": [
+    "format",
+    "decisions"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/decisions-v1"
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "findingId",
+          "status",
+          "reason"
+        ],
+        "properties": {
+          "findingId": {
+            "$ref": "common-v1.schema.json#/$defs/id"
+          },
+          "status": {
+            "$ref": "common-v1.schema.json#/$defs/review/properties/status"
+          },
+          "reason": {
+            "$ref": "common-v1.schema.json#/$defs/review/properties/reason"
+          },
+          "recordedAt": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

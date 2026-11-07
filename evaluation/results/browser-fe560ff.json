@@ -1,0 +1,521 @@
+{
+  "format": "ui-sheet/browser-evaluation-result-v1",
+  "cases": [
+    {
+      "id": "matching-actions",
+      "description": "Three matching primary actions.",
+      "expected": [],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "corner-radius",
+      "description": "One action has an unintended smaller corner radius.",
+      "expected": [
+        2
+      ],
+      "predicted": [
+        2
+      ],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "bottom-border",
+      "description": "One action has an unintended dashed bottom border.",
+      "expected": [
+        2
+      ],
+      "predicted": [
+        2
+      ],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "left-padding",
+      "description": "One action has unintended extra left padding.",
+      "expected": [
+        2
+      ],
+      "predicted": [
+        2
+      ],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "font-weight",
+      "description": "One action has an unintended lighter font weight.",
+      "expected": [
+        2
+      ],
+      "predicted": [
+        2
+      ],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "text-color",
+      "description": "One action has an unintended text color.",
+      "expected": [
+        2
+      ],
+      "predicted": [
+        2
+      ],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "shadow",
+      "description": "One action has an unintended shadow.",
+      "expected": [
+        2
+      ],
+      "predicted": [
+        2
+      ],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "gradient",
+      "description": "One action has an unintended gradient while its background color stays the same.",
+      "expected": [
+        2
+      ],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "italic",
+      "description": "One action has unintended italic text.",
+      "expected": [
+        2
+      ],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "intentional-outline",
+      "description": "An explicitly named outline variant is intentional.",
+      "expected": [],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "intentional-danger",
+      "description": "An explicitly named destructive action is intentional.",
+      "expected": [],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "intentional-small",
+      "description": "An explicitly named small-size variant is intentional.",
+      "expected": [],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "disabled",
+      "description": "A disabled action differs intentionally and is outside the comparison.",
+      "expected": [],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 2,
+      "sourceMatches": 2,
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "hidden",
+      "description": "A hidden action differs and is outside the comparison.",
+      "expected": [],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 2,
+      "sourceMatches": 2,
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "toggle",
+      "description": "A pressed toggle differs intentionally and is outside the comparison.",
+      "expected": [],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 2,
+      "sourceMatches": 2,
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "two-examples",
+      "description": "Only two actions are available and one is labeled as a regression.",
+      "expected": [
+        1
+      ],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "seen": 2,
+      "eligible": 2,
+      "sourceMatches": 2,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "wrong-majority",
+      "description": "Two actions have drifted from the intended appearance, leaving the original in the minority.",
+      "expected": [
+        1,
+        2
+      ],
+      "predicted": [
+        0
+      ],
+      "tp": 0,
+      "fp": 1,
+      "fn": 2,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "intentional-unmarked",
+      "description": "One appearance is intentionally different but has no variant hint.",
+      "expected": [],
+      "predicted": [
+        2
+      ],
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "equivalent-color",
+      "description": "Different CSS color syntax renders the same background.",
+      "expected": [],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "invisible-border-color",
+      "description": "A zero-width border has a different but invisible color.",
+      "expected": [],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "mobile-drift",
+      "description": "One action gains an unintended smaller radius at a mobile viewport.",
+      "expected": [
+        2
+      ],
+      "predicted": [
+        2
+      ],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "dark-drift",
+      "description": "One action gains an unintended smaller radius under a dark color preference.",
+      "expected": [
+        2
+      ],
+      "predicted": [
+        2
+      ],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "different-button-type",
+      "description": "A submit action uses an intentional different style and is grouped separately.",
+      "expected": [],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 3,
+      "sourceMatches": 3,
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    },
+    {
+      "id": "tab-role",
+      "description": "A button with a tab role is outside the native-button comparison.",
+      "expected": [],
+      "predicted": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "seen": 3,
+      "eligible": 2,
+      "sourceMatches": 2,
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      }
+    }
+  ],
+  "totals": {
+    "tp": 8,
+    "fp": 2,
+    "fn": 5
+  },
+  "precision": 0.8,
+  "recall": 0.6153846153846154,
+  "preparedAgainst": "fe560ff0fd81939ce3f1b257048cbb7ae71c66aa",
+  "browsers": [
+    "156.0.4314.58"
+  ],
+  "limitations": "Synthetic cases, labels by the implementer, not independent or representative. Source checks use generated pages with unique IDs. Captures do not establish general image quality.",
+  "checkedAt": "2026-11-04T05:07:37.485Z",
+  "detectorRevision": "fe560ff0fd81939ce3f1b257048cbb7ae71c66aa",
+  "datasetRevision": "af3234f642a4d8a0f8eec7951eec5a5efac49e04"
+}

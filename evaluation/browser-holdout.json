@@ -1,0 +1,31 @@
+{
+  "format": "ui-sheet/browser-evaluation-v1",
+  "preparedAgainst": "fe560ff0fd81939ce3f1b257048cbb7ae71c66aa",
+  "description": "New synthetic browser scenarios written after the initial detector. Labels are by the implementer and are not independently reviewed or representative of real projects.",
+  "cases": [
+    { "id": "matching-actions", "description": "Three matching primary actions.", "css": "", "buttons": [{}, {}, {}], "expected": [] },
+    { "id": "corner-radius", "description": "One action has an unintended smaller corner radius.", "css": ".wrong { border-radius: 3px; }", "buttons": [{}, {}, { "classes": "wrong" }], "expected": [2] },
+    { "id": "bottom-border", "description": "One action has an unintended dashed bottom border.", "css": ".wrong { border-bottom: 3px dashed #b21f1f; }", "buttons": [{}, {}, { "classes": "wrong" }], "expected": [2] },
+    { "id": "left-padding", "description": "One action has unintended extra left padding.", "css": ".wrong { padding-left: 30px; }", "buttons": [{}, {}, { "classes": "wrong" }], "expected": [2] },
+    { "id": "font-weight", "description": "One action has an unintended lighter font weight.", "css": ".wrong { font-weight: 400; }", "buttons": [{}, {}, { "classes": "wrong" }], "expected": [2] },
+    { "id": "text-color", "description": "One action has an unintended text color.", "css": ".wrong { color: #ffdd00; }", "buttons": [{}, {}, { "classes": "wrong" }], "expected": [2] },
+    { "id": "shadow", "description": "One action has an unintended shadow.", "css": ".wrong { box-shadow: 0 4px 8px #333; }", "buttons": [{}, {}, { "classes": "wrong" }], "expected": [2] },
+    { "id": "gradient", "description": "One action has an unintended gradient while its background color stays the same.", "css": ".wrong { background-image: linear-gradient(#ff0000, #0000ff); }", "buttons": [{}, {}, { "classes": "wrong" }], "expected": [2] },
+    { "id": "italic", "description": "One action has unintended italic text.", "css": ".wrong { font-style: italic; }", "buttons": [{}, {}, { "classes": "wrong" }], "expected": [2] },
+    { "id": "intentional-outline", "description": "An explicitly named outline variant is intentional.", "css": ".outline { background: transparent; color: #245ce0; }", "buttons": [{}, {}, { "classes": "outline" }], "expected": [] },
+    { "id": "intentional-danger", "description": "An explicitly named destructive action is intentional.", "css": ".danger { background: #b21f1f; border-color: #b21f1f; }", "buttons": [{}, {}, { "classes": "danger", "label": "Delete" }], "expected": [] },
+    { "id": "intentional-small", "description": "An explicitly named small-size variant is intentional.", "css": ".small { padding: 3px 8px; font-size: 12px; }", "buttons": [{}, {}, { "classes": "small" }], "expected": [] },
+    { "id": "disabled", "description": "A disabled action differs intentionally and is outside the comparison.", "css": ".wrong { opacity: .5; border-radius: 2px; }", "buttons": [{}, {}, { "classes": "wrong", "disabled": true }], "expected": [] },
+    { "id": "hidden", "description": "A hidden action differs and is outside the comparison.", "css": ".wrong { border-radius: 2px; }", "buttons": [{}, {}, { "classes": "wrong", "hidden": true }], "expected": [] },
+    { "id": "toggle", "description": "A pressed toggle differs intentionally and is outside the comparison.", "css": ".wrong { border-radius: 2px; }", "buttons": [{}, {}, { "classes": "wrong", "pressed": true }], "expected": [] },
+    { "id": "two-examples", "description": "Only two actions are available and one is labeled as a regression.", "css": ".wrong { border-radius: 3px; }", "buttons": [{}, { "classes": "wrong" }], "expected": [1] },
+    { "id": "wrong-majority", "description": "Two actions have drifted from the intended appearance, leaving the original in the minority.", "css": ".wrong { border-radius: 3px; }", "buttons": [{}, { "classes": "wrong" }, { "classes": "wrong" }], "expected": [1, 2] },
+    { "id": "intentional-unmarked", "description": "One appearance is intentionally different but has no variant hint.", "css": ".alternate { border-radius: 3px; }", "buttons": [{}, {}, { "classes": "alternate" }], "expected": [] },
+    { "id": "equivalent-color", "description": "Different CSS color syntax renders the same background.", "css": ".equivalent { background-color: rgba(36, 92, 224, 1); }", "buttons": [{}, {}, { "classes": "equivalent" }], "expected": [] },
+    { "id": "invisible-border-color", "description": "A zero-width border has a different but invisible color.", "css": ".button { border: 0; } .alternate { border-color: red; }", "buttons": [{}, {}, { "classes": "alternate" }], "expected": [] },
+    { "id": "mobile-drift", "description": "One action gains an unintended smaller radius at a mobile viewport.", "viewport": { "width": 390, "height": 844 }, "css": "@media (max-width: 500px) { .wrong { border-radius: 3px; } }", "buttons": [{}, {}, { "classes": "wrong" }], "expected": [2] },
+    { "id": "dark-drift", "description": "One action gains an unintended smaller radius under a dark color preference.", "colorScheme": "dark", "css": "@media (prefers-color-scheme: dark) { .wrong { border-radius: 3px; } }", "buttons": [{}, {}, { "classes": "wrong" }], "expected": [2] },
+    { "id": "different-button-type", "description": "A submit action uses an intentional different style and is grouped separately.", "css": ".alternate { border-radius: 3px; }", "buttons": [{}, {}, { "classes": "alternate", "type": "submit" }], "expected": [] },
+    { "id": "tab-role", "description": "A button with a tab role is outside the native-button comparison.", "css": ".alternate { border-radius: 3px; }", "buttons": [{}, {}, { "classes": "alternate", "role": "tab" }], "expected": [] }
+  ]
+}

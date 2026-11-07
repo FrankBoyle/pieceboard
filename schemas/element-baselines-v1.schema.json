@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/element-baselines-v1.schema.json",
+  "title": "Historical producer contract: UI Sheet approved configured-family baselines",
+  "type": "object",
+  "required": [
+    "format",
+    "rules"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/element-baselines-v1"
+    },
+    "rules": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "group",
+          "style",
+          "reason"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "common-v1.schema.json#/$defs/id"
+          },
+          "scope": {
+            "$ref": "common-v1.schema.json#/$defs/elementBaselineScope"
+          },
+          "group": {
+            "$ref": "common-v1.schema.json#/$defs/elementBaselineGroup"
+          },
+          "style": {
+            "type": "object",
+            "description": "Normalized measured button style. This is the complete current comparison property set, not every CSS property.",
+            "required": [
+              "backgroundColor",
+              "backgroundImage",
+              "color",
+              "borderTopWidth",
+              "borderTopStyle",
+              "borderTopColor",
+              "borderRightWidth",
+              "borderRightStyle",
+              "borderRightColor",
+              "borderBottomWidth",
+              "borderBottomStyle",
+              "borderBottomColor",
+              "borderLeftWidth",
+              "borderLeftStyle",
+              "borderLeftColor",
+              "borderTopLeftRadius",
+              "borderTopRightRadius",
+              "borderBottomRightRadius",
+              "borderBottomLeftRadius",
+              "fontFamily",
+              "fontSize",
+              "fontWeight",
+              "fontStyle",
+              "lineHeight",
+              "letterSpacing",
+              "textTransform",
+              "textDecorationLine",
+              "paddingTop",
+              "paddingRight",
+              "paddingBottom",
+              "paddingLeft",
+              "boxShadow"
+            ],
+            "properties": {
+              "backgroundColor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "backgroundImage": {
+                "anyOf": [
+                  {
+                    "const": "none"
+                  },
+                  {
+                    "type": "string",
+                    "maxLength": 2048,
+                    "pattern": "^(?:repeating-)?(?:linear|radial|conic)-gradient\\(",
+                    "not": {
+                      "pattern": "[\"'\\\\]|(?:url|image-set|cross-fade|image|element|paint)\\s*\\("
+                    }
+                  }
+                ]
+              },
+              "color": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderTopWidth": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderTopStyle": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderTopColor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderRightWidth": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderRightStyle": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderRightColor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderBottomWidth": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderBottomStyle": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderBottomColor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderLeftWidth": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderLeftStyle": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderLeftColor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderTopLeftRadius": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderTopRightRadius": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderBottomRightRadius": {
+                "type": "string",
+                "minLength": 1
+              },
+              "borderBottomLeftRadius": {
+                "type": "string",
+                "minLength": 1
+              },
+              "fontFamily": {
+                "type": "string",
+                "minLength": 1
+              },
+              "fontSize": {
+                "type": "string",
+                "minLength": 1
+              },
+              "fontWeight": {
+                "type": "string",
+                "minLength": 1
+              },
+              "fontStyle": {
+                "type": "string",
+                "minLength": 1
+              },
+              "lineHeight": {
+                "type": "string",
+                "minLength": 1
+              },
+              "letterSpacing": {
+                "type": "string",
+                "minLength": 1
+              },
+              "textTransform": {
+                "type": "string",
+                "minLength": 1
+              },
+              "textDecorationLine": {
+                "type": "string",
+                "minLength": 1
+              },
+              "paddingTop": {
+                "type": "string",
+                "minLength": 1
+              },
+              "paddingRight": {
+                "type": "string",
+                "minLength": 1
+              },
+              "paddingBottom": {
+                "type": "string",
+                "minLength": 1
+              },
+              "paddingLeft": {
+                "type": "string",
+                "minLength": 1
+              },
+              "boxShadow": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": true
+          },
+          "reason": {
+            "$ref": "common-v1.schema.json#/$defs/review/properties/reason"
+          },
+          "recordedAt": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "common-v1.schema.json#/$defs/source"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true,
+  "description": "Historical pre-effects alpha output. Retained for reference only; current runtime requires regeneration and reapproval using ui-sheet/element-baselines-v2."
+}

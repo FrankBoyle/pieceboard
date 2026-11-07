@@ -1,0 +1,1748 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/layout-v1.schema.json",
+  "title": "UI Sheet explicit layout audit page",
+  "type": "object",
+  "required": [
+    "format",
+    "scope",
+    "coverage",
+    "counts",
+    "results"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/layout-v1"
+    },
+    "scope": {
+      "$ref": "layout-v1.schema.json#/$defs/scope"
+    },
+    "coverage": {
+      "enum": [
+        "observed",
+        "partial",
+        "insufficient"
+      ]
+    },
+    "counts": {
+      "$ref": "layout-v1.schema.json#/$defs/counts"
+    },
+    "results": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "$ref": "layout-v1.schema.json#/$defs/result"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "description": "Evidence for explicitly configured checks only; does not infer an application design standard. Runtime validation additionally checks count arithmetic, IDs, and matching coverage.",
+  "$defs": {
+    "scope": {
+      "type": "object",
+      "required": [
+        "url",
+        "viewport",
+        "colorScheme",
+        "media",
+        "pixelRatio",
+        "browser"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192
+        },
+        "viewport": {
+          "type": "object",
+          "required": [
+            "width",
+            "height"
+          ],
+          "properties": {
+            "width": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4096
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4096
+            }
+          },
+          "additionalProperties": false
+        },
+        "colorScheme": {
+          "enum": [
+            "light",
+            "dark"
+          ]
+        },
+        "media": {
+          "enum": [
+            "screen",
+            "print"
+          ]
+        },
+        "pixelRatio": {
+          "$ref": "common-v1.schema.json#/$defs/pixelRatio"
+        },
+        "browser": {
+          "type": "object",
+          "required": [
+            "engine",
+            "version"
+          ],
+          "properties": {
+            "engine": {
+              "const": "chromium"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "source": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "unresolved"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "file",
+            "line"
+          ],
+          "properties": {
+            "status": {
+              "const": "manual"
+            },
+            "file": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "^(?!/)(?!.*//)(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\u0000-\\u001f\\u007f]+$"
+            },
+            "line": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "column": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "rules",
+        "passed",
+        "findings",
+        "incomplete"
+      ],
+      "properties": {
+        "rules": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 30
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 30
+        },
+        "findings": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 30
+        },
+        "incomplete": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "preview": {
+      "type": "object",
+      "required": [
+        "image",
+        "pixelRatio",
+        "width",
+        "height"
+      ],
+      "properties": {
+        "image": {
+          "$ref": "common-v1.schema.json#/$defs/image"
+        },
+        "pixelRatio": {
+          "$ref": "common-v1.schema.json#/$defs/pixelRatio"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "additionalProperties": false
+    },
+    "expectedInset": {
+      "type": "object",
+      "required": [
+        "min"
+      ],
+      "properties": {
+        "min": {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "top": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000
+            },
+            "right": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000
+            },
+            "bottom": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000
+            },
+            "left": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000
+            }
+          },
+          "additionalProperties": false,
+          "minProperties": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "expectedGap": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "min": {
+          "type": "number",
+          "minimum": -10000,
+          "maximum": 10000
+        },
+        "max": {
+          "type": "number",
+          "minimum": -10000,
+          "maximum": 10000
+        }
+      },
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "min"
+          ],
+          "type": "object"
+        },
+        {
+          "required": [
+            "max"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "expectedStyle": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "property",
+            "expected"
+          ],
+          "properties": {
+            "property": {
+              "enum": [
+                "marginTop",
+                "marginRight",
+                "marginBottom",
+                "marginLeft",
+                "paddingTop",
+                "paddingRight",
+                "paddingBottom",
+                "paddingLeft",
+                "rowGap",
+                "columnGap",
+                "wordSpacing",
+                "letterSpacing",
+                "lineHeight",
+                "textIndent"
+              ]
+            },
+            "expected": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "property"
+          ],
+          "properties": {
+            "property": {
+              "enum": [
+                "marginTop",
+                "marginRight",
+                "marginBottom",
+                "marginLeft",
+                "paddingTop",
+                "paddingRight",
+                "paddingBottom",
+                "paddingLeft",
+                "rowGap",
+                "columnGap",
+                "wordSpacing",
+                "letterSpacing",
+                "lineHeight",
+                "textIndent"
+              ]
+            },
+            "min": {
+              "type": "number",
+              "minimum": -10000,
+              "maximum": 10000
+            },
+            "max": {
+              "type": "number",
+              "minimum": -10000,
+              "maximum": 10000
+            }
+          },
+          "additionalProperties": false,
+          "anyOf": [
+            {
+              "required": [
+                "min"
+              ],
+              "type": "object"
+            },
+            {
+              "required": [
+                "max"
+              ],
+              "type": "object"
+            }
+          ]
+        }
+      ]
+    },
+    "expectedImage": {
+      "type": "object",
+      "required": [
+        "paths",
+        "maxAspectRatioError"
+      ],
+      "properties": {
+        "paths": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "pattern": "^/(?!/)(?!.*(?:/\\.{1,2})(?:/|$))(?!.*[\\u0000-\\u0020\\u007f-\\uffff?#\\\\]).*$",
+            "description": "Exact approved URL pathname; runtime additionally rejects URL normalization such as percent-encoded dot segments."
+          },
+          "uniqueItems": true
+        },
+        "maxAspectRatioError": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "result": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "selector",
+        "status",
+        "message",
+        "expected",
+        "measured",
+        "source"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,63}$"
+        },
+        "kind": {
+          "enum": [
+            "text-inset",
+            "horizontal-gap",
+            "style",
+            "image"
+          ]
+        },
+        "selector": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "\\S"
+        },
+        "otherSelector": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "\\S"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "finding",
+            "incomplete"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "expected": {
+          "type": "object"
+        },
+        "measured": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        "source": {
+          "$ref": "layout-v1.schema.json#/$defs/source"
+        },
+        "preview": {
+          "$ref": "layout-v1.schema.json#/$defs/preview"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "text-inset"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "expected": {
+                "$ref": "layout-v1.schema.json#/$defs/expectedInset"
+              },
+              "measured": {
+                "type": "object",
+                "properties": {
+                  "top": {
+                    "type": "number"
+                  },
+                  "right": {
+                    "type": "number"
+                  },
+                  "bottom": {
+                    "type": "number"
+                  },
+                  "left": {
+                    "type": "number"
+                  },
+                  "textRects": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "textNodes": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "matches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  },
+                  "otherMatches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "horizontal-gap"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "required": [
+              "otherSelector"
+            ],
+            "properties": {
+              "expected": {
+                "$ref": "layout-v1.schema.json#/$defs/expectedGap"
+              },
+              "measured": {
+                "type": "object",
+                "properties": {
+                  "gap": {
+                    "type": "number"
+                  },
+                  "verticalOverlap": {
+                    "type": "number"
+                  },
+                  "matches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  },
+                  "otherMatches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "type": "object"
+          },
+          "else": {
+            "not": {
+              "required": [
+                "otherSelector"
+              ],
+              "type": "object"
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "style"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "expected": {
+                "$ref": "layout-v1.schema.json#/$defs/expectedStyle"
+              },
+              "measured": {
+                "type": "object",
+                "properties": {
+                  "property": {
+                    "enum": [
+                      "marginTop",
+                      "marginRight",
+                      "marginBottom",
+                      "marginLeft",
+                      "paddingTop",
+                      "paddingRight",
+                      "paddingBottom",
+                      "paddingLeft",
+                      "rowGap",
+                      "columnGap",
+                      "wordSpacing",
+                      "letterSpacing",
+                      "lineHeight",
+                      "textIndent"
+                    ]
+                  },
+                  "value": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "px": {
+                    "type": "number"
+                  },
+                  "matches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  },
+                  "otherMatches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "image"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "expected": {
+                "$ref": "layout-v1.schema.json#/$defs/expectedImage"
+              },
+              "measured": {
+                "type": "object",
+                "properties": {
+                  "elementTag": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "decoded": {
+                    "type": "boolean"
+                  },
+                  "approvedPath": {
+                    "type": "boolean"
+                  },
+                  "sameOrigin": {
+                    "type": "boolean"
+                  },
+                  "naturalWidth": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "naturalHeight": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "renderedWidth": {
+                    "type": "number"
+                  },
+                  "renderedHeight": {
+                    "type": "number"
+                  },
+                  "aspectRatioError": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "matches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  },
+                  "otherMatches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "text-inset"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "top",
+                  "right",
+                  "bottom",
+                  "left",
+                  "textRects"
+                ],
+                "properties": {
+                  "top": {
+                    "type": "number"
+                  },
+                  "right": {
+                    "type": "number"
+                  },
+                  "bottom": {
+                    "type": "number"
+                  },
+                  "left": {
+                    "type": "number"
+                  },
+                  "textRects": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2000
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "horizontal-gap"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "gap",
+                  "verticalOverlap"
+                ],
+                "properties": {
+                  "gap": {
+                    "type": "number"
+                  },
+                  "verticalOverlap": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "style"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "property",
+                  "value"
+                ],
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "style"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              },
+              "expected": {
+                "not": {
+                  "required": [
+                    "expected"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "px"
+                ],
+                "properties": {
+                  "px": {
+                    "type": "number"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "image"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "elementTag",
+                  "decoded"
+                ],
+                "properties": {
+                  "elementTag": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "decoded": {
+                    "type": "boolean"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "image"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              },
+              "measured": {
+                "properties": {
+                  "elementTag": {
+                    "const": "img"
+                  }
+                },
+                "required": [
+                  "elementTag"
+                ],
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "decoded",
+                  "sameOrigin",
+                  "approvedPath",
+                  "naturalWidth",
+                  "naturalHeight",
+                  "renderedWidth",
+                  "renderedHeight",
+                  "aspectRatioError"
+                ],
+                "properties": {
+                  "decoded": {
+                    "const": true
+                  },
+                  "sameOrigin": {
+                    "type": "boolean"
+                  },
+                  "approvedPath": {
+                    "type": "boolean"
+                  },
+                  "naturalWidth": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "naturalHeight": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "renderedWidth": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "renderedHeight": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "aspectRatioError": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "image"
+              },
+              "status": {
+                "const": "passed"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "elementTag",
+                  "decoded",
+                  "sameOrigin",
+                  "approvedPath"
+                ],
+                "properties": {
+                  "elementTag": {
+                    "const": "img"
+                  },
+                  "decoded": {
+                    "const": true
+                  },
+                  "sameOrigin": {
+                    "const": true
+                  },
+                  "approvedPath": {
+                    "const": true
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "image"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              },
+              "measured": {
+                "properties": {
+                  "approvedPath": {
+                    "const": true
+                  }
+                },
+                "required": [
+                  "approvedPath"
+                ],
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "sameOrigin"
+                ],
+                "properties": {
+                  "sameOrigin": {
+                    "const": true
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "compactResult": {
+      "type": "object",
+      "required": [
+        "page",
+        "id",
+        "kind",
+        "selector",
+        "status",
+        "message",
+        "expected",
+        "measured",
+        "source",
+        "previewAvailable"
+      ],
+      "properties": {
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,63}$"
+        },
+        "kind": {
+          "enum": [
+            "text-inset",
+            "horizontal-gap",
+            "style",
+            "image"
+          ]
+        },
+        "selector": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "\\S"
+        },
+        "otherSelector": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "\\S"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "finding",
+            "incomplete"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "expected": {
+          "type": "object"
+        },
+        "measured": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        "source": {
+          "$ref": "layout-v1.schema.json#/$defs/source"
+        },
+        "previewAvailable": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "text-inset"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "expected": {
+                "$ref": "layout-v1.schema.json#/$defs/expectedInset"
+              },
+              "measured": {
+                "type": "object",
+                "properties": {
+                  "top": {
+                    "type": "number"
+                  },
+                  "right": {
+                    "type": "number"
+                  },
+                  "bottom": {
+                    "type": "number"
+                  },
+                  "left": {
+                    "type": "number"
+                  },
+                  "textRects": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "textNodes": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "matches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  },
+                  "otherMatches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "horizontal-gap"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "required": [
+              "otherSelector"
+            ],
+            "properties": {
+              "expected": {
+                "$ref": "layout-v1.schema.json#/$defs/expectedGap"
+              },
+              "measured": {
+                "type": "object",
+                "properties": {
+                  "gap": {
+                    "type": "number"
+                  },
+                  "verticalOverlap": {
+                    "type": "number"
+                  },
+                  "matches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  },
+                  "otherMatches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "type": "object"
+          },
+          "else": {
+            "not": {
+              "required": [
+                "otherSelector"
+              ],
+              "type": "object"
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "style"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "expected": {
+                "$ref": "layout-v1.schema.json#/$defs/expectedStyle"
+              },
+              "measured": {
+                "type": "object",
+                "properties": {
+                  "property": {
+                    "enum": [
+                      "marginTop",
+                      "marginRight",
+                      "marginBottom",
+                      "marginLeft",
+                      "paddingTop",
+                      "paddingRight",
+                      "paddingBottom",
+                      "paddingLeft",
+                      "rowGap",
+                      "columnGap",
+                      "wordSpacing",
+                      "letterSpacing",
+                      "lineHeight",
+                      "textIndent"
+                    ]
+                  },
+                  "value": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "px": {
+                    "type": "number"
+                  },
+                  "matches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  },
+                  "otherMatches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "image"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "expected": {
+                "$ref": "layout-v1.schema.json#/$defs/expectedImage"
+              },
+              "measured": {
+                "type": "object",
+                "properties": {
+                  "elementTag": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "decoded": {
+                    "type": "boolean"
+                  },
+                  "approvedPath": {
+                    "type": "boolean"
+                  },
+                  "sameOrigin": {
+                    "type": "boolean"
+                  },
+                  "naturalWidth": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "naturalHeight": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "renderedWidth": {
+                    "type": "number"
+                  },
+                  "renderedHeight": {
+                    "type": "number"
+                  },
+                  "aspectRatioError": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "matches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  },
+                  "otherMatches": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "text-inset"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "top",
+                  "right",
+                  "bottom",
+                  "left",
+                  "textRects"
+                ],
+                "properties": {
+                  "top": {
+                    "type": "number"
+                  },
+                  "right": {
+                    "type": "number"
+                  },
+                  "bottom": {
+                    "type": "number"
+                  },
+                  "left": {
+                    "type": "number"
+                  },
+                  "textRects": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2000
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "horizontal-gap"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "gap",
+                  "verticalOverlap"
+                ],
+                "properties": {
+                  "gap": {
+                    "type": "number"
+                  },
+                  "verticalOverlap": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "style"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "property",
+                  "value"
+                ],
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "style"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              },
+              "expected": {
+                "not": {
+                  "required": [
+                    "expected"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "px"
+                ],
+                "properties": {
+                  "px": {
+                    "type": "number"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "image"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "elementTag",
+                  "decoded"
+                ],
+                "properties": {
+                  "elementTag": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "decoded": {
+                    "type": "boolean"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "image"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              },
+              "measured": {
+                "properties": {
+                  "elementTag": {
+                    "const": "img"
+                  }
+                },
+                "required": [
+                  "elementTag"
+                ],
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "decoded",
+                  "sameOrigin",
+                  "approvedPath",
+                  "naturalWidth",
+                  "naturalHeight",
+                  "renderedWidth",
+                  "renderedHeight",
+                  "aspectRatioError"
+                ],
+                "properties": {
+                  "decoded": {
+                    "const": true
+                  },
+                  "sameOrigin": {
+                    "type": "boolean"
+                  },
+                  "approvedPath": {
+                    "type": "boolean"
+                  },
+                  "naturalWidth": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "naturalHeight": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "renderedWidth": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "renderedHeight": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "aspectRatioError": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "image"
+              },
+              "status": {
+                "const": "passed"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "elementTag",
+                  "decoded",
+                  "sameOrigin",
+                  "approvedPath"
+                ],
+                "properties": {
+                  "elementTag": {
+                    "const": "img"
+                  },
+                  "decoded": {
+                    "const": true
+                  },
+                  "sameOrigin": {
+                    "const": true
+                  },
+                  "approvedPath": {
+                    "const": true
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "image"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "finding"
+                ]
+              },
+              "measured": {
+                "properties": {
+                  "approvedPath": {
+                    "const": true
+                  }
+                },
+                "required": [
+                  "approvedPath"
+                ],
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "measured": {
+                "required": [
+                  "sameOrigin"
+                ],
+                "properties": {
+                  "sameOrigin": {
+                    "const": true
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        }
+      ]
+    }
+  }
+}

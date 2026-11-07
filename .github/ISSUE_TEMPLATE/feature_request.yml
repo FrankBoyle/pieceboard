@@ -1,0 +1,21 @@
+name: Feature proposal
+description: Suggest an improvement to UI Sheet.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+    validations:
+      required: true
+  - type: textarea
+    id: workflow
+    attributes:
+      label: What would a useful workflow look like?
+      description: Include a small example and any intentional variations to preserve.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Use synthetic data and avoid sharing credentials or private browser state.

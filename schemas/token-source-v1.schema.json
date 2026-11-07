@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/token-source-v1.schema.json",
+  "title": "UI Sheet CSS custom-property source declarations",
+  "type": "object",
+  "required": [
+    "format",
+    "files",
+    "declarations"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/token-source-v1"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "file",
+          "status"
+        ],
+        "properties": {
+          "file": {
+            "$ref": "token-source-v1.schema.json#/$defs/file"
+          },
+          "status": {
+            "enum": [
+              "scanned",
+              "failed"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "declarations": {
+      "type": "array",
+      "items": {
+        "$ref": "token-source-v1.schema.json#/$defs/declaration"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "description": "Explicit parsed CSS declarations and attempted CSS files. Context preserves source nesting; this does not compute cascade, inheritance, or effective runtime values.",
+  "$defs": {
+    "file": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "pattern": "^(?!/)(?!.*//)(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:\\u0000-\\u001f\\u007f]+\\.[cC][sS][sS]$"
+    },
+    "tokenName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 2000,
+      "pattern": "^--[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "context": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "type",
+              "selector"
+            ],
+            "properties": {
+              "type": {
+                "const": "rule"
+              },
+              "selector": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 16384,
+                "pattern": "\\S"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "type",
+              "name",
+              "params"
+            ],
+            "properties": {
+              "type": {
+                "const": "at-rule"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000,
+                "pattern": "\\S"
+              },
+              "params": {
+                "type": "string",
+                "maxLength": 16384
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "scope": {
+      "type": "object",
+      "required": [
+        "token",
+        "file",
+        "context"
+      ],
+      "properties": {
+        "token": {
+          "$ref": "token-source-v1.schema.json#/$defs/tokenName"
+        },
+        "file": {
+          "$ref": "token-source-v1.schema.json#/$defs/file"
+        },
+        "context": {
+          "$ref": "token-source-v1.schema.json#/$defs/context"
+        }
+      },
+      "additionalProperties": false
+    },
+    "declaration": {
+      "type": "object",
+      "required": [
+        "token",
+        "file",
+        "context",
+        "value",
+        "important",
+        "line",
+        "column"
+      ],
+      "properties": {
+        "token": {
+          "$ref": "token-source-v1.schema.json#/$defs/tokenName"
+        },
+        "file": {
+          "$ref": "token-source-v1.schema.json#/$defs/file"
+        },
+        "context": {
+          "$ref": "token-source-v1.schema.json#/$defs/context"
+        },
+        "value": {
+          "type": "string",
+          "maxLength": 131072
+        },
+        "important": {
+          "type": "boolean"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "additionalProperties": false
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^token:[a-f0-9]{24}$"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 230">
+  <rect width="400" height="230" fill="#f1f4eb"/>
+  <rect x="64" y="88" width="272" height="54" rx="7" fill="#fbfcf8" stroke="#d5e3d3"/>
+  <text x="84" y="121" fill="#78a184" font-family="Arial,sans-serif" font-size="20">✳</text>
+  <text x="111" y="119" fill="#55715b" font-family="Arial,sans-serif" font-size="12">Your workspace is private.</text>
+</svg>

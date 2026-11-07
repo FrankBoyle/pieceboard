@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/responsive-audit-v1.schema.json",
+  "title": "Pieceboard responsive viewport observations",
+  "type": "object",
+  "required": ["format", "pages"],
+  "properties": {
+    "format": { "const": "ui-sheet/responsive-pages-v1" },
+    "pages": { "type": "array", "minItems": 1, "maxItems": 20, "items": { "$ref": "#/$defs/page" } }
+  },
+  "$defs": {
+    "viewport": {
+      "type": "object", "required": ["width", "height"],
+      "properties": { "width": { "type": "integer", "minimum": 1, "maximum": 4096 }, "height": { "type": "integer", "minimum": 1, "maximum": 4096 } }
+    },
+    "bounds": {
+      "type": "object", "required": ["x", "y", "width", "height"],
+      "properties": { "x": { "type": "number" }, "y": { "type": "number" }, "width": { "type": "number", "minimum": 0 }, "height": { "type": "number", "minimum": 0 } }
+    },
+    "preview": {
+      "type": "object", "required": ["image", "width", "height", "pixelRatio", "scroll"],
+      "properties": {
+        "image": { "type": "string", "pattern": "^data:image/png;base64," },
+        "width": { "type": "integer", "minimum": 1 }, "height": { "type": "integer", "minimum": 1 }, "pixelRatio": { "const": 1 },
+        "scroll": { "type": "object", "required": ["x", "y"], "properties": { "x": { "type": "number" }, "y": { "type": "number" } } }
+      }
+    },
+    "finding": {
+      "type": "object", "required": ["kind", "selector", "tag", "bounds", "viewportWidth", "message", "recommendation"],
+      "properties": {
+        "kind": { "enum": ["horizontal-overflow", "clipped-text", "overlapping-text"] },
+        "selector": { "type": "string", "minLength": 1, "maxLength": 500 }, "otherSelector": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "container": { "type": "string", "minLength": 1, "maxLength": 500 }, "sameParent": { "type": "boolean" },
+        "tag": { "type": "string", "minLength": 1 }, "bounds": { "$ref": "#/$defs/bounds" }, "viewportWidth": { "type": "integer", "minimum": 1, "maximum": 4096 },
+        "overflowPx": { "type": "number", "minimum": 0 },
+        "overlap": { "type": "object", "required": ["width", "height"], "properties": { "width": { "type": "number", "minimum": 0 }, "height": { "type": "number", "minimum": 0 } } },
+        "message": { "type": "string", "minLength": 1 }, "previewIndex": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "computedStyle": { "$ref": "#/$defs/styles" }, "containerStyle": { "$ref": "#/$defs/styles" }, "otherComputedStyle": { "$ref": "#/$defs/styles" },
+        "source": { "type": "object", "required": ["status", "file", "line"], "properties": { "status": { "const": "likely" }, "file": { "type": "string", "minLength": 1 }, "line": { "type": "integer", "minimum": 1 }, "column": { "type": "integer", "minimum": 1 } } },
+        "recommendation": { "type": "object", "required": ["summary"], "properties": { "summary": { "type": "string", "minLength": 1 }, "css": { "type": "string", "minLength": 1 }, "note": { "type": "string" } } }
+      }
+    },
+    "styles": { "type": "object", "additionalProperties": { "type": "string", "maxLength": 200 } },
+    "inspection": {
+      "type": "object", "required": ["viewport", "coverage", "findings"],
+      "properties": {
+        "viewport": { "$ref": "#/$defs/viewport" }, "coverage": { "enum": ["observed", "partial", "incomplete"] },
+        "reason": { "type": "string", "minLength": 1 }, "stable": { "type": "boolean" },
+        "document": { "type": "object", "required": ["viewportWidth", "scrollWidth"], "properties": { "viewportWidth": { "type": "integer", "minimum": 0 }, "scrollWidth": { "type": "integer", "minimum": 0 } } },
+        "inspected": { "type": "object", "required": ["elements", "textNodes", "textFragments", "limited", "uninspected"], "properties": { "elements": { "type": "integer", "minimum": 0, "maximum": 4000 }, "textNodes": { "type": "integer", "minimum": 0, "maximum": 2500 }, "textFragments": { "type": "integer", "minimum": 0, "maximum": 3000 }, "limited": { "type": "boolean" }, "uninspected": { "type": "integer", "minimum": 0, "maximum": 4000 } } },
+        "findings": { "type": "array", "maxItems": 80, "items": { "$ref": "#/$defs/finding" } },
+        "previews": { "type": "array", "maxItems": 8, "items": { "$ref": "#/$defs/preview" } }
+      },
+      "allOf": [
+        { "if": { "properties": { "coverage": { "const": "incomplete" } }, "required": ["coverage"] }, "then": { "required": ["reason"] }, "else": { "required": ["stable", "document", "inspected", "previews"] } }
+      ]
+    },
+    "page": {
+      "type": "object", "required": ["url", "colorScheme", "pixelRatio", "browser", "actions", "maskSelectorsConfigured", "viewports"],
+      "properties": {
+        "url": { "type": "string", "pattern": "^https?://" }, "colorScheme": { "enum": ["light", "dark"] }, "pixelRatio": { "type": "integer", "minimum": 1, "maximum": 4 },
+        "actions": { "type": "array", "maxItems": 20, "items": { "type": "object", "required": ["kind", "selector"], "properties": { "kind": { "enum": ["focus", "hover"] }, "selector": { "type": "string", "minLength": 1, "maxLength": 200 } } } },
+        "maskSelectorsConfigured": { "type": "integer", "minimum": 0, "maximum": 20 },
+        "browser": { "type": "object", "required": ["engine", "version"], "properties": { "engine": { "const": "chromium" }, "version": { "type": "string" } } },
+        "viewports": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "$ref": "#/$defs/inspection" } }
+      }
+    }
+  }
+}

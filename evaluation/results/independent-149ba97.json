@@ -1,0 +1,6221 @@
+{
+  "format": "ui-sheet/independent-browser-evaluation-result-v1",
+  "cases": [
+    {
+      "id": "radius-single",
+      "description": "Every document primary action must use the same 8px corners. The last button accidentally uses 22px corners.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "radius-single.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "radius-single.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "radius-single.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "radius-single.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "radius-single.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/radius-single",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "60d6ca48218f13e99178d8345d148c457c3211927bf191bef8c51256826e061c"
+    },
+    {
+      "id": "radius-repeated",
+      "description": "The document primary action specification requires 8px corners. Two repeated instances accidentally use 1px corners; both are defects even though they share one appearance.",
+      "scoring": "scored",
+      "expected": [
+        6,
+        7
+      ],
+      "predicted": [],
+      "fixtureControls": 8,
+      "counts": {
+        "seen": 8,
+        "eligible": 8,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 8,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 8,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "radius-repeated.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "radius-repeated.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "radius-repeated.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "radius-repeated.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "radius-repeated.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        },
+        {
+          "index": 5,
+          "matched": true,
+          "expectedLine": 11,
+          "actual": {
+            "status": "likely",
+            "file": "radius-repeated.html",
+            "line": 11,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-5"
+          }
+        },
+        {
+          "index": 6,
+          "matched": true,
+          "expectedLine": 12,
+          "actual": {
+            "status": "likely",
+            "file": "radius-repeated.html",
+            "line": 12,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-6"
+          }
+        },
+        {
+          "index": 7,
+          "matched": true,
+          "expectedLine": 13,
+          "actual": {
+            "status": "likely",
+            "file": "radius-repeated.html",
+            "line": 13,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-7"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/radius-repeated",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 2,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": [
+          6,
+          7
+        ]
+      },
+      "fixtureSha256": "e4595df5556cafd95b3350648e68d4fc75264c0bc90e7d68ecbfda7fbdd5df5b"
+    },
+    {
+      "id": "border-bottom-width",
+      "description": "All document primary actions require a 1px border on every side. The final button accidentally has a 5px bottom border.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "border-bottom-width.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "border-bottom-width.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "border-bottom-width.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "border-bottom-width.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "border-bottom-width.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/border-bottom-width",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "8ad109af46b072726113620539698bed2c2b75f3d2ef2dd47163640f087d59da"
+    },
+    {
+      "id": "font-weight",
+      "description": "All document primary labels require weight 600. The final label accidentally uses weight 400.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "font-weight.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "font-weight.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "font-weight.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "font-weight.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "font-weight.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/font-weight",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "03de523b51fcaeaac62e62a0a02dac2006b0de857c0f258b808c7e5eb9c81355"
+    },
+    {
+      "id": "italic-label",
+      "description": "All document primary labels must be upright. Italic text on the last otherwise comparable action is an accidental override.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "italic-label.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "italic-label.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "italic-label.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "italic-label.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "italic-label.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/italic-label",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "0e8ba0eb3ad708805355845a0657e2aa61680c5a23d8b65a68dfff5ae835dbe4"
+    },
+    {
+      "id": "horizontal-padding",
+      "description": "All document primary actions require 16px horizontal padding. The final button accidentally has 32px horizontal padding.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "horizontal-padding.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "horizontal-padding.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "horizontal-padding.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "horizontal-padding.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "horizontal-padding.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/horizontal-padding",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "c50eed8b366e7f83a4e2f55b0445c2662cf53ff47d719b6c5947208c06a0268c"
+    },
+    {
+      "id": "unexpected-shadow",
+      "description": "This flat primary action design has no shadow. The last button accidentally gains a conspicuous drop shadow.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "unexpected-shadow.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "unexpected-shadow.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "unexpected-shadow.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "unexpected-shadow.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "unexpected-shadow.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/unexpected-shadow",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "a8beed74a98d4ca4188c9af06e8cfe3617d9e16a50e711050cd525e13ddf2167"
+    },
+    {
+      "id": "uppercase-label",
+      "description": "Sentence-case labels are required for every document primary action. The last button accidentally forces uppercase text.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "uppercase-label.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "uppercase-label.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "uppercase-label.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "uppercase-label.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "uppercase-label.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/uppercase-label",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "a462b5962fff7835db2cd3f6508c7ff36a10bdf69286c21425ea653b8374caea"
+    },
+    {
+      "id": "background-color",
+      "description": "Every document primary action is specified as blue #245ce0. The final button accidentally has a red fill while retaining primary semantics.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "background-color.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "background-color.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "background-color.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "background-color.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "background-color.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/background-color",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "7c23cd7e635098e758e756f87561cbe7bb0d66ecdb4bd7b88b37f2fe33b0e70e"
+    },
+    {
+      "id": "gradient-direction",
+      "description": "All actions in this branded primary family require the same left-to-right two-color gradient. The final button accidentally reverses the gradient direction.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "gradient-direction.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "gradient-direction.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "gradient-direction.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "gradient-direction.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 11,
+          "actual": {
+            "status": "likely",
+            "file": "gradient-direction.html",
+            "line": 11,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/gradient-direction",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "8d07fdcfcc96eaed6d8518fcf66de77fd37567f3c4d5bc53d4e214a493dbd1c1"
+    },
+    {
+      "id": "gradient-stop-color",
+      "description": "The approved primary gradient ends in cyan #67e8f9. The final primary action accidentally ends in yellow #fde047.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "gradient-stop-color.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "gradient-stop-color.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "gradient-stop-color.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "gradient-stop-color.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 11,
+          "actual": {
+            "status": "likely",
+            "file": "gradient-stop-color.html",
+            "line": 11,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/gradient-stop-color",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "53b3e41ae4112ca663135edb2eb3763ac81ff9130c502d46f93c1bd50c4f4b85"
+    },
+    {
+      "id": "text-decoration",
+      "description": "Document primary action text must have no underline. The last button accidentally receives an underline.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "text-decoration.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "text-decoration.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "text-decoration.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "text-decoration.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "text-decoration.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/text-decoration",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "2e02dc89ce22e8d47c3b3188d9881d4cdd437d19d1acdf61221334177d724914"
+    },
+    {
+      "id": "wrong-majority-contract",
+      "description": "An authored design requirement fixes the document primary fill at blue #245ce0. Four accidentally red instances are defects; the lone blue instance is correct. Frequency must not redefine this requirement.",
+      "scoring": "scored",
+      "expected": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "wrong-majority-contract.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "wrong-majority-contract.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "wrong-majority-contract.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "wrong-majority-contract.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "wrong-majority-contract.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/wrong-majority-contract",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 4,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [
+          4
+        ],
+        "falseNegativeIndexes": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "fixtureSha256": "61718f456fa8111af47c487bf0b7dd75bc0e5e7ca48d49c95b75d88f975c715b"
+    },
+    {
+      "id": "two-controls-known-contract",
+      "description": "Only two primary actions are sampled, but their authored specification unambiguously requires 8px corners. The second action accidentally uses square corners.",
+      "scoring": "scored",
+      "expected": [
+        1
+      ],
+      "predicted": [],
+      "fixtureControls": 2,
+      "counts": {
+        "seen": 2,
+        "eligible": 2,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 0,
+        "undersampled": 2,
+        "tied": 0
+      },
+      "sourceMatches": 2,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "two-controls-known-contract.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "two-controls-known-contract.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/two-controls-known-contract",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 1,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": [
+          1
+        ]
+      },
+      "fixtureSha256": "7f8cd98b18c221c4bb09df255f0c2dee02a171caa1a7c01f9d10babb5f0fb62b"
+    },
+    {
+      "id": "tied-appearances-known-contract",
+      "description": "The authored primary specification requires blue #245ce0. Two blue and two accidentally red actions form an equal-frequency tie; both red controls are defects.",
+      "scoring": "scored",
+      "expected": [
+        2,
+        3
+      ],
+      "predicted": [],
+      "fixtureControls": 4,
+      "counts": {
+        "seen": 4,
+        "eligible": 4,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 0,
+        "undersampled": 0,
+        "tied": 4
+      },
+      "sourceMatches": 4,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "tied-appearances-known-contract.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "tied-appearances-known-contract.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "tied-appearances-known-contract.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "tied-appearances-known-contract.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/tied-appearances-known-contract",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 2,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": [
+          2,
+          3
+        ]
+      },
+      "fixtureSha256": "c551384d501ce1804add6c7c37e7fe0ab13f866265ca4bf7865890314827e1ff"
+    },
+    {
+      "id": "opacity-repeated",
+      "description": "All enabled document primary actions must render at opacity 1. Two enabled instances accidentally use opacity .35; neither is a disabled state.",
+      "scoring": "scored",
+      "expected": [
+        5,
+        6
+      ],
+      "predicted": [],
+      "fixtureControls": 7,
+      "counts": {
+        "seen": 7,
+        "eligible": 7,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 7,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 7,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "opacity-repeated.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "opacity-repeated.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "opacity-repeated.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "opacity-repeated.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "opacity-repeated.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        },
+        {
+          "index": 5,
+          "matched": true,
+          "expectedLine": 11,
+          "actual": {
+            "status": "likely",
+            "file": "opacity-repeated.html",
+            "line": 11,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-5"
+          }
+        },
+        {
+          "index": 6,
+          "matched": true,
+          "expectedLine": 12,
+          "actual": {
+            "status": "likely",
+            "file": "opacity-repeated.html",
+            "line": 12,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-6"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/opacity-repeated",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 2,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": [
+          5,
+          6
+        ]
+      },
+      "fixtureSha256": "4c48ae23dc42d0e600fe424f30cc3741ef4a0830cd306077834ba26b7177d264"
+    },
+    {
+      "id": "letter-spacing",
+      "description": "The primary label specification requires normal letter spacing. The final primary label accidentally uses 4px spacing.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "letter-spacing.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "letter-spacing.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "letter-spacing.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "letter-spacing.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "letter-spacing.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/letter-spacing",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "9f6ae79ed20e3c3c6871cfa18707a21cbb3e8e0685049be09e20ee182903d20c"
+    },
+    {
+      "id": "dark-theme-border",
+      "description": "Under the requested dark browser preference this page deliberately switches all primary borders to #a5b4fc. The final primary action accidentally receives a pink border. Compare only within this dark context.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "dark-theme-border.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "dark-theme-border.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "dark-theme-border.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 11,
+          "actual": {
+            "status": "likely",
+            "file": "dark-theme-border.html",
+            "line": 11,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 12,
+          "actual": {
+            "status": "likely",
+            "file": "dark-theme-border.html",
+            "line": 12,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "dark",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/dark-theme-border",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:dark",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "af1eb1e645a5670b153e982988831fdab7b03147c707b2e33f4971ace9ed4203"
+    },
+    {
+      "id": "mobile-padding-drift",
+      "description": "At a 390px viewport all primary actions are specified to keep 16px horizontal padding. A narrow-screen override accidentally doubles padding on the last button.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "mobile-padding-drift.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "mobile-padding-drift.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "mobile-padding-drift.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "mobile-padding-drift.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "mobile-padding-drift.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/mobile-padding-drift",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          4
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "84fc53d2880df877d7f5ad41d36634ccb6dfd6c51c8822a54753388296059dc3"
+    },
+    {
+      "id": "idle-defect-beside-hover",
+      "description": "The fourth idle primary action accidentally has square corners. The fifth action is deliberately hovered and has its specified hover fill and shadow; only the idle corner defect is wrong.",
+      "scoring": "scored",
+      "expected": [
+        3
+      ],
+      "predicted": [
+        3
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 4,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 1,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 4,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 4,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "idle-defect-beside-hover.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "idle-defect-beside-hover.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "idle-defect-beside-hover.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "idle-defect-beside-hover.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": [
+          {
+            "kind": "hover",
+            "selector": "#evaluation-4"
+          }
+        ]
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/idle-defect-beside-hover",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "actions": [
+          {
+            "kind": "hover",
+            "selector": "#evaluation-4"
+          }
+        ],
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          3
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "e27a8df7d7c9b37c5fcba955039a2adab07f279b7f01d4362ce7c5a786f37260"
+    },
+    {
+      "id": "idle-defect-beside-focus",
+      "description": "The fourth idle primary action accidentally has 24px corners. The fifth action is deliberately focused and has its specified focus ring and shadow; only the idle corner defect is wrong.",
+      "scoring": "scored",
+      "expected": [
+        3
+      ],
+      "predicted": [
+        3
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 4,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 1,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 4,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 4,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "idle-defect-beside-focus.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "idle-defect-beside-focus.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "idle-defect-beside-focus.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "idle-defect-beside-focus.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": [
+          {
+            "kind": "focus",
+            "selector": "#evaluation-4"
+          }
+        ]
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/idle-defect-beside-focus",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "actions": [
+          {
+            "kind": "focus",
+            "selector": "#evaluation-4"
+          }
+        ],
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [
+          3
+        ],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "d9d9e9c43c8ae4e2620774fef40e9302f0e013c848c82242e1b5d57f8ed8d009"
+    },
+    {
+      "id": "blur-filter",
+      "description": "Primary action labels and boundaries must render sharply. The final otherwise enabled action accidentally has a 1.5px CSS blur filter.",
+      "scoring": "scored",
+      "expected": [
+        4
+      ],
+      "predicted": [],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "blur-filter.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "blur-filter.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "blur-filter.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "blur-filter.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "blur-filter.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/blur-filter",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 1,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": [
+          4
+        ]
+      },
+      "fixtureSha256": "724034013ef950761090e2827e7ec4c4dd966f036f9f5bca7be342b09efd21bb"
+    },
+    {
+      "id": "consistent-label-lengths",
+      "description": "Short and long labels are intentionally allowed to make these otherwise identical primary actions different widths. None violates the primary style specification.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 4,
+      "counts": {
+        "seen": 4,
+        "eligible": 4,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 4,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 4,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "consistent-label-lengths.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "consistent-label-lengths.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "consistent-label-lengths.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "consistent-label-lengths.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/consistent-label-lengths",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "ca5d1808553b5b6576fb72bf3db102fd8da2a8bd0ca7fa37d1fe3392b602884d"
+    },
+    {
+      "id": "explicit-secondary-variant",
+      "description": "Blue primary and white outlined secondary actions are intentionally distinct variants, explicitly labeled in the fixture. Neither is an outlier within its own variant.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 6,
+      "counts": {
+        "seen": 6,
+        "eligible": 6,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 4,
+        "undersampled": 2,
+        "tied": 0
+      },
+      "sourceMatches": 6,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-secondary-variant.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-secondary-variant.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-secondary-variant.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-secondary-variant.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-secondary-variant.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        },
+        {
+          "index": 5,
+          "matched": true,
+          "expectedLine": 11,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-secondary-variant.html",
+            "line": 11,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-5"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/explicit-secondary-variant",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "42f916fbb09059b81a53fb2c150fa92c2503ebc60438a5dd58a353d670cc1dd2"
+    },
+    {
+      "id": "explicit-destructive-variant",
+      "description": "Delete actions intentionally use a red destructive variant. Their different color must not be treated as drift from the blue primary variant.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 6,
+      "counts": {
+        "seen": 6,
+        "eligible": 6,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 4,
+        "undersampled": 2,
+        "tied": 0
+      },
+      "sourceMatches": 6,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-destructive-variant.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-destructive-variant.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-destructive-variant.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-destructive-variant.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-destructive-variant.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        },
+        {
+          "index": 5,
+          "matched": true,
+          "expectedLine": 11,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-destructive-variant.html",
+            "line": 11,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-5"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/explicit-destructive-variant",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "0cdc835276121c5dc9caecbd84b2e79100ad818d882f8d711f637a5b6c1c0d45"
+    },
+    {
+      "id": "explicit-compact-variant",
+      "description": "Regular and compact primary actions are separately specified size variants. Compact controls intentionally use smaller typography and padding.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 6,
+      "counts": {
+        "seen": 6,
+        "eligible": 6,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 4,
+        "undersampled": 2,
+        "tied": 0
+      },
+      "sourceMatches": 6,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-compact-variant.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-compact-variant.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-compact-variant.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-compact-variant.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-compact-variant.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        },
+        {
+          "index": 5,
+          "matched": true,
+          "expectedLine": 11,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-compact-variant.html",
+            "line": 11,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-5"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/explicit-compact-variant",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "7addd31b4bbd8d87fd8aa771110813e489a1cc3be1bf5433bb7e861a2437689d"
+    },
+    {
+      "id": "explicit-different-families",
+      "description": "Document actions are blue and export-toolbar actions are green by separate approved family requirements. Both use a primary variant within their own family.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 6,
+      "counts": {
+        "seen": 6,
+        "eligible": 6,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 4,
+        "undersampled": 2,
+        "tied": 0
+      },
+      "sourceMatches": 6,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-different-families.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-different-families.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-different-families.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-different-families.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-different-families.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        },
+        {
+          "index": 5,
+          "matched": true,
+          "expectedLine": 11,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-different-families.html",
+            "line": 11,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-5"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/explicit-different-families",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "8a3f72a1a46daeeeeec7a17620b5a2e48e505a73a30248dbae3c6ab984cabc3b"
+    },
+    {
+      "id": "disabled-style",
+      "description": "The last action is disabled. Its muted fill, opacity and round corners are intentional disabled-state styling; enabled primary actions remain consistent.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 4,
+        "hidden": 0,
+        "disabled": 1,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 4,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 4,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "disabled-style.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "disabled-style.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "disabled-style.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "disabled-style.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/disabled-style",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "e5434c52c3331a8cb4feaa77331cea6a2f78e44675d9cf11ecd4b420b0b4910c"
+    },
+    {
+      "id": "hidden-control",
+      "description": "The hidden final action has an alternative style that is intentionally not rendered in this scenario. All visible actions meet the required primary style.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 4,
+        "hidden": 1,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 4,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 4,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "hidden-control.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "hidden-control.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "hidden-control.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "hidden-control.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/hidden-control",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "542bc87edc7e0cec95599df12e538b1d94a3a46fe361d3e3c3304e3400935c34"
+    },
+    {
+      "id": "intentional-hover-state",
+      "description": "The last action is deliberately hovered. Its darker fill and drop shadow are the specified hover state; the other primary actions remain idle.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 4,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 1,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 4,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 4,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-hover-state.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-hover-state.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-hover-state.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-hover-state.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": [
+          {
+            "kind": "hover",
+            "selector": "#evaluation-4"
+          }
+        ]
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/intentional-hover-state",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "actions": [
+          {
+            "kind": "hover",
+            "selector": "#evaluation-4"
+          }
+        ],
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "335485421421c513916ddf7c0f8813f53d9fc97a49c108d27e46a803a7215ad8"
+    },
+    {
+      "id": "intentional-focus-state",
+      "description": "The last action is deliberately focused. Its visible amber outline and outer shadow are required focus styling, not an idle-style defect.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 4,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 1,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 4,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 4,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-focus-state.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-focus-state.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-focus-state.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-focus-state.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": [
+          {
+            "kind": "focus",
+            "selector": "#evaluation-4"
+          }
+        ]
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/intentional-focus-state",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "actions": [
+          {
+            "kind": "focus",
+            "selector": "#evaluation-4"
+          }
+        ],
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "95c4e15c89bb1bc7b17ccbbc80b452122a619d7fa135913559479e51015e758c"
+    },
+    {
+      "id": "intentional-toggle-states",
+      "description": "These are explicitly marked toggle buttons. Four are unpressed and two are pressed; the darker fill and inset shadow on the pressed toggles are intentional.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 6,
+      "counts": {
+        "seen": 6,
+        "eligible": 0,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 6,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 0,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 0,
+      "sourceChecks": [],
+      "previewCoverage": {
+        "requested": 0,
+        "attempted": 0,
+        "captured": 0,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/intentional-toggle-states",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "224588949bca8c7c99cf643daf0947cb22d5e6fd674d48167a86bcc9d942612e"
+    },
+    {
+      "id": "native-buttons-with-tab-role",
+      "description": "Native buttons with a tab role intentionally use a separate navigation-tab appearance. Ordinary primary actions and tabs are individually consistent.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 6,
+      "counts": {
+        "seen": 6,
+        "eligible": 4,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 2,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 4,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 4,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "native-buttons-with-tab-role.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "native-buttons-with-tab-role.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "native-buttons-with-tab-role.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "native-buttons-with-tab-role.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/native-buttons-with-tab-role",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "1b754d32ca685049024a7cd9a75a3738d63e92e60a7c73364d0976efe45bb6f4"
+    },
+    {
+      "id": "light-theme-counterpart",
+      "description": "The dark-only accidental border override is inactive under this light preference. Every currently rendered primary action meets its light-theme requirement.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "light-theme-counterpart.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "light-theme-counterpart.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "light-theme-counterpart.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 11,
+          "actual": {
+            "status": "likely",
+            "file": "light-theme-counterpart.html",
+            "line": 11,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 12,
+          "actual": {
+            "status": "likely",
+            "file": "light-theme-counterpart.html",
+            "line": 12,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/light-theme-counterpart",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "a232c247084e684aab76e24c38712876fb8f5891f93e7983e79f99b3795a7d88"
+    },
+    {
+      "id": "desktop-responsive-counterpart",
+      "description": "The narrow-screen padding override is inactive at this 1280px viewport. Every currently rendered primary action meets its desktop requirement.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "desktop-responsive-counterpart.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "desktop-responsive-counterpart.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "desktop-responsive-counterpart.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "desktop-responsive-counterpart.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "desktop-responsive-counterpart.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/desktop-responsive-counterpart",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "75ff3b788295514985c8e12918c7f762a6550bfc7323506730cdcab4dd53d98b"
+    },
+    {
+      "id": "explicit-icon-variant",
+      "description": "The plus-only action intentionally uses a square icon variant with less horizontal padding. It is explicitly distinct from text primary actions.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 6,
+      "counts": {
+        "seen": 6,
+        "eligible": 6,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 4,
+        "undersampled": 2,
+        "tied": 0
+      },
+      "sourceMatches": 6,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-icon-variant.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-icon-variant.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-icon-variant.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-icon-variant.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-icon-variant.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        },
+        {
+          "index": 5,
+          "matched": true,
+          "expectedLine": 11,
+          "actual": {
+            "status": "likely",
+            "file": "explicit-icon-variant.html",
+            "line": 11,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-5"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/explicit-icon-variant",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "c1eebeea31ece5f1043cfbf28fe3eec47380ecd9b324575d90cabecb4f99a058"
+    },
+    {
+      "id": "button-and-submit-types",
+      "description": "Submit and plain button types share the same intentional visual design. Their HTML type alone does not create an appearance defect.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 3,
+        "undersampled": 2,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "button-and-submit-types.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "button-and-submit-types.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "button-and-submit-types.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "button-and-submit-types.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "button-and-submit-types.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/button-and-submit-types",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "d6d9c8a7d3ab63671602765c3a1dae9f94c96d3df0652a47c6562c47314d302f"
+    },
+    {
+      "id": "approved-unmarked-pill-exception",
+      "description": "The last action has an explicitly approved pill-corner exception for a one-off campaign. The approval is given by this authored fixture requirement and deliberately is not encoded as a separate variant hint. Its different radius is intentional.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "approved-unmarked-pill-exception.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "approved-unmarked-pill-exception.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "approved-unmarked-pill-exception.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "approved-unmarked-pill-exception.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "approved-unmarked-pill-exception.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/approved-unmarked-pill-exception",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [
+          4
+        ],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "1d8421872540a777cabc070b542d88af19529f298927f668a74ca07f8bdb80fa"
+    },
+    {
+      "id": "approved-unmarked-roomy-exception",
+      "description": "The last primary action intentionally has extra horizontal padding for a touch target in a supported special layout. This authored exception is deliberately not represented by a variant hint. The visual difference is acceptable.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "approved-unmarked-roomy-exception.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "approved-unmarked-roomy-exception.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "approved-unmarked-roomy-exception.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "approved-unmarked-roomy-exception.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "approved-unmarked-roomy-exception.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/approved-unmarked-roomy-exception",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [
+          4
+        ],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "c11602e9b3a4c499d77067e66745efba210ab0742424a963ab37227e4b3ce216"
+    },
+    {
+      "id": "intentional-explicit-width",
+      "description": "Fixed-width and content-width primary actions are both approved in this layout. The final two buttons intentionally occupy 240px without changing their typography, padding, color, or border.",
+      "scoring": "scored",
+      "expected": [],
+      "predicted": [],
+      "fixtureControls": 6,
+      "counts": {
+        "seen": 6,
+        "eligible": 6,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 6,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 6,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-explicit-width.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-explicit-width.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-explicit-width.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-explicit-width.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-explicit-width.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        },
+        {
+          "index": 5,
+          "matched": true,
+          "expectedLine": 11,
+          "actual": {
+            "status": "likely",
+            "file": "intentional-explicit-width.html",
+            "line": 11,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-5"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/intentional-explicit-width",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "truePositiveIndexes": [],
+        "falsePositiveIndexes": [],
+        "falseNegativeIndexes": []
+      },
+      "fixtureSha256": "00580511b719872590b9b458f6ab2bef5ff1161b4e178e90be8d8da186a49adf"
+    },
+    {
+      "id": "unknown-two-control-reference",
+      "description": "Two unfamiliar actions differ in corner radius and there is no supplied design requirement or approved reference.",
+      "scoring": "unscorable",
+      "expected": null,
+      "predicted": [],
+      "fixtureControls": 2,
+      "counts": {
+        "seen": 2,
+        "eligible": 2,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 0,
+        "undersampled": 2,
+        "tied": 0
+      },
+      "sourceMatches": 2,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-two-control-reference.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-two-control-reference.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/unknown-two-control-reference",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": null,
+      "unscorableReason": "Neither frequency nor the author has established which appearance, if either, is wrong.",
+      "fixtureSha256": "3df374fe7b08479686424fce5dc99506299ae0d2e36965fc670beac14c434f2a"
+    },
+    {
+      "id": "unknown-equal-frequency-intent",
+      "description": "Two blue and two green actions share generic labels and comparison hints, with no specified approved appearance.",
+      "scoring": "unscorable",
+      "expected": null,
+      "predicted": [],
+      "fixtureControls": 4,
+      "counts": {
+        "seen": 4,
+        "eligible": 4,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 0,
+        "undersampled": 0,
+        "tied": 4
+      },
+      "sourceMatches": 4,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-equal-frequency-intent.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-equal-frequency-intent.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-equal-frequency-intent.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-equal-frequency-intent.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/unknown-equal-frequency-intent",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": null,
+      "unscorableReason": "The equal-frequency appearances could be intentional alternatives or drift; a correctness label would invent design intent.",
+      "fixtureSha256": "510ad0118a2185c88ae27072a21d8d7e3f13f568e7d06ab9f58426e1aa55ce80"
+    },
+    {
+      "id": "unknown-minority-intent",
+      "description": "Four blue actions and one pill-shaped action are observed without a design specification or exception record.",
+      "scoring": "unscorable",
+      "expected": null,
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-minority-intent.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-minority-intent.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-minority-intent.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-minority-intent.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-minority-intent.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/unknown-minority-intent",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": null,
+      "unscorableReason": "A rare appearance alone cannot determine whether the last control is an intentional variant or a defect.",
+      "fixtureSha256": "75ddbf0098e60ad929d0de4059925849c0042362409cc3597c452805052cb185"
+    },
+    {
+      "id": "unknown-family-assignment",
+      "description": "Three Save controls and two Export controls have distinct colors but only generic shared comparison hints. Their actual component-family relationship is unknown.",
+      "scoring": "unscorable",
+      "expected": null,
+      "predicted": [],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-family-assignment.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-family-assignment.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-family-assignment.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-family-assignment.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-family-assignment.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/unknown-family-assignment",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": null,
+      "unscorableReason": "The generic fixture hints are insufficient evidence that these different-purpose controls must share an appearance.",
+      "fixtureSha256": "75c4dcc3afd52b8438ff1c2edc763a6dc25898a77ec9d577c10996ec29d8f351"
+    },
+    {
+      "id": "viewport-edge-coverage",
+      "description": "A differently styled action begins below the initial 390 by 844 viewport. The scenario supplies no requirement about whether offscreen controls belong to this particular review.",
+      "scoring": "unscorable",
+      "expected": null,
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 1,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "viewport-edge-coverage.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "viewport-edge-coverage.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "viewport-edge-coverage.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "viewport-edge-coverage.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "viewport-edge-coverage.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/viewport-edge-coverage",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": null,
+      "unscorableReason": "Coverage and eligibility outside the requested initial viewport require an explicit review policy; do not count the absent label as a negative.",
+      "fixtureSha256": "b5148fd43e2088d1bdb6c9588e3f7aab4b855ee040b8878e25caefb4cbabd76a"
+    },
+    {
+      "id": "unvisited-hover-intent",
+      "description": "The final action has a distinct hover override, but this scenario captures only the idle state and supplies no approved hover design.",
+      "scoring": "unscorable",
+      "expected": null,
+      "predicted": [],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "unvisited-hover-intent.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "unvisited-hover-intent.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "unvisited-hover-intent.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "unvisited-hover-intent.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "unvisited-hover-intent.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 1,
+        "attempted": 1,
+        "captured": 1,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/unvisited-hover-intent",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": null,
+      "unscorableReason": "The idle capture cannot establish whether the unvisited hover appearance is correct. This is a coverage diagnostic, not an accuracy negative for all states.",
+      "fixtureSha256": "2aaec29f974a784c6f9867bd2c33d15dd1958417ba72099b33af3c6229198027"
+    },
+    {
+      "id": "unknown-local-theme-context",
+      "description": "A single dark-styled control appears beside light-styled actions, without application theme markers or a specification for embedded themed regions.",
+      "scoring": "unscorable",
+      "expected": null,
+      "predicted": [
+        4
+      ],
+      "fixtureControls": 5,
+      "counts": {
+        "seen": 5,
+        "eligible": 5,
+        "hidden": 0,
+        "disabled": 0,
+        "otherRole": 0,
+        "stateful": 0,
+        "possiblyBlocked": 0,
+        "visibilityUnverified": 0,
+        "missingStyle": 0,
+        "comparable": 5,
+        "undersampled": 0,
+        "tied": 0
+      },
+      "sourceMatches": 5,
+      "sourceChecks": [
+        {
+          "index": 0,
+          "matched": true,
+          "expectedLine": 6,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-local-theme-context.html",
+            "line": 6,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-0"
+          }
+        },
+        {
+          "index": 1,
+          "matched": true,
+          "expectedLine": 7,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-local-theme-context.html",
+            "line": 7,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-1"
+          }
+        },
+        {
+          "index": 2,
+          "matched": true,
+          "expectedLine": 8,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-local-theme-context.html",
+            "line": 8,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-2"
+          }
+        },
+        {
+          "index": 3,
+          "matched": true,
+          "expectedLine": 9,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-local-theme-context.html",
+            "line": 9,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-3"
+          }
+        },
+        {
+          "index": 4,
+          "matched": true,
+          "expectedLine": 10,
+          "actual": {
+            "status": "likely",
+            "file": "unknown-local-theme-context.html",
+            "line": 10,
+            "method": "unique ID and tag",
+            "elementId": "evaluation-4"
+          }
+        }
+      ],
+      "previewCoverage": {
+        "requested": 2,
+        "attempted": 2,
+        "captured": 2,
+        "unavailable": 0,
+        "omitted": 0
+      },
+      "requestedContext": {
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "colorScheme": "light",
+        "pixelRatio": 2,
+        "actions": []
+      },
+      "scope": {
+        "url": "http://127.0.0.1:58890/unknown-local-theme-context",
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "theme": "app:unspecified;browser:light",
+        "pixelRatio": 2,
+        "state": "enabled, non-toggle buttons",
+        "instrumentedSources": false,
+        "browser": {
+          "engine": "chromium",
+          "version": "156.0.4314.58"
+        },
+        "maskSelectorsConfigured": 0,
+        "visibilityCheckLimit": 500
+      },
+      "metrics": null,
+      "unscorableReason": "An embedded dark region may be intentional. A single browser color preference cannot resolve the missing application-theme intent.",
+      "fixtureSha256": "0e9c15cbb40901f054d2f9e43f920c2f2f14a0699acafe8d5d7e50f737394a9c"
+    }
+  ],
+  "scoredCases": 40,
+  "unscorableCases": 7,
+  "scoredFixtureControls": 208,
+  "labeledPositiveControls": 28,
+  "totals": {
+    "tp": 16,
+    "fp": 3,
+    "fn": 12
+  },
+  "precision": 0.8421052631578947,
+  "recall": 0.5714285714285714,
+  "setId": "separately-authored-synthetic-buttons-2026-11-04",
+  "startedAt": "2026-11-04T12:40:01.414Z",
+  "checkedAt": "2026-11-04T12:41:32.083Z",
+  "durationMs": 90669,
+  "frozenArtifacts": {
+    "commit": "8ab0e0d641350c0074d0ee882590fb2f4efdf129",
+    "files": [
+      {
+        "file": "evaluation/independent-button-cases.json",
+        "sha256": "749dc401bd075bdab1292955b80a026e668ecd4928ab49d82afa76dcb8fb91f3"
+      },
+      {
+        "file": "evaluation/independent-review.md",
+        "sha256": "5276c71c46e48e2e5ab7a4087ccc9f401a9506ddaf8ba92f42a33e3c6215b03b"
+      }
+    ]
+  },
+  "detector": {
+    "commit": "149ba97e2fe29da25cfced700620db88bbca7654",
+    "checkoutDirty": false,
+    "checkoutStatus": [],
+    "runtimeDirty": false,
+    "runtimeStatus": [],
+    "runtimeDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "runtimeSourceSha256": "612529fd6374f9b54912fa4da8fc1e8b00a57554b912442737a6dc08be7c898f",
+    "runtimeSourceFiles": [
+      {
+        "file": "bin/ui-sheet.js",
+        "sha256": "af76968209457f756c91c3944813a6667d90d8f8b78fe79a538d20b2decbb694"
+      },
+      {
+        "file": "package-lock.json",
+        "sha256": "fc1c7ec2ca5716fb475da9de3515b856eec77c10ac6b5046350ac4a28dc5cdff"
+      },
+      {
+        "file": "package.json",
+        "sha256": "9bbdb9c5d025d725943ec69f298c626a996fa485292305cd61d1a103b422ade6"
+      },
+      {
+        "file": "src/appearances.js",
+        "sha256": "1b1e1e326941c1e9fd3ec5d0f6fde326e7b216e30679a24cae4eee67ae7b28ff"
+      },
+      {
+        "file": "src/auth.js",
+        "sha256": "0815fe8fae89fd16dd7dff8be336e2420f5d9a5bb575e0178f6877f7092b7290"
+      },
+      {
+        "file": "src/baselines.js",
+        "sha256": "c03ace2cc9fd093ec4123be86f8ef1956f71993242d2a30bf863bff0d9b6b039"
+      },
+      {
+        "file": "src/capture-deadline.js",
+        "sha256": "e9eceac3a487f52be8379bc6c3a13a6467364aa9b4847af789d7e0f5ca119238"
+      },
+      {
+        "file": "src/capture.js",
+        "sha256": "d720698586786775a1b07b1cb972ed69a9abf1be4e0879af21c5c14ae5847148"
+      },
+      {
+        "file": "src/catalog.js",
+        "sha256": "0d9cf4c77179c1da50bfe662f613bc96c71cbefa5d58ce306e6e927da7975486"
+      },
+      {
+        "file": "src/check.js",
+        "sha256": "4528b2924fab2d498f8d3001248cae9b2e65ef9bb06089a64ea5b81eb0fae84d"
+      },
+      {
+        "file": "src/config.js",
+        "sha256": "6505568f18f9db831abd1a7b57a60d2237a736a60151477ea598431c9f0b7f30"
+      },
+      {
+        "file": "src/consistency.js",
+        "sha256": "8a3a13aa4f674971bf95e5765766a1ad15b1853e3b29ef173e2c222ccc614cf0"
+      },
+      {
+        "file": "src/context.js",
+        "sha256": "2c6a53ac6fdccfd03c7d800dfaa616f31d0380f98cf0105b0e50fc3251ffcf77"
+      },
+      {
+        "file": "src/cross-page.js",
+        "sha256": "20d5582161131ba9cdebf212993b2c24d40e588431eac64786bc026bd3a02d5b"
+      },
+      {
+        "file": "src/decisions.js",
+        "sha256": "2fcb5bec6515ba4933d7d986d444ab5448d86dc1991b19eca5fd8f310d994d74"
+      },
+      {
+        "file": "src/element-baselines.js",
+        "sha256": "b9248c1bfd13e2ad430b16830c9b87e6f97ee9e258047926690f4eec79a787d2"
+      },
+      {
+        "file": "src/element-capture.js",
+        "sha256": "ef3efc48ad4e8b9f43ecc16d7427fef397e9aa8dcf675ff11f31ede4a9bfdcf3"
+      },
+      {
+        "file": "src/element-check.js",
+        "sha256": "e2dea587c87bc83d5810d4fe05fad3d7bee5608a76453477529ee2b1c2380c0f"
+      },
+      {
+        "file": "src/element-consistency.js",
+        "sha256": "576887c32cf4ae7ca8b7cd2ff183e0017bccaace6740a0de59dd7571b98e50fc"
+      },
+      {
+        "file": "src/install-skill.js",
+        "sha256": "e2cd76cc3d955669845f60f2251283e016e04d9f2f837af3ec07c443d079d932"
+      },
+      {
+        "file": "src/instrumented-sources.js",
+        "sha256": "d05c67fc2b46fc322e9d0ee59ebb9de214f5b865f893f631210faf9beafd6764"
+      },
+      {
+        "file": "src/locations.js",
+        "sha256": "0812f8bc970b9a4b59e895eaf2b18f8522c989e2447c3b44dbac081c6a9dbb63"
+      },
+      {
+        "file": "src/manual-previews.js",
+        "sha256": "a1c479cf902212cd6fc3ea123b90264c5ee3344b418780aef8527359190491a7"
+      },
+      {
+        "file": "src/observe.js",
+        "sha256": "9f234361d527acdbbff449a9c3de8ad769c755aad701f4bf17aa05aa67e9a31b"
+      },
+      {
+        "file": "src/provenance.js",
+        "sha256": "a28dca4ed6040a054c2c0ece9606d5e55668003033f1d7695f247ce8e9c91814"
+      },
+      {
+        "file": "src/report.js",
+        "sha256": "cd1debdd925545427c8780f2c383350e9e29f8e7fbcd32eb0195c7a5f1052bcb"
+      },
+      {
+        "file": "src/scan-status.js",
+        "sha256": "cb4f6ba8b4a92e5031771dd7afd8fa9c169f69cfe91f24ff8bce82ad93e9e940"
+      },
+      {
+        "file": "src/scan.js",
+        "sha256": "1c3897367a9f4bb7020d3a44749c8d17bd55168051082390f58c80876f897cc4"
+      },
+      {
+        "file": "src/viewer.css",
+        "sha256": "7965efd98746b5efe665852457137c6a289cc6eb4b613804311fc8360cdbc596"
+      },
+      {
+        "file": "src/viewer.js",
+        "sha256": "e7346bf98af1349f17796b4227392b18b561d45788acfedffc64bf17c117bc34"
+      },
+      {
+        "file": "src/vite-source.js",
+        "sha256": "626e390de4253f9c90a41f23c76082e1b128bba4f4f01ba465fbecd88717d37e"
+      },
+      {
+        "file": "vite.js",
+        "sha256": "d0f0b3b018ad58ec19ee6db1f49a0abaf43a38a4803598359402ede8e4352913"
+      }
+    ],
+    "stableDuringRun": true
+  },
+  "runnerFiles": [
+    {
+      "file": "scripts/evaluate-independent.js",
+      "sha256": "27a76c8ecd4e5d101562b5cc1422b1663861fea2062bd3cc75a8db840913f6d7"
+    },
+    {
+      "file": "evaluation/independent-evaluate.js",
+      "sha256": "4541e3f3aff6cc3e27233fe2e8355dcee57297edf57c8efd6e74c6fad090c720"
+    },
+    {
+      "file": "evaluation/browser-evaluate.js",
+      "sha256": "8e89ea0200b3f5baea33629957432c97596838c479debe41304789d162b9b8c3"
+    }
+  ],
+  "environment": {
+    "node": "v22.23.1",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "browsers": [
+    {
+      "engine": "chromium",
+      "version": "156.0.4314.58"
+    }
+  ],
+  "captureDefaults": {
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "colorScheme": "light",
+    "pixelRatio": 2
+  },
+  "captureTimeoutMs": 120000,
+  "authorship": {
+    "type": "second-software-agent",
+    "independentHumanReview": false,
+    "allowedInputs": [
+      "README.md",
+      "evaluation/README.md",
+      "evaluation/browser-evaluate.js"
+    ],
+    "detectorImplementationRead": false,
+    "existingCaseDataRead": false,
+    "predictionsSeenBeforeFreeze": false,
+    "note": "The allowed documentation describes the detector and previous aggregate outcomes. This is separate authorship, not a blind or human-labeled external evaluation."
+  },
+  "limitations": "Synthetic cases authored by a second software agent, without independent human review. Documentation exposed prior detector behavior. Unscorable cases are diagnostics only. Unique IDs simplify source checks; preview presence does not prove readability or general source accuracy. Scores apply only to this frozen set and recorded runtime/context."
+}

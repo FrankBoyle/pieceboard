@@ -1,0 +1,1627 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/common-v1.schema.json",
+  "title": "Shared UI Sheet current-output definitions",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{16}$"
+    },
+    "observationId": {
+      "type": "string",
+      "pattern": "^button:[0-9]+$"
+    },
+    "coverage": {
+      "enum": [
+        "observed",
+        "partial",
+        "insufficient"
+      ],
+      "description": "Coverage of selected eligible observations, never proof of whole-app consistency."
+    },
+    "viewport": {
+      "type": "object",
+      "required": [
+        "width",
+        "height"
+      ],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        }
+      },
+      "additionalProperties": true
+    },
+    "pixelRatio": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4
+    },
+    "browser": {
+      "type": "object",
+      "required": [
+        "engine",
+        "version"
+      ],
+      "properties": {
+        "engine": {
+          "const": "chromium"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "location": {
+      "type": "object",
+      "required": [
+        "file",
+        "line"
+      ],
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "detail": {
+          "type": "string"
+        },
+        "element": {
+          "$ref": "#/$defs/element"
+        }
+      },
+      "additionalProperties": true
+    },
+    "element": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "tag": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "classes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "src": {
+          "type": "string"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "ariaLabel": {
+          "type": "string"
+        },
+        "inventoryTypes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "className",
+              "type"
+            ],
+            "properties": {
+              "className": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "source": {
+      "type": "object",
+      "description": "Evidence about selected local source. Even an instrumented source is not proof of deployment or authorization.",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "likely",
+            "manual",
+            "instrumented",
+            "unresolved"
+          ]
+        },
+        "file": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "method": {
+          "type": "string"
+        },
+        "elementId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "likely",
+                  "manual",
+                  "instrumented"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "file",
+              "line"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "instrumented"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "column",
+              "sha256"
+            ]
+          }
+        }
+      ]
+    },
+    "group": {
+      "type": "object",
+      "required": [
+        "family",
+        "variant",
+        "type"
+      ],
+      "properties": {
+        "family": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "variant": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "familyEvidence": {
+          "type": "string"
+        },
+        "variantEvidence": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "scope": {
+      "type": "object",
+      "required": [
+        "url",
+        "viewport",
+        "theme"
+      ],
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "viewport": {
+          "$ref": "#/$defs/viewport"
+        },
+        "theme": {
+          "type": "string"
+        },
+        "pixelRatio": {
+          "$ref": "#/$defs/pixelRatio"
+        },
+        "state": {
+          "type": "string"
+        },
+        "browser": {
+          "$ref": "#/$defs/browser"
+        },
+        "instrumentedSources": {
+          "type": "boolean"
+        },
+        "maskSelectorsConfigured": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "visibilityCheckLimit": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "actions": {
+          "$ref": "#/$defs/captureActions"
+        },
+        "buttonGroups": {
+          "$ref": "#/$defs/buttonGroups"
+        },
+        "elementGroups": {
+          "$ref": "#/$defs/elementGroups"
+        }
+      },
+      "additionalProperties": true
+    },
+    "style": {
+      "type": "object",
+      "description": "Normalized measured button style. This is the complete current comparison property set, not every CSS property.",
+      "required": [
+        "backgroundColor",
+        "backgroundImage",
+        "color",
+        "opacity",
+        "filter",
+        "borderTopWidth",
+        "borderTopStyle",
+        "borderTopColor",
+        "borderRightWidth",
+        "borderRightStyle",
+        "borderRightColor",
+        "borderBottomWidth",
+        "borderBottomStyle",
+        "borderBottomColor",
+        "borderLeftWidth",
+        "borderLeftStyle",
+        "borderLeftColor",
+        "borderTopLeftRadius",
+        "borderTopRightRadius",
+        "borderBottomRightRadius",
+        "borderBottomLeftRadius",
+        "fontFamily",
+        "fontSize",
+        "fontWeight",
+        "fontStyle",
+        "lineHeight",
+        "letterSpacing",
+        "textTransform",
+        "textDecorationLine",
+        "paddingTop",
+        "paddingRight",
+        "paddingBottom",
+        "paddingLeft",
+        "boxShadow"
+      ],
+      "properties": {
+        "backgroundColor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "backgroundImage": {
+          "anyOf": [
+            {
+              "const": "none"
+            },
+            {
+              "type": "string",
+              "maxLength": 2048,
+              "pattern": "^(?:repeating-)?(?:linear|radial|conic)-gradient\\(",
+              "not": {
+                "pattern": "[\"'\\\\]|(?:url|image-set|cross-fade|image|element|paint)\\s*\\("
+              }
+            }
+          ]
+        },
+        "color": {
+          "type": "string",
+          "minLength": 1
+        },
+        "opacity": {
+          "type": "string",
+          "description": "Canonical String(Number(value)) for a measured finite opacity in [0,1]. Very small positive values use scientific notation.",
+          "pattern": "^(?:0(?:\\.\\d+)?|1|[1-9](?:\\.\\d+)?e-(?:[7-9]|[1-9]\\d+))$"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "const": "none"
+            },
+            {
+              "type": "string",
+              "maxLength": 2048,
+              "pattern": "^(?:(?:brightness|contrast|grayscale|invert|opacity|saturate|sepia)\\(\\s*\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?\\s*\\)|blur\\(\\s*\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px\\s*\\)|hue-rotate\\(\\s*[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?(?:deg|grad|rad|turn)\\s*\\)|drop-shadow\\(\\s*(?:(?:(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\\(\\s*[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*(?:,|/)\\s*\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?)?\\s*\\)|color\\(\\s*(?:srgb(?:-linear)?|display-p3|a98-rgb|prophoto-rgb|rec2020|xyz(?:-d50|-d65)?)\\s+[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*(?:,|/)\\s*\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?)?\\s*\\)|currentcolor|transparent)\\s+[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px\\s+[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px(?:\\s+\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px)?|[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px\\s+[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px(?:\\s+\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px)?(?:\\s+(?:(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\\(\\s*[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*(?:,|/)\\s*\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?)?\\s*\\)|color\\(\\s*(?:srgb(?:-linear)?|display-p3|a98-rgb|prophoto-rgb|rec2020|xyz(?:-d50|-d65)?)\\s+[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*(?:,|/)\\s*\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?)?\\s*\\)|currentcolor|transparent))?)\\s*\\))(?:\\s+(?:(?:brightness|contrast|grayscale|invert|opacity|saturate|sepia)\\(\\s*\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?\\s*\\)|blur\\(\\s*\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px\\s*\\)|hue-rotate\\(\\s*[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?(?:deg|grad|rad|turn)\\s*\\)|drop-shadow\\(\\s*(?:(?:(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\\(\\s*[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*(?:,|/)\\s*\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?)?\\s*\\)|color\\(\\s*(?:srgb(?:-linear)?|display-p3|a98-rgb|prophoto-rgb|rec2020|xyz(?:-d50|-d65)?)\\s+[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*(?:,|/)\\s*\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?)?\\s*\\)|currentcolor|transparent)\\s+[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px\\s+[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px(?:\\s+\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px)?|[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px\\s+[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px(?:\\s+\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?px)?(?:\\s+(?:(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\\(\\s*[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*(?:,|/)\\s*\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?)?\\s*\\)|color\\(\\s*(?:srgb(?:-linear)?|display-p3|a98-rgb|prophoto-rgb|rec2020|xyz(?:-d50|-d65)?)\\s+[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*,\\s*|\\s+)[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?(?:\\s*(?:,|/)\\s*\\+?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?%?)?\\s*\\)|currentcolor|transparent))?)\\s*\\)))*$",
+              "not": {
+                "pattern": "[\"'\\\\]|(?:url|image-set|cross-fade|image|element|paint)\\s*\\("
+              }
+            }
+          ]
+        },
+        "borderTopWidth": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderTopStyle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderTopColor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderRightWidth": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderRightStyle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderRightColor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderBottomWidth": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderBottomStyle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderBottomColor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderLeftWidth": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderLeftStyle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderLeftColor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderTopLeftRadius": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderTopRightRadius": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderBottomRightRadius": {
+          "type": "string",
+          "minLength": 1
+        },
+        "borderBottomLeftRadius": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fontFamily": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fontSize": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fontWeight": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fontStyle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lineHeight": {
+          "type": "string",
+          "minLength": 1
+        },
+        "letterSpacing": {
+          "type": "string",
+          "minLength": 1
+        },
+        "textTransform": {
+          "type": "string",
+          "minLength": 1
+        },
+        "textDecorationLine": {
+          "type": "string",
+          "minLength": 1
+        },
+        "paddingTop": {
+          "type": "string",
+          "minLength": 1
+        },
+        "paddingRight": {
+          "type": "string",
+          "minLength": 1
+        },
+        "paddingBottom": {
+          "type": "string",
+          "minLength": 1
+        },
+        "paddingLeft": {
+          "type": "string",
+          "minLength": 1
+        },
+        "boxShadow": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "difference": {
+      "type": "object",
+      "required": [
+        "property",
+        "label",
+        "common",
+        "observed"
+      ],
+      "properties": {
+        "property": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "common": {
+          "type": "string"
+        },
+        "observed": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "review": {
+      "type": "object",
+      "required": [
+        "status",
+        "reason"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "intentional",
+            "needs-fix",
+            "deferred",
+            "false-positive"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "\\S"
+        },
+        "recordedAt": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "anchor": {
+      "type": "object",
+      "required": [
+        "file",
+        "line"
+      ],
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "elementId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "previewCoverage": {
+      "type": "object",
+      "required": [
+        "requested",
+        "attempted",
+        "captured",
+        "unavailable",
+        "omitted"
+      ],
+      "properties": {
+        "requested": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "attempted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "captured": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unavailable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "omitted": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "buttonCounts": {
+      "type": "object",
+      "required": [
+        "seen",
+        "eligible",
+        "hidden",
+        "disabled",
+        "otherRole",
+        "stateful",
+        "possiblyBlocked",
+        "visibilityUnverified",
+        "missingStyle",
+        "comparable",
+        "undersampled",
+        "tied",
+        "ambiguous",
+        "repeatedMinority"
+      ],
+      "properties": {
+        "seen": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "eligible": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "hidden": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "disabled": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "otherRole": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stateful": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "possiblyBlocked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "visibilityUnverified": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missingStyle": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "comparable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "undersampled": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tied": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ambiguous": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repeatedMinority": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "instrumentation": {
+      "type": "object",
+      "required": [
+        "eligible",
+        "matched",
+        "missing",
+        "invalidOrOverridden"
+      ],
+      "properties": {
+        "eligible": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "matched": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "invalidOrOverridden": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "image": {
+      "type": "string",
+      "pattern": "^data:image/[a-zA-Z0-9.+-]+;base64,"
+    },
+    "preview": {
+      "type": "object",
+      "required": [
+        "image",
+        "pixelRatio"
+      ],
+      "properties": {
+        "image": {
+          "$ref": "#/$defs/image"
+        },
+        "pixelRatio": {
+          "$ref": "#/$defs/pixelRatio"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "capture": {
+      "type": "object",
+      "required": [
+        "image",
+        "file",
+        "line",
+        "method",
+        "page"
+      ],
+      "properties": {
+        "image": {
+          "$ref": "#/$defs/image"
+        },
+        "file": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "method": {
+          "type": "string"
+        },
+        "page": {
+          "type": "string"
+        },
+        "pixelRatio": {
+          "$ref": "#/$defs/pixelRatio"
+        },
+        "label": {
+          "type": "string"
+        },
+        "classification": {
+          "type": "string"
+        },
+        "element": {
+          "$ref": "#/$defs/element"
+        },
+        "captureMetadata": {
+          "type": "object",
+          "required": ["role", "school", "viewportWidth", "viewportHeight", "capturedAt", "screenshotSha256", "servedSha"],
+          "properties": {
+            "role": { "type": ["string", "null"], "maxLength": 200 },
+            "school": { "type": ["string", "null"], "maxLength": 200 },
+            "viewportWidth": { "type": ["integer", "null"], "minimum": 1, "maximum": 10000 },
+            "viewportHeight": { "type": ["integer", "null"], "minimum": 1, "maximum": 10000 },
+            "capturedAt": { "type": ["string", "null"], "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(?:\\.\\d{3})?Z$" },
+            "screenshotSha256": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+            "servedSha": { "type": ["string", "null"], "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "observation": {
+      "type": "object",
+      "required": [
+        "id",
+        "group",
+        "style",
+        "visibilityEvidence"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/observationId"
+        },
+        "group": {
+          "$ref": "#/$defs/group"
+        },
+        "style": {
+          "$ref": "#/$defs/style"
+        },
+        "visibilityEvidence": {
+          "enum": [
+            "clear",
+            "unverified"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      },
+      "additionalProperties": true
+    },
+    "appearance": {
+      "type": "object",
+      "required": [
+        "group",
+        "count",
+        "example",
+        "style",
+        "source"
+      ],
+      "properties": {
+        "group": {
+          "$ref": "#/$defs/group"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "example": {
+          "$ref": "#/$defs/observationId"
+        },
+        "style": {
+          "$ref": "#/$defs/style"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "approval": {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "page": {
+              "$ref": "#/$defs/approvalTemplate"
+            },
+            "crossPage": {
+              "$ref": "#/$defs/approvalTemplate"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "approvalTemplate": {
+      "type": "object",
+      "required": [
+        "id",
+        "scope",
+        "group",
+        "style"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "scope": {
+          "$ref": "#/$defs/baselineScope"
+        },
+        "group": {
+          "$ref": "#/$defs/group"
+        },
+        "style": {
+          "$ref": "#/$defs/style"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      },
+      "additionalProperties": true
+    },
+    "baselineScope": {
+      "type": "object",
+      "description": "Runtime validation additionally rejects credentials, query strings and fragments and canonicalizes loopback route identities.",
+      "required": [
+        "url",
+        "viewport",
+        "theme"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "viewport": {
+          "$ref": "#/$defs/viewport"
+        },
+        "theme": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "pixelRatio": {
+          "$ref": "#/$defs/pixelRatio"
+        }
+      },
+      "additionalProperties": true
+    },
+    "sourceRevision": {
+      "type": "object",
+      "required": [
+        "kind",
+        "commit",
+        "dirty",
+        "trackedSourceFiles",
+        "scannedSourceFiles",
+        "recordedAt"
+      ],
+      "properties": {
+        "kind": {
+          "const": "git"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+        },
+        "dirty": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "trackedSourceFiles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scannedSourceFiles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recordedAt": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "baselineSummary": {
+      "type": "object",
+      "required": [
+        "applied",
+        "unmatched"
+      ],
+      "properties": {
+        "applied": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unmatched": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "decisionSummary": {
+      "type": "object",
+      "required": [
+        "applied",
+        "stale"
+      ],
+      "properties": {
+        "applied": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stale": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "captureActions": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "required": [
+          "kind",
+          "selector"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "focus",
+              "hover"
+            ]
+          },
+          "selector": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "buttonGroups": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "required": [
+          "selector",
+          "family"
+        ],
+        "properties": {
+          "selector": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S"
+          },
+          "family": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_. -]{0,79}$"
+          },
+          "variant": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_. -]{0,79}$"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "elementGroups": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "required": [
+          "selector",
+          "family",
+          "type"
+        ],
+        "properties": {
+          "selector": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S"
+          },
+          "family": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_. -]{0,79}$"
+          },
+          "variant": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_. -]{0,79}$"
+          },
+          "type": {
+            "enum": [
+              "inputs",
+              "dropdowns",
+              "selectors",
+              "tabs",
+              "headers",
+              "sidebars",
+              "navigation",
+              "headings",
+              "text"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "elementObservationId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,79}:[0-9]+$"
+    },
+    "elementGroup": {
+      "type": "object",
+      "required": [
+        "family",
+        "familyEvidence",
+        "variant",
+        "variantEvidence",
+        "type",
+        "tag",
+        "nativeType",
+        "state"
+      ],
+      "properties": {
+        "family": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_. -]{0,79}$"
+        },
+        "familyEvidence": {
+          "const": "configured group"
+        },
+        "variant": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_. -]{0,79}$"
+        },
+        "variantEvidence": {
+          "enum": [
+            "configured variant",
+            "unspecified"
+          ]
+        },
+        "type": {
+          "enum": [
+            "inputs",
+            "dropdowns",
+            "selectors",
+            "tabs",
+            "headers",
+            "sidebars",
+            "navigation",
+            "headings",
+            "text"
+          ]
+        },
+        "tag": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,79}$"
+        },
+        "nativeType": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_. -]{0,79}$"
+        },
+        "state": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "elementCounts": {
+      "type": "object",
+      "required": [
+        "seen",
+        "eligible",
+        "hidden",
+        "possiblyBlocked",
+        "visibilityUnverified",
+        "missingStyle",
+        "missingState",
+        "omitted",
+        "comparable",
+        "undersampled",
+        "tied",
+        "ambiguous",
+        "repeatedMinority"
+      ],
+      "properties": {
+        "seen": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "eligible": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "hidden": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "possiblyBlocked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "visibilityUnverified": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missingStyle": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missingState": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "omitted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "comparable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "undersampled": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tied": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ambiguous": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repeatedMinority": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "elementInstrumentation": {
+      "type": "object",
+      "required": [
+        "eligible",
+        "matched"
+      ],
+      "properties": {
+        "eligible": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "matched": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "elementObservation": {
+      "type": "object",
+      "required": [
+        "id",
+        "group",
+        "style",
+        "visibilityEvidence"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/elementObservationId"
+        },
+        "group": {
+          "$ref": "#/$defs/elementGroup"
+        },
+        "style": {
+          "$ref": "#/$defs/style"
+        },
+        "visibilityEvidence": {
+          "enum": [
+            "clear",
+            "unverified"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      },
+      "additionalProperties": true
+    },
+    "elementAppearance": {
+      "type": "object",
+      "required": [
+        "group",
+        "count",
+        "example",
+        "style",
+        "source"
+      ],
+      "properties": {
+        "group": {
+          "$ref": "#/$defs/elementGroup"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "example": {
+          "$ref": "#/$defs/elementObservationId"
+        },
+        "style": {
+          "$ref": "#/$defs/style"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "approval": {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "page": {
+              "$ref": "#/$defs/elementApprovalTemplate"
+            },
+            "crossPage": {
+              "$ref": "#/$defs/elementApprovalTemplate"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "elementBaselineGroup": {
+      "type": "object",
+      "required": [
+        "family",
+        "variant",
+        "type",
+        "tag",
+        "nativeType",
+        "state"
+      ],
+      "properties": {
+        "family": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_. -]{0,79}$"
+        },
+        "variant": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_. -]{0,79}$"
+        },
+        "type": {
+          "enum": [
+            "inputs",
+            "dropdowns",
+            "selectors",
+            "tabs",
+            "headers",
+            "sidebars",
+            "navigation",
+            "headings",
+            "text"
+          ]
+        },
+        "tag": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,79}$"
+        },
+        "nativeType": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_. -]{0,79}$"
+        },
+        "state": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "elementBaselineScope": {
+      "type": "object",
+      "required": [
+        "url",
+        "viewport",
+        "theme",
+        "pixelRatio"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "viewport": {
+          "type": "object",
+          "required": [
+            "width",
+            "height"
+          ],
+          "properties": {
+            "width": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4096
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4096
+            }
+          },
+          "additionalProperties": true
+        },
+        "theme": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "not": {
+            "const": "unknown"
+          }
+        },
+        "pixelRatio": {
+          "$ref": "#/$defs/pixelRatio"
+        }
+      },
+      "additionalProperties": true
+    },
+    "elementApprovalTemplate": {
+      "type": "object",
+      "required": [
+        "id",
+        "scope",
+        "group",
+        "style"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "scope": {
+          "$ref": "#/$defs/elementBaselineScope"
+        },
+        "group": {
+          "$ref": "#/$defs/elementBaselineGroup"
+        },
+        "style": {
+          "$ref": "#/$defs/style"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      },
+      "additionalProperties": true
+    },
+    "elementQueryScope": {
+      "type": "object",
+      "required": [
+        "url",
+        "viewport",
+        "theme",
+        "pixelRatio"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "viewport": {
+          "type": "object",
+          "required": [
+            "width",
+            "height"
+          ],
+          "properties": {
+            "width": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4096
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4096
+            }
+          },
+          "additionalProperties": true
+        },
+        "theme": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "pixelRatio": {
+          "$ref": "#/$defs/pixelRatio"
+        },
+        "state": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "browser": {
+          "$ref": "#/$defs/browser"
+        },
+        "instrumentedSources": {
+          "type": "boolean"
+        },
+        "maskSelectorsConfigured": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "pageProgress": {
+      "type": "object",
+      "required": [
+        "requested",
+        "observed",
+        "captured",
+        "active",
+        "failed"
+      ],
+      "properties": {
+        "requested": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "observed": {
+          "type": "array",
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "captured": {
+          "type": "array",
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "index",
+                "phase"
+              ],
+              "properties": {
+                "index": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 20
+                },
+                "phase": {
+                  "enum": [
+                    "observe",
+                    "capture"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "failed": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "index",
+                "phase"
+              ],
+              "properties": {
+                "index": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 20
+                },
+                "phase": {
+                  "enum": [
+                    "observe",
+                    "capture"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "description": "Bounded page indexes only, never URLs or data. Runtime additionally checks sorted indexes, indexes<=requested, and completed-phase relationships.",
+      "not": {
+        "required": [
+          "active",
+          "failed"
+        ],
+        "properties": {
+          "active": {
+            "type": "object"
+          },
+          "failed": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}

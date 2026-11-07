@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/token-check-v1.schema.json",
+  "title": "UI Sheet source-only token baseline check",
+  "type": "object",
+  "required": [
+    "format",
+    "scanStatus",
+    "coverage",
+    "total",
+    "matched",
+    "changed",
+    "missing",
+    "ambiguous",
+    "unscanned",
+    "findings"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/token-check-v1"
+    },
+    "scanStatus": {
+      "enum": [
+        "completed",
+        "unverified"
+      ]
+    },
+    "coverage": {
+      "enum": [
+        "observed",
+        "partial",
+        "insufficient"
+      ]
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "matched": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "changed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "missing": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ambiguous": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unscanned": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "findings": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "token",
+          "file",
+          "context",
+          "status",
+          "approved",
+          "current"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "token-source-v1.schema.json#/$defs/id"
+          },
+          "token": {
+            "$ref": "token-source-v1.schema.json#/$defs/tokenName"
+          },
+          "file": {
+            "$ref": "token-source-v1.schema.json#/$defs/file"
+          },
+          "context": {
+            "$ref": "token-source-v1.schema.json#/$defs/context"
+          },
+          "status": {
+            "enum": [
+              "matched",
+              "changed",
+              "missing",
+              "ambiguous",
+              "unscanned"
+            ]
+          },
+          "approved": {
+            "type": "object",
+            "required": [
+              "value",
+              "important"
+            ],
+            "properties": {
+              "value": {
+                "type": "string",
+                "maxLength": 131072
+              },
+              "important": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          },
+          "current": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "value",
+                "important",
+                "line",
+                "column"
+              ],
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "maxLength": 131072
+                },
+                "important": {
+                  "type": "boolean"
+                },
+                "line": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "column": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "description": "Checks only explicitly approved source scopes. Unscanned or ambiguous scopes and missing scan metadata cannot establish complete coverage."
+}

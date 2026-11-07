@@ -1,0 +1,32 @@
+name: Bug report
+description: Report a reproducible problem with the scanner or report.
+body:
+  - type: markdown
+    attributes:
+      value: Please use synthetic examples. Do not include credentials, private browser state, or real user records.
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What happened?
+      description: Include what you expected and what you observed.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps or minimal reproduction
+      description: Include the command and a small example project if possible.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, Node version, browser version, and UI Sheet revision.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and coverage
+      description: Share safe logs or screenshots, along with relevant coverage limitations.

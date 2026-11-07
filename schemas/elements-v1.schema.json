@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/elements-v1.schema.json",
+  "title": "UI Sheet configured-family observations and comparisons",
+  "type": "object",
+  "required": [
+    "format",
+    "findingIdentity",
+    "scope",
+    "counts",
+    "observations",
+    "findings",
+    "appearances",
+    "coverage",
+    "baselinesUsed"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/elements-v1"
+    },
+    "findingIdentity": {
+      "const": "ui-sheet/element-finding-v2"
+    },
+    "scope": {
+      "$ref": "common-v1.schema.json#/$defs/scope"
+    },
+    "counts": {
+      "$ref": "common-v1.schema.json#/$defs/elementCounts"
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "$ref": "common-v1.schema.json#/$defs/elementObservation"
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "evidence",
+          "reference",
+          "group",
+          "total",
+          "common",
+          "outlier",
+          "differences"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "common-v1.schema.json#/$defs/id"
+          },
+          "kind": {
+            "const": "configured-element-style-outlier"
+          },
+          "status": {
+            "const": "possible difference"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "reference": {
+            "enum": [
+              "approved",
+              "inferred"
+            ]
+          },
+          "group": {
+            "$ref": "common-v1.schema.json#/$defs/elementGroup"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "common": {
+            "type": "object",
+            "required": [
+              "count",
+              "example"
+            ],
+            "properties": {
+              "count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "example": {
+                "anyOf": [
+                  {
+                    "$ref": "common-v1.schema.json#/$defs/elementObservationId"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "style": {
+                "$ref": "common-v1.schema.json#/$defs/style"
+              },
+              "source": {
+                "$ref": "common-v1.schema.json#/$defs/source"
+              }
+            },
+            "additionalProperties": true
+          },
+          "outlier": {
+            "type": "object",
+            "required": [
+              "count",
+              "example"
+            ],
+            "properties": {
+              "count": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "example": {
+                "$ref": "common-v1.schema.json#/$defs/elementObservationId"
+              }
+            },
+            "additionalProperties": true
+          },
+          "differences": {
+            "type": "array",
+            "items": {
+              "$ref": "common-v1.schema.json#/$defs/difference"
+            }
+          },
+          "decisionAnchor": {
+            "$ref": "common-v1.schema.json#/$defs/anchor"
+          },
+          "review": {
+            "$ref": "common-v1.schema.json#/$defs/review"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "appearances": {
+      "type": "array",
+      "items": {
+        "$ref": "common-v1.schema.json#/$defs/elementAppearance"
+      }
+    },
+    "coverage": {
+      "$ref": "common-v1.schema.json#/$defs/coverage"
+    },
+    "previews": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "common-v1.schema.json#/$defs/preview"
+      }
+    },
+    "previewCoverage": {
+      "$ref": "common-v1.schema.json#/$defs/previewCoverage"
+    },
+    "instrumentation": {
+      "$ref": "common-v1.schema.json#/$defs/elementInstrumentation"
+    },
+    "baselinesUsed": {
+      "type": "array",
+      "items": {
+        "$ref": "common-v1.schema.json#/$defs/id"
+      }
+    }
+  },
+  "additionalProperties": true
+}

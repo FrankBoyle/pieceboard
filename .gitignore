@@ -1,0 +1,14 @@
+node_modules/
+.ui-sheet/
+.ui-sheet-demo/
+.ui-sheet-demo-consistency/
+.ui-sheet-demo-cross-page/
+.ui-sheet-demo-elements/
+.ui-sheet-demo-layout/
+.ui-sheet-auth/
+.ui-sheet-lab/
+# Local project-specific review material and its local-only tests.
+examples/*-design-decisions/
+test/*-design-decisions.test.js
+coverage/
+*.tgz

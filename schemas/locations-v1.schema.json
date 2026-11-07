@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/locations-v1.schema.json",
+  "title": "UI Sheet compact observed occurrences",
+  "type": "object",
+  "required": [
+    "format",
+    "family",
+    "variant",
+    "pagesVisited",
+    "matchingPages",
+    "total",
+    "truncated",
+    "locations"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/locations-v1"
+    },
+    "family": {
+      "type": "string"
+    },
+    "variant": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pagesVisited": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "matchingPages": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "truncated": {
+      "type": "boolean"
+    },
+    "locations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "page",
+          "url",
+          "viewport",
+          "theme",
+          "observation",
+          "group",
+          "source",
+          "previewAvailable"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "url": {
+            "type": "string"
+          },
+          "viewport": {
+            "anyOf": [
+              {
+                "$ref": "common-v1.schema.json#/$defs/viewport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "theme": {
+            "type": "string"
+          },
+          "observation": {
+            "$ref": "common-v1.schema.json#/$defs/observationId"
+          },
+          "group": {
+            "$ref": "common-v1.schema.json#/$defs/group"
+          },
+          "source": {
+            "$ref": "common-v1.schema.json#/$defs/source"
+          },
+          "previewAvailable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

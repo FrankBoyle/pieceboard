@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/element-pages-v1.schema.json",
+  "title": "UI Sheet configured-family pages",
+  "type": "object",
+  "required": [
+    "format",
+    "pages"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/element-pages-v1"
+    },
+    "pages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "elements-v1.schema.json"
+      }
+    }
+  },
+  "additionalProperties": true
+}

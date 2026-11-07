@@ -1,0 +1,4 @@
+body { margin: 0; padding: 48px; font: 16px Arial, sans-serif; color: #25364a; background: #f4f7fb; }
+main { max-width: 720px; padding: 28px; margin: 0 auto; border: 1px solid #dce4f0; border-radius: 12px; background: white; }
+.button { border: 1px solid #2563eb; border-radius: 8px; background: #2563eb; color: white; font: 600 16px/24px Arial, sans-serif; padding: 8px 16px; }
+.different { border-radius: 3px; }

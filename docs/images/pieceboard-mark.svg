@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">Pieceboard</title>
+  <desc id="desc">Two paths of interface pieces meet at the center; the amber choice stands out.</desc>
+  <rect x="8" y="8" width="43" height="39" rx="8" fill="#17385b"/>
+  <rect x="55" y="8" width="33" height="39" rx="8" fill="#2b7898"/>
+  <rect x="40" y="39" width="29" height="22" rx="7" fill="#2b7898"/>
+  <rect x="8" y="57" width="29" height="31" rx="8" fill="#248da1"/>
+  <rect x="40" y="57" width="48" height="31" rx="8" fill="#f2b344"/>
+</svg>

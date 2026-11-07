@@ -1,0 +1,21 @@
+:root {
+  --color-ink: #203d30;
+  --color-accent: #9ccca8;
+  --color-surface: #f4f7ef;
+  --color-line: #d8e7d8;
+  --font-body: "Segoe UI", sans-serif;
+  --radius-control: 8px;
+  --space-control: 12px;
+}
+
+body { color: var(--color-ink); background: var(--color-surface); font-family: var(--font-body); }
+h1, h2 { font-family: Georgia, serif; }
+.button { border: 0; border-radius: var(--radius-control); padding: var(--space-control) 18px; }
+.button--primary { background: var(--color-ink); color: white; }
+.button--quiet { background: var(--color-surface); color: var(--color-ink); }
+.badge { background: var(--color-accent); border-radius: 20px; padding: 5px 10px; }
+.field { font-family: var(--font-body); }
+.field input { border: 1px solid var(--color-line); border-radius: var(--radius-control); }
+.avatar { background: var(--color-accent); border-radius: 50%; }
+.notice { border: 1px solid var(--color-line); padding: var(--space-control); }
+.brand { background-image: url('../public/harbor-mark.svg'); }

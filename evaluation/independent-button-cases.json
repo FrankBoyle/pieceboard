@@ -1,0 +1,1823 @@
+{
+  "format": "ui-sheet/browser-evaluation-v1",
+  "setId": "separately-authored-synthetic-buttons-2026-11-04",
+  "authorship": {
+    "type": "second-software-agent",
+    "independentHumanReview": false,
+    "allowedInputs": [
+      "README.md",
+      "evaluation/README.md",
+      "evaluation/browser-evaluate.js"
+    ],
+    "detectorImplementationRead": false,
+    "existingCaseDataRead": false,
+    "predictionsSeenBeforeFreeze": false,
+    "note": "The allowed documentation describes the detector and previous aggregate outcomes. This is separate authorship, not a blind or human-labeled external evaluation."
+  },
+  "labelPolicy": "Expected indexes are all individual controls that violate the authored requirement in the observed context. Repeated defective appearances count at every occurrence. Scoring is independent of detector support and frequency. An empty expected array on an unscorable case is a format placeholder and must not enter any accuracy denominator.",
+  "captureDefaults": {
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "colorScheme": "light",
+    "pixelRatio": 2
+  },
+  "fixtureExtensions": {
+    "buttonGroup": "Serialize button.group as data-ui-sheet-group.",
+    "buttonVariant": "Serialize button.variant as data-ui-sheet-variant.",
+    "pressed": "When the pressed field is present, serialize both true and false as aria-pressed.",
+    "interactions": "After page load, move the mouse to 0,0. Apply each focus or hover action to the zero-based button index before capture and verify the requested state.",
+    "viewport": "Use the case viewport when present, otherwise captureDefaults.viewport.",
+    "colorScheme": "Use the case colorScheme when present, otherwise captureDefaults.colorScheme.",
+    "scoring": "Only scoring=scored cases enter accuracy totals; retain unscorable cases as diagnostics."
+  },
+  "cases": [
+    {
+      "id": "radius-single",
+      "description": "Every document primary action must use the same 8px corners. The last button accidentally uses 22px corners.",
+      "scoring": "scored",
+      "css": ".drift{border-radius:22px}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "id": "radius-repeated",
+      "description": "The document primary action specification requires 8px corners. Two repeated instances accidentally use 1px corners; both are defects even though they share one appearance.",
+      "scoring": "scored",
+      "css": ".drift{border-radius:1px}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 5",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 6",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        6,
+        7
+      ]
+    },
+    {
+      "id": "border-bottom-width",
+      "description": "All document primary actions require a 1px border on every side. The final button accidentally has a 5px bottom border.",
+      "scoring": "scored",
+      "css": ".drift{border-bottom-width:5px}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "id": "font-weight",
+      "description": "All document primary labels require weight 600. The final label accidentally uses weight 400.",
+      "scoring": "scored",
+      "css": ".drift{font-weight:400}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "id": "italic-label",
+      "description": "All document primary labels must be upright. Italic text on the last otherwise comparable action is an accidental override.",
+      "scoring": "scored",
+      "css": ".drift{font-style:italic}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "id": "horizontal-padding",
+      "description": "All document primary actions require 16px horizontal padding. The final button accidentally has 32px horizontal padding.",
+      "scoring": "scored",
+      "css": ".drift{padding-left:32px;padding-right:32px}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "id": "unexpected-shadow",
+      "description": "This flat primary action design has no shadow. The last button accidentally gains a conspicuous drop shadow.",
+      "scoring": "scored",
+      "css": ".drift{box-shadow:0 7px 12px rgba(15,23,42,.65)}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "id": "uppercase-label",
+      "description": "Sentence-case labels are required for every document primary action. The last button accidentally forces uppercase text.",
+      "scoring": "scored",
+      "css": ".drift{text-transform:uppercase}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "id": "background-color",
+      "description": "Every document primary action is specified as blue #245ce0. The final button accidentally has a red fill while retaining primary semantics.",
+      "scoring": "scored",
+      "css": ".drift{background-color:#dc2626}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "id": "gradient-direction",
+      "description": "All actions in this branded primary family require the same left-to-right two-color gradient. The final button accidentally reverses the gradient direction.",
+      "scoring": "scored",
+      "css": ".button{background:linear-gradient(90deg,#164e63 0%,#67e8f9 100%)}\n.drift{background:linear-gradient(270deg,#164e63 0%,#67e8f9 100%)}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "id": "gradient-stop-color",
+      "description": "The approved primary gradient ends in cyan #67e8f9. The final primary action accidentally ends in yellow #fde047.",
+      "scoring": "scored",
+      "css": ".button{background:linear-gradient(90deg,#164e63 0%,#67e8f9 100%)}\n.drift{background:linear-gradient(90deg,#164e63 0%,#fde047 100%)}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "id": "text-decoration",
+      "description": "Document primary action text must have no underline. The last button accidentally receives an underline.",
+      "scoring": "scored",
+      "css": ".drift{text-decoration:underline}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "id": "wrong-majority-contract",
+      "description": "An authored design requirement fixes the document primary fill at blue #245ce0. Four accidentally red instances are defects; the lone blue instance is correct. Frequency must not redefine this requirement.",
+      "scoring": "scored",
+      "css": ".wrong{background-color:#dc2626}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "wrong"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "wrong"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "wrong"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "wrong"
+        },
+        {
+          "label": "Correct primary action",
+          "group": "document-actions",
+          "variant": "primary"
+        }
+      ],
+      "expected": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "evidence": "The requirement is part of this fixture oracle, not an inferred majority or a supplied machine baseline."
+    },
+    {
+      "id": "two-controls-known-contract",
+      "description": "Only two primary actions are sampled, but their authored specification unambiguously requires 8px corners. The second action accidentally uses square corners.",
+      "scoring": "scored",
+      "css": ".drift{border-radius:0}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save another item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        1
+      ],
+      "evidence": "Low sample size does not make the authored design requirement unknown."
+    },
+    {
+      "id": "tied-appearances-known-contract",
+      "description": "The authored primary specification requires blue #245ce0. Two blue and two accidentally red actions form an equal-frequency tie; both red controls are defects.",
+      "scoring": "scored",
+      "css": ".drift{background-color:#dc2626}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        2,
+        3
+      ]
+    },
+    {
+      "id": "opacity-repeated",
+      "description": "All enabled document primary actions must render at opacity 1. Two enabled instances accidentally use opacity .35; neither is a disabled state.",
+      "scoring": "scored",
+      "css": ".drift{opacity:.35}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 5",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        5,
+        6
+      ]
+    },
+    {
+      "id": "letter-spacing",
+      "description": "The primary label specification requires normal letter spacing. The final primary label accidentally uses 4px spacing.",
+      "scoring": "scored",
+      "css": ".drift{letter-spacing:4px}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "id": "dark-theme-border",
+      "description": "Under the requested dark browser preference this page deliberately switches all primary borders to #a5b4fc. The final primary action accidentally receives a pink border. Compare only within this dark context.",
+      "scoring": "scored",
+      "css": ":root{color-scheme:light dark}body{background:#f8fafc;color:#111827}\n.button{background-color:#245ce0;border-color:#245ce0;color:#fff}\n@media(prefers-color-scheme:dark){body{background:#0f172a;color:#e2e8f0}.button{background-color:#a5b4fc;border-color:#a5b4fc;color:#111827}.drift{border-color:#fb7185}}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ],
+      "colorScheme": "dark"
+    },
+    {
+      "id": "mobile-padding-drift",
+      "description": "At a 390px viewport all primary actions are specified to keep 16px horizontal padding. A narrow-screen override accidentally doubles padding on the last button.",
+      "scoring": "scored",
+      "css": "@media(max-width:600px){.drift{padding-left:32px;padding-right:32px}}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "id": "idle-defect-beside-hover",
+      "description": "The fourth idle primary action accidentally has square corners. The fifth action is deliberately hovered and has its specified hover fill and shadow; only the idle corner defect is wrong.",
+      "scoring": "scored",
+      "css": ".drift{border-radius:0}\n.button:hover{background-color:#14368c;box-shadow:0 3px 6px rgba(15,23,42,.5)}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        },
+        {
+          "label": "Hovered action",
+          "group": "document-actions",
+          "variant": "primary"
+        }
+      ],
+      "expected": [
+        3
+      ],
+      "interactions": [
+        {
+          "type": "hover",
+          "button": 4
+        }
+      ]
+    },
+    {
+      "id": "idle-defect-beside-focus",
+      "description": "The fourth idle primary action accidentally has 24px corners. The fifth action is deliberately focused and has its specified focus ring and shadow; only the idle corner defect is wrong.",
+      "scoring": "scored",
+      "css": ".drift{border-radius:24px}\n.button:focus{outline:3px solid #f59e0b;outline-offset:3px;box-shadow:0 0 0 5px #fef3c7}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        },
+        {
+          "label": "Focused action",
+          "group": "document-actions",
+          "variant": "primary"
+        }
+      ],
+      "expected": [
+        3
+      ],
+      "interactions": [
+        {
+          "type": "focus",
+          "button": 4
+        }
+      ]
+    },
+    {
+      "id": "blur-filter",
+      "description": "Primary action labels and boundaries must render sharply. The final otherwise enabled action accidentally has a 1.5px CSS blur filter.",
+      "scoring": "scored",
+      "css": ".drift{filter:blur(1.5px)}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save changed item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "id": "consistent-label-lengths",
+      "description": "Short and long labels are intentionally allowed to make these otherwise identical primary actions different widths. None violates the primary style specification.",
+      "scoring": "scored",
+      "css": "",
+      "buttons": [
+        {
+          "label": "Save",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save all selected documents",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Continue",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save this draft",
+          "group": "document-actions",
+          "variant": "primary"
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "explicit-secondary-variant",
+      "description": "Blue primary and white outlined secondary actions are intentionally distinct variants, explicitly labeled in the fixture. Neither is an outlier within its own variant.",
+      "scoring": "scored",
+      "css": ".secondary{background-color:#fff;color:#245ce0}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Cancel",
+          "group": "document-actions",
+          "variant": "secondary",
+          "classes": "secondary"
+        },
+        {
+          "label": "Cancel",
+          "group": "document-actions",
+          "variant": "secondary",
+          "classes": "secondary"
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "explicit-destructive-variant",
+      "description": "Delete actions intentionally use a red destructive variant. Their different color must not be treated as drift from the blue primary variant.",
+      "scoring": "scored",
+      "css": ".destructive{background-color:#b91c1c;border-color:#b91c1c}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Delete document",
+          "group": "document-actions",
+          "variant": "destructive",
+          "classes": "destructive"
+        },
+        {
+          "label": "Delete document",
+          "group": "document-actions",
+          "variant": "destructive",
+          "classes": "destructive"
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "explicit-compact-variant",
+      "description": "Regular and compact primary actions are separately specified size variants. Compact controls intentionally use smaller typography and padding.",
+      "scoring": "scored",
+      "css": ".compact{font-size:13px;line-height:18px;padding:4px 8px}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save compact item",
+          "group": "document-actions",
+          "variant": "primary-compact",
+          "classes": "compact"
+        },
+        {
+          "label": "Save compact item",
+          "group": "document-actions",
+          "variant": "primary-compact",
+          "classes": "compact"
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "explicit-different-families",
+      "description": "Document actions are blue and export-toolbar actions are green by separate approved family requirements. Both use a primary variant within their own family.",
+      "scoring": "scored",
+      "css": ".export-action{background-color:#15803d;border-color:#15803d}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Export",
+          "group": "export-toolbar",
+          "variant": "primary",
+          "classes": "export-action"
+        },
+        {
+          "label": "Export",
+          "group": "export-toolbar",
+          "variant": "primary",
+          "classes": "export-action"
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "disabled-style",
+      "description": "The last action is disabled. Its muted fill, opacity and round corners are intentional disabled-state styling; enabled primary actions remain consistent.",
+      "scoring": "scored",
+      "css": ".button:disabled{background-color:#94a3b8;border-color:#94a3b8;opacity:.45;border-radius:20px}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Unavailable action",
+          "group": "document-actions",
+          "variant": "primary",
+          "disabled": true
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "hidden-control",
+      "description": "The hidden final action has an alternative style that is intentionally not rendered in this scenario. All visible actions meet the required primary style.",
+      "scoring": "scored",
+      "css": ".dormant{background-color:#dc2626;border-radius:0}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Hidden future action",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "dormant",
+          "hidden": true
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "intentional-hover-state",
+      "description": "The last action is deliberately hovered. Its darker fill and drop shadow are the specified hover state; the other primary actions remain idle.",
+      "scoring": "scored",
+      "css": ".button:hover{background-color:#14368c;box-shadow:0 3px 6px rgba(15,23,42,.5)}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Hovered action",
+          "group": "document-actions",
+          "variant": "primary"
+        }
+      ],
+      "expected": [],
+      "interactions": [
+        {
+          "type": "hover",
+          "button": 4
+        }
+      ]
+    },
+    {
+      "id": "intentional-focus-state",
+      "description": "The last action is deliberately focused. Its visible amber outline and outer shadow are required focus styling, not an idle-style defect.",
+      "scoring": "scored",
+      "css": ".button:focus{outline:3px solid #f59e0b;outline-offset:3px;box-shadow:0 0 0 5px #fef3c7}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Focused action",
+          "group": "document-actions",
+          "variant": "primary"
+        }
+      ],
+      "expected": [],
+      "interactions": [
+        {
+          "type": "focus",
+          "button": 4
+        }
+      ]
+    },
+    {
+      "id": "intentional-toggle-states",
+      "description": "These are explicitly marked toggle buttons. Four are unpressed and two are pressed; the darker fill and inset shadow on the pressed toggles are intentional.",
+      "scoring": "scored",
+      "css": ".button[aria-pressed=\"true\"]{background-color:#163a91;box-shadow:inset 0 0 0 3px #93c5fd}",
+      "buttons": [
+        {
+          "label": "Option off",
+          "group": "document-actions",
+          "variant": "toggle",
+          "pressed": false
+        },
+        {
+          "label": "Option off",
+          "group": "document-actions",
+          "variant": "toggle",
+          "pressed": false
+        },
+        {
+          "label": "Option off",
+          "group": "document-actions",
+          "variant": "toggle",
+          "pressed": false
+        },
+        {
+          "label": "Option off",
+          "group": "document-actions",
+          "variant": "toggle",
+          "pressed": false
+        },
+        {
+          "label": "Option on",
+          "group": "document-actions",
+          "variant": "toggle",
+          "pressed": true
+        },
+        {
+          "label": "Option on",
+          "group": "document-actions",
+          "variant": "toggle",
+          "pressed": true
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "native-buttons-with-tab-role",
+      "description": "Native buttons with a tab role intentionally use a separate navigation-tab appearance. Ordinary primary actions and tabs are individually consistent.",
+      "scoring": "scored",
+      "css": ".navchoice{background-color:transparent;color:#245ce0;border-width:0 0 3px;border-radius:0}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Details tab",
+          "group": "document-actions",
+          "variant": "navigation-tab",
+          "role": "tab",
+          "classes": "navchoice"
+        },
+        {
+          "label": "Details tab",
+          "group": "document-actions",
+          "variant": "navigation-tab",
+          "role": "tab",
+          "classes": "navchoice"
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "light-theme-counterpart",
+      "description": "The dark-only accidental border override is inactive under this light preference. Every currently rendered primary action meets its light-theme requirement.",
+      "scoring": "scored",
+      "css": ":root{color-scheme:light dark}body{background:#f8fafc;color:#111827}\n.button{background-color:#245ce0;border-color:#245ce0;color:#fff}\n@media(prefers-color-scheme:dark){body{background:#0f172a;color:#e2e8f0}.button{background-color:#a5b4fc;border-color:#a5b4fc;color:#111827}.drift{border-color:#fb7185}}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [],
+      "colorScheme": "light"
+    },
+    {
+      "id": "desktop-responsive-counterpart",
+      "description": "The narrow-screen padding override is inactive at this 1280px viewport. Every currently rendered primary action meets its desktop requirement.",
+      "scoring": "scored",
+      "css": "@media(max-width:600px){.drift{padding-left:32px;padding-right:32px}}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "drift"
+        }
+      ],
+      "expected": [],
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      }
+    },
+    {
+      "id": "explicit-icon-variant",
+      "description": "The plus-only action intentionally uses a square icon variant with less horizontal padding. It is explicitly distinct from text primary actions.",
+      "scoring": "scored",
+      "css": ".icon-action{width:42px;padding-left:8px;padding-right:8px}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "+",
+          "group": "document-actions",
+          "variant": "icon",
+          "classes": "icon-action"
+        },
+        {
+          "label": "+",
+          "group": "document-actions",
+          "variant": "icon",
+          "classes": "icon-action"
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "button-and-submit-types",
+      "description": "Submit and plain button types share the same intentional visual design. Their HTML type alone does not create an appearance defect.",
+      "scoring": "scored",
+      "css": "",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary",
+          "type": "button"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary",
+          "type": "button"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary",
+          "type": "button"
+        },
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary",
+          "type": "submit"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary",
+          "type": "submit"
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "approved-unmarked-pill-exception",
+      "description": "The last action has an explicitly approved pill-corner exception for a one-off campaign. The approval is given by this authored fixture requirement and deliberately is not encoded as a separate variant hint. Its different radius is intentional.",
+      "scoring": "scored",
+      "css": ".campaign{border-radius:999px}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save campaign item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "campaign"
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "approved-unmarked-roomy-exception",
+      "description": "The last primary action intentionally has extra horizontal padding for a touch target in a supported special layout. This authored exception is deliberately not represented by a variant hint. The visual difference is acceptable.",
+      "scoring": "scored",
+      "css": ".special-layout{padding-left:32px;padding-right:32px}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save special item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "special-layout"
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "intentional-explicit-width",
+      "description": "Fixed-width and content-width primary actions are both approved in this layout. The final two buttons intentionally occupy 240px without changing their typography, padding, color, or border.",
+      "scoring": "scored",
+      "css": ".wide-layout{width:240px}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "wide-layout"
+        },
+        {
+          "label": "Save",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "wide-layout"
+        }
+      ],
+      "expected": []
+    },
+    {
+      "id": "unknown-two-control-reference",
+      "description": "Two unfamiliar actions differ in corner radius and there is no supplied design requirement or approved reference.",
+      "scoring": "unscorable",
+      "css": ".round{border-radius:999px}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "round"
+        }
+      ],
+      "expected": [],
+      "unscorableReason": "Neither frequency nor the author has established which appearance, if either, is wrong."
+    },
+    {
+      "id": "unknown-equal-frequency-intent",
+      "description": "Two blue and two green actions share generic labels and comparison hints, with no specified approved appearance.",
+      "scoring": "unscorable",
+      "css": ".green{background-color:#15803d;border-color:#15803d}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "green"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "green"
+        }
+      ],
+      "expected": [],
+      "unscorableReason": "The equal-frequency appearances could be intentional alternatives or drift; a correctness label would invent design intent."
+    },
+    {
+      "id": "unknown-minority-intent",
+      "description": "Four blue actions and one pill-shaped action are observed without a design specification or exception record.",
+      "scoring": "unscorable",
+      "css": ".round{border-radius:999px}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "round"
+        }
+      ],
+      "expected": [],
+      "unscorableReason": "A rare appearance alone cannot determine whether the last control is an intentional variant or a defect."
+    },
+    {
+      "id": "unknown-family-assignment",
+      "description": "Three Save controls and two Export controls have distinct colors but only generic shared comparison hints. Their actual component-family relationship is unknown.",
+      "scoring": "unscorable",
+      "css": ".exportish{background-color:#15803d;border-color:#15803d}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Export",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "exportish"
+        },
+        {
+          "label": "Export",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "exportish"
+        }
+      ],
+      "expected": [],
+      "unscorableReason": "The generic fixture hints are insufficient evidence that these different-purpose controls must share an appearance."
+    },
+    {
+      "id": "viewport-edge-coverage",
+      "description": "A differently styled action begins below the initial 390 by 844 viewport. The scenario supplies no requirement about whether offscreen controls belong to this particular review.",
+      "scoring": "unscorable",
+      "css": ".below-fold{position:absolute;top:1100px;left:28px;border-radius:0}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Below-fold action",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "below-fold"
+        }
+      ],
+      "expected": [],
+      "unscorableReason": "Coverage and eligibility outside the requested initial viewport require an explicit review policy; do not count the absent label as a negative.",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "id": "unvisited-hover-intent",
+      "description": "The final action has a distinct hover override, but this scenario captures only the idle state and supplies no approved hover design.",
+      "scoring": "unscorable",
+      "css": ".unvisited:hover{background-color:#dc2626;border-radius:0}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Idle action with unvisited hover",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "unvisited"
+        }
+      ],
+      "expected": [],
+      "unscorableReason": "The idle capture cannot establish whether the unvisited hover appearance is correct. This is a coverage diagnostic, not an accuracy negative for all states."
+    },
+    {
+      "id": "unknown-local-theme-context",
+      "description": "A single dark-styled control appears beside light-styled actions, without application theme markers or a specification for embedded themed regions.",
+      "scoring": "unscorable",
+      "css": "body{background:#f8fafc}.local-dark{background-color:#a5b4fc;border-color:#a5b4fc;color:#111827}",
+      "buttons": [
+        {
+          "label": "Save 1",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 2",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 3",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save 4",
+          "group": "document-actions",
+          "variant": "primary"
+        },
+        {
+          "label": "Save embedded item",
+          "group": "document-actions",
+          "variant": "primary",
+          "classes": "local-dark"
+        }
+      ],
+      "expected": [],
+      "unscorableReason": "An embedded dark region may be intentional. A single browser color preference cannot resolve the missing application-theme intent."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "Harbor Studio",
+  "components": {
+    "Button": {
+      "description": "The main action for moving someone forward. Use the quiet variant for secondary actions.",
+      "preview": "previews/button.svg"
+    },
+    "Badge": {
+      "description": "A small label for status and context.",
+      "preview": "previews/badge.svg"
+    },
+    "TextField": {
+      "description": "A labeled input for short pieces of text.",
+      "preview": "previews/field.svg"
+    },
+    "Avatar": {
+      "description": "A friendly visual identifier for a person.",
+      "preview": "previews/avatar.svg"
+    },
+    "Notice": {
+      "description": "A short message that calls attention to useful information.",
+      "preview": "previews/notice.svg"
+    }
+  }
+}

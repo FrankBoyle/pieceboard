@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/finding-locations-v1.schema.json",
+  "title": "UI Sheet observed locations for one finding appearance",
+  "description": "A bounded list of matching occurrences recorded in current captured evidence. This is not whole-app usage or deployment proof.",
+  "type": "object",
+  "required": [
+    "format",
+    "scanStatus",
+    "findingId",
+    "side",
+    "total",
+    "truncated",
+    "locations"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/finding-locations-v1"
+    },
+    "scanStatus": {
+      "enum": [
+        "completed",
+        "unverified"
+      ]
+    },
+    "findingId": {
+      "$ref": "common-v1.schema.json#/$defs/id"
+    },
+    "side": {
+      "enum": [
+        "common",
+        "outlier"
+      ]
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "truncated": {
+      "type": "boolean"
+    },
+    "locations": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "required": [
+          "page",
+          "url",
+          "observationId",
+          "group",
+          "source",
+          "previewAvailable"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "url": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "observationId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,79}:(0|[1-9][0-9]*)$"
+          },
+          "group": {
+            "allOf": [
+              {
+                "$ref": "common-v1.schema.json#/$defs/group"
+              },
+              {
+                "if": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "tag"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "nativeType"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "state"
+                      ]
+                    }
+                  ]
+                },
+                "then": {
+                  "$ref": "common-v1.schema.json#/$defs/elementBaselineGroup"
+                }
+              }
+            ],
+            "type": "object"
+          },
+          "source": {
+            "$ref": "common-v1.schema.json#/$defs/source"
+          },
+          "previewAvailable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

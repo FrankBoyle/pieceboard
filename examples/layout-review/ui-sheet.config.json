@@ -1,0 +1,11 @@
+{
+  "name": "Layout review demo",
+  "include": ["index.html", "approved-mark.svg"],
+  "layoutChecks": [
+    { "id": "callout-clearance", "kind": "text-inset", "selector": "#crowded-banner", "min": { "left": 16, "right": 16, "bottom": 12 } },
+    { "id": "wordmark-gap", "kind": "horizontal-gap", "selector": "#brand-first", "otherSelector": "#brand-second", "min": 4 },
+    { "id": "word-spacing", "kind": "style", "selector": "#summary", "property": "wordSpacing", "min": 0, "max": 2 },
+    { "id": "logo-replaced-by-text", "kind": "image", "selector": "#retyped-logo", "paths": ["/approved-mark.svg"] },
+    { "id": "approved-logo", "kind": "image", "selector": "#approved-logo", "paths": ["/approved-mark.svg"] }
+  ]
+}

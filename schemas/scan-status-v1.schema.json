@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/scan-status-v1.schema.json",
+  "title": "UI Sheet scan completion marker",
+  "type": "object",
+  "required": [
+    "format",
+    "status",
+    "runId"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/scan-status-v1"
+    },
+    "status": {
+      "enum": [
+        "in-progress",
+        "failed",
+        "completed"
+      ]
+    },
+    "runId": {
+      "type": "string",
+      "pattern": "^[a-f0-9-]{36}$"
+    },
+    "pageProgress": {
+      "$ref": "common-v1.schema.json#/$defs/pageProgress"
+    }
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pageProgress": {
+            "type": "object",
+            "properties": {
+              "active": {
+                "type": "null"
+              },
+              "failed": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "const": "in-progress"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pageProgress": {
+            "type": "object",
+            "properties": {
+              "failed": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "const": "failed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pageProgress": {
+            "type": "object",
+            "properties": {
+              "active": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

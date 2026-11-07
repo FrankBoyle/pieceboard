@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 230">
+  <rect width="400" height="230" fill="#edf2ea"/>
+  <text x="96" y="87" fill="#55715b" font-family="Arial,sans-serif" font-size="11" font-weight="bold">WORKSPACE NAME</text>
+  <rect x="96" y="99" width="208" height="43" rx="6" fill="#fff" stroke="#cadbca"/>
+  <text x="110" y="125" fill="#9aab9c" font-family="Arial,sans-serif" font-size="12">My workspace</text>
+</svg>

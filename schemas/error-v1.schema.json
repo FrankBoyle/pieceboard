@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/error-v1.schema.json",
+  "title": "UI Sheet structured check failure",
+  "type": "object",
+  "required": [
+    "format",
+    "error"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/error-v1"
+    },
+    "error": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "enum": [
+            "CHECK_FAILED",
+            "TOKEN_CHECK_FAILED",
+            "LAYOUT_CHECK_FAILED"
+          ]
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

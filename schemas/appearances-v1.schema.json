@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/appearances-v1.schema.json",
+  "title": "UI Sheet compact observed appearances",
+  "type": "object",
+  "required": [
+    "format",
+    "page",
+    "pageCount",
+    "scope",
+    "totalAppearances",
+    "truncated",
+    "appearances"
+  ],
+  "properties": {
+    "format": {
+      "const": "ui-sheet/appearances-v1"
+    },
+    "page": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "pageCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "scope": {
+      "$ref": "common-v1.schema.json#/$defs/scope"
+    },
+    "totalAppearances": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "truncated": {
+      "type": "boolean"
+    },
+    "appearances": {
+      "type": "array",
+      "items": {
+        "$ref": "common-v1.schema.json#/$defs/appearance"
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Juniper UI consistency lab</title>
+<style>
+  :root{--ink:#213c2e;--green:#275b40;--line:#d7e1d8;--radius:9px;--paper:#f5f7f1;font-family:Arial,sans-serif;color:var(--ink);background:var(--paper)}
+  *{box-sizing:border-box}body{margin:0;padding:28px}main{max-width:1040px;margin:auto}header{display:flex;align-items:center;gap:12px;margin-bottom:24px}header img{width:40px;height:40px}header strong{display:block;font-size:20px}header small{color:#56715e}h1{font-size:30px;letter-spacing:-1px;margin:0 0 8px}p{margin:0 0 20px;color:#56715e;line-height:1.5}
+  section{padding:18px 20px;background:white;border:1px solid var(--line);border-radius:14px;margin-top:12px}h2{font-size:13px;margin:0 0 12px;letter-spacing:.5px}.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.workspace-field,.workspace-select{width:195px;padding:10px 12px;background:white;color:var(--ink);border:1px solid #a5b9aa;border-radius:var(--radius);font:15px/22px Arial,sans-serif}.workspace-tab{display:inline-block;text-decoration:none;color:#38624a;border-bottom:3px solid #cbdcce;padding:10px 18px;font:600 15px/22px Arial,sans-serif}.workspace-chip{border:1px solid #acc1ae;border-radius:20px;background:#eef4e9;color:#355840;padding:8px 16px;font:15px/22px Arial,sans-serif}.button{border:1px solid var(--green);border-radius:var(--radius);background:var(--green);color:white;padding:10px 18px;font:600 15px/22px Arial,sans-serif}.danger{background:#a43840;border-color:#a43840}.drift-radius{border-radius:2px}.drift-type{font-style:italic}.drift-tab{padding-left:30px;padding-right:30px}.drift-chip{box-shadow:0 3px 0 #9cac70}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #215a39;outline-offset:3px}
+</style>
+<main>
+  <header><img id="juniper-logo" src="mark.svg" alt="Juniper mark"><div><strong>Juniper</strong><small>A synthetic workspace</small></div></header>
+  <h1>A small consistency lab.</h1>
+  <p>Each row contains three matching examples and one seeded difference. The destructive action is an intentional variant.</p>
+  <section><h2>Workspace fields</h2><div class="row">
+    <input id="field-name" class="workspace-field" placeholder="Workspace name" aria-label="Workspace name">
+    <input id="field-team" class="workspace-field" placeholder="Team name" aria-label="Team name">
+    <input id="field-label" class="workspace-field" placeholder="Project label" aria-label="Project label">
+    <input id="field-tag" class="workspace-field drift-radius" placeholder="Project tag" aria-label="Project tag">
+  </div></section>
+  <section><h2>Dropdowns</h2><div class="row">
+    <select id="choice-board" class="workspace-select" aria-label="Board view"><option>Board view</option><option>List view</option></select>
+    <select id="choice-density" class="workspace-select" aria-label="Density"><option>Comfortable</option><option>Compact</option></select>
+    <select id="choice-order" class="workspace-select" aria-label="Sort order"><option>Newest first</option><option>Oldest first</option></select>
+    <select id="choice-group" class="workspace-select drift-type" aria-label="Grouping"><option>Group by project</option><option>No groups</option></select>
+  </div></section>
+  <section><h2>Tabs</h2><div class="row" role="tablist" aria-label="Sample workspace tabs">
+    <a id="tab-overview" class="workspace-tab" role="tab" aria-selected="false" href="#overview">Overview</a>
+    <a id="tab-projects" class="workspace-tab" role="tab" aria-selected="false" href="#projects">Projects</a>
+    <a id="tab-activity" class="workspace-tab" role="tab" aria-selected="false" href="#activity">Activity</a>
+    <a id="tab-settings" class="workspace-tab drift-tab" role="tab" aria-selected="false" href="#settings">Settings</a>
+  </div></section>
+  <section><h2>Selectors</h2><div class="row">
+    <button id="selector-planning" type="button" class="workspace-chip" role="checkbox" aria-checked="false">Planning</button>
+    <button id="selector-design" type="button" class="workspace-chip" role="checkbox" aria-checked="false">Design</button>
+    <button id="selector-research" type="button" class="workspace-chip" role="checkbox" aria-checked="false">Research</button>
+    <button id="selector-review" type="button" class="workspace-chip drift-chip" role="checkbox" aria-checked="false">Review</button>
+  </div></section>
+  <section><h2>Actions</h2><div class="row">
+    <button id="action-save" type="button" class="button primary" data-ui-sheet-group="workspace actions" data-ui-sheet-variant="primary">Save workspace</button>
+    <button id="action-copy" type="button" class="button primary" data-ui-sheet-group="workspace actions" data-ui-sheet-variant="primary">Save a copy</button>
+    <button id="action-draft" type="button" class="button primary" data-ui-sheet-group="workspace actions" data-ui-sheet-variant="primary">Save draft</button>
+    <button id="action-template" type="button" class="button primary drift-radius" data-ui-sheet-group="workspace actions" data-ui-sheet-variant="primary">Save template</button>
+    <button id="action-delete" type="button" class="button danger" data-ui-sheet-group="workspace actions" data-ui-sheet-variant="danger">Delete workspace</button>
+  </div></section>
+</main>
+</html>

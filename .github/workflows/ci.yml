@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      full_matrix:
+        description: Run every supported Node version on Linux and Windows
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  routine-linux:
+    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.full_matrix }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+      - run: npm run test:package
+
+  routine-windows:
+    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.full_matrix }}
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install chromium
+      - run: node --test --test-concurrency=1 --test-timeout=180000 test/scan-status.test.js test/vite-source.browser.test.js
+
+  full-matrix:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.full_matrix }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [22, 24, 26]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - name: Install Chromium and Linux dependencies
+        if: runner.os == 'Linux'
+        run: npx playwright install --with-deps chromium
+      - name: Install Chromium on Windows
+        if: runner.os == 'Windows'
+        run: npx playwright install chromium
+      - name: Full tests on Linux
+        if: runner.os == 'Linux'
+        run: npm test
+      - name: Full tests on Windows
+        if: runner.os == 'Windows'
+        run: node --test --test-concurrency=1 --test-timeout=180000
+      - run: npm run test:package

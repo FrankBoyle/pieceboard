@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Layout review fixture</title>
+  <style>
+    body { margin: 0; padding: 32px; font: 16px/1.5 Arial, sans-serif; color: #22344a; background: #f5f7fb; }
+    main { max-width: 720px; margin: auto; }
+    section { margin: 24px 0; padding: 20px; background: white; border-radius: 12px; }
+    h1, h2 { line-height: 1.25; }
+    .wordmark { display: inline-flex; font: 700 36px/1.2 Arial, sans-serif; }
+    #brand-second { margin-left: -8px; color: #8c5900; }
+    .callout { box-sizing: border-box; width: 520px; max-width: 100%; height: 55px; padding: 16px 18px 0; background: #18375e; color: white; border-radius: 10px; }
+    .callout p { margin: 0; max-width: 410px; font: 16px/20px Arial, sans-serif; }
+    .summary { word-spacing: 6px; }
+    img { display: block; }
+    @media print { .callout { height: auto; padding-bottom: 16px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Layout and brand review</h1>
+    <p>This synthetic fixture intentionally contains spacing problems.</p>
+    <section>
+      <h2>Overlapping wordmark parts</h2>
+      <div id="retyped-logo" class="wordmark"><span id="brand-first">Study</span><span id="brand-second">Flow</span></div>
+    </section>
+    <section>
+      <h2>Crowded callout</h2>
+      <div id="crowded-banner" class="callout"><p>Review upcoming work across teams and keep the next action clear for everyone who needs to follow up.</p></div>
+    </section>
+    <section>
+      <h2>Unusual word spacing</h2>
+      <p id="summary" class="summary">These words have more spacing than the configured project rule allows.</p>
+    </section>
+    <section>
+      <h2>Approved source</h2>
+      <img id="approved-logo" src="/approved-mark.svg" width="160" height="40" alt="Study Flow demo mark">
+    </section>
+  </main>
+</body>
+</html>
