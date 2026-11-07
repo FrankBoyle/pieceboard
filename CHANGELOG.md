@@ -1,8 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.3 — 2026-11-07
+
+- Connect the lower-left and upper-right blue pieces in the logo and small vector mark for clearer recognition at header size.
+- Point npm README images and source links to this immutable release tag.
+
 ## 0.1.0-alpha.2 — 2026-11-07
 
-- Fix all README images and source links on the npm package page by pointing them to this release's immutable GitHub tag.
+- Unpublished staged candidate superseded by alpha.3 before npm approval.
 
 ## 0.1.0-alpha.1 — 2026-11-07
 
