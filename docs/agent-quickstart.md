@@ -1,16 +1,25 @@
 # Run Pieceboard with a coding agent
 
-This guide is for someone who wants an agent to clone Pieceboard and run a UI review. It also works if the agent is already in a Pieceboard checkout. Node.js 22 or newer and Git are required; no AI API key is required by Pieceboard.
+This guide is for someone who wants an agent to install Pieceboard and run a UI review. It also works if the agent is already in a Pieceboard checkout. Node.js 22 or newer is required; Git is needed to clone repositories, and no AI API key is required by Pieceboard.
 
 Tell the agent which project or projects to inspect and the UI journey that matters. For example:
 
-> Set up Pieceboard from its repository and start its local page on my computer. Help me choose the projects and the UI source I want to review, then walk me through the sheet. If I provide an authorized demo page, capture it and explain what was and was not observed. Use a separate test account and let me sign in myself. Do not change my application code unless I ask.
+> Install Pieceboard in a separate tools folder and start its local page on my computer. Help me choose the projects and the UI source I want to review, then walk me through the sheet. If I provide an authorized demo page, capture it and explain what was and was not observed. Use a separate test account and let me sign in myself. Do not change my application code unless I ask.
 
 The agent should inspect project instructions and reuse existing checkouts when available. If a needed path, test URL, or test-account access cannot be determined, it should ask for that detail. It should not assume that a public website or its signed-in data is available for capture.
 
-## 1. Set up the checkout and open the start page
+## 1. Install Pieceboard and open the start page
 
-In a terminal, or with help from the agent:
+In an empty tools folder outside the projects to review, run these commands in a terminal, or with help from the agent:
+
+```sh
+npm init -y
+npm install --save-dev pieceboard@alpha
+npx playwright install chromium
+npx pieceboard start
+```
+
+Alternatively, clone the repository and run:
 
 ```sh
 git clone https://github.com/FrankBoyle/pieceboard.git
@@ -20,7 +29,7 @@ npx playwright install chromium
 npm start
 ```
 
-Pieceboard opens a browser page on `127.0.0.1` and prints its local address in the terminal. Keep that process running while the person uses the page. If the browser does not open, open the printed address manually. Use `npm start -- --workspace /path/to/projects` to start in a particular folder, or `npm start -- --no-open` to print the address without opening a browser. A compatible installed browser can be selected for sign-in and captures with `npm start -- --browser "/path/to/browser"`. Press Ctrl+C after the review; completed reports remain in `.ui-sheet/launcher-runs/`.
+Pieceboard opens a browser page on `127.0.0.1` and prints its local address in the terminal. Keep that process running while the person uses the page. If the browser does not open, open the printed address manually. With the npm installation, use `npx pieceboard start --workspace "/path/to/projects"` to start in a particular folder, or add `--no-open` to print the address without opening a browser. A compatible installed browser can be selected for sign-in and captures with `--browser "/path/to/browser"`. From a checkout, pass the same options after `npm start --`. Press Ctrl+C after the review; completed reports remain in `.ui-sheet/launcher-runs/` inside the folder where the command ran.
 
 On the page, find the folder containing the projects, select the repositories, and optionally enter existing source paths within each one. The list shows Git repositories directly inside the chosen folder, plus the folder itself. Add an authorized test-page URL for screenshots, or create a source-only inventory. To sign in, select **Open test sign-in**, sign in yourself in the separate browser, return to the test site, and choose **I’m signed in** in the launcher. If bundled Chromium cannot open, Pieceboard tries a compatible installed browser in a fresh profile and identifies it on the page. Browser state is stored in `.ui-sheet-auth/`; protect it like a credential. If a sign-in flow cannot be restored or the page redirects, inspect the warning and use the manual screenshot workflow described below. The launcher does not automatically inspect embedded frames or navigate through an entire workflow.
 

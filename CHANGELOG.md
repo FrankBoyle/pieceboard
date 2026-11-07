@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.0-alpha.6 — 2026-11-07
 
 - Add a loopback-only local start page for selecting and scoping repositories, capturing an optional test page, and opening the resulting sheet.
 - Allow the user to sign in to a test account in a separate browser; keep reusable state local and require it explicitly for capture.
