@@ -6,6 +6,14 @@
 
 The npm package and primary command are `pieceboard`. The older `ui-sheet` command, config filename, report directory, and JSON format IDs remain supported for compatibility. The package was previously called UI Sheet.
 
+## Start with a coding agent
+
+You can clone Pieceboard and ask your coding agent to set it up and review one or more projects. Give the agent the project locations and the UI journey you want to inspect. For example:
+
+> Clone `https://github.com/FrankBoyle/pieceboard`, read its agent quick start, and help me run Pieceboard. First show me the included demo. Then scan the relevant UI source in my project and open the report. Tell me what the scan covers and help me review any differences. Use a demo or test page for any captures, and let me sign in myself if needed. Ask me for any project paths or test-page details you cannot determine.
+
+The [agent quick start](docs/agent-quickstart.md) covers running directly from a checkout, reviewing multiple repositories, and capturing an authorized signed-in test page. The quick start below is for installing Pieceboard as a dependency in an existing project.
+
 ## Quick start
 
 Requires Node.js 22 or newer:
