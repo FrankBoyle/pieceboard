@@ -8,11 +8,21 @@ The npm package and primary command are `pieceboard`. The older `ui-sheet` comma
 
 ## Start with a coding agent
 
-You can clone Pieceboard and ask your coding agent to set it up and review one or more projects. Give the agent the project locations and the UI journey you want to inspect. For example:
+You can clone Pieceboard and ask your coding agent to start a local page where you choose the projects to review. For example:
 
-> Clone `https://github.com/FrankBoyle/pieceboard`, read its agent quick start, and help me run Pieceboard. First show me the included demo. Then scan the relevant UI source in my project and open the report. Tell me what the scan covers and help me review any differences. Use a demo or test page for any captures, and let me sign in myself if needed. Ask me for any project paths or test-page details you cannot determine.
+> Clone `https://github.com/FrankBoyle/pieceboard`, read its agent quick start, and start Pieceboard on my computer. Help me choose the projects I want to review on the local page. Then walk me through the resulting sheet. For screenshots, use an authorized test page and let me sign in myself with a test account. Explain what was and was not captured.
 
-The [agent quick start](docs/agent-quickstart.md) covers running directly from a checkout, reviewing multiple repositories, and capturing an authorized signed-in test page. The quick start below is for installing Pieceboard as a dependency in an existing project.
+From a checkout with Node.js 22 or newer, the agent can run:
+
+```sh
+npm ci
+npx playwright install chromium
+npm start
+```
+
+The last command opens a local page and prints its address. Choose a folder, select one or more repositories, optionally add an authorized test page, and select **Create my sheet**. You can narrow each repository to specific source paths. For a signed-in test page, **Open test sign-in** opens a separate browser for you to sign in; return to the site, then choose **I’m signed in** on the start page. Keep the terminal running while you use Pieceboard, and press Ctrl+C when finished. The report remains on disk.
+
+Without a test page, the report is a source inventory, not a rendering of your app. Captures cover the selected page and state, not every route or embedded frame. Test sign-in state in `.ui-sheet-auth/` and reports in `.ui-sheet/launcher-runs/` can contain private information; keep them out of version control and review reports before sharing. The [agent quick start](docs/agent-quickstart.md) explains the local page and the command-line alternative. The package quick start below installs the published alpha in an existing project; the launcher is available in the source checkout and will require a later package release.
 
 ## Quick start
 

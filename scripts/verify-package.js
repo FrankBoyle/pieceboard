@@ -19,6 +19,7 @@ try {
   for (const file of ['SECURITY.md', 'CHANGELOG.md', 'docs/privacy.md', 'schemas/finding-locations-v1.schema.json', 'schemas/element-appearances-v1.schema.json', 'schemas/element-locations-v1.schema.json', 'src/finding-locations.js', 'src/element-queries.js', 'docs/images/ui-groups.png']) assert.ok(included.has(file), `package is missing ${file}`);
   for (const file of ['schemas/report-v1.schema.json', 'schemas/check-v1.schema.json', 'schemas/elements-v1.schema.json', 'schemas/baselines-v4.schema.json', 'schemas/element-baselines-v2.schema.json', 'schemas/error-v1.schema.json', 'docs/schema.md', 'docs/element-groups.md', 'scripts/demo-elements.js', 'examples/ui-groups/index.html', 'scripts/evaluate-independent.js', 'evaluation/independent-button-cases.json']) assert.ok(included.has(file), `package is missing ${file}`);
   for (const file of ['README.md', 'PROJECT_PLAN.md', 'vite.js', 'docs/data-format.md', 'docs/images/pieceboard-logo.png', 'docs/images/pieceboard-logo.svg', 'docs/images/pieceboard-mark.svg', 'docs/images/button-review.png', 'docs/images/button-zoom.png', 'docs/images/approve-appearance.png', 'docs/images/cross-page.png', 'evaluation/README.md', 'evaluation/browser-holdout.json', 'evaluation/browser-evaluate.js', 'evaluation/results/browser-fe560ff.json', 'examples/button-review/index.html', 'examples/cross-page/profile.html', 'scripts/evaluate-browser.js', 'scripts/evaluate-public-source.js']) assert.ok(included.has(file), `package is missing ${file}`);
+  for (const file of ['src/launcher.js', 'src/launcher/index.html', 'src/launcher/app.js', 'src/launcher/style.css', 'docs/agent-quickstart.md']) assert.ok(included.has(file), `package is missing ${file}`);
   const packageVersion = JSON.parse(await fs.readFile(path.join(repo, 'package.json'), 'utf8')).version;
   const readme = await fs.readFile(path.join(repo, 'README.md'), 'utf8');
   assert.ok(readme.includes(`src="https://raw.githubusercontent.com/FrankBoyle/pieceboard/v${packageVersion}/docs/images/pieceboard-logo.png"`), 'npm README must display this release\'s logo');
@@ -37,6 +38,14 @@ try {
     await fs.access(path.join(consumer, 'node_modules', 'pieceboard', 'docs', 'images', 'pieceboard-logo.svg'));
     const vitePlugin = await import(pathToFileURL(path.join(consumer, 'node_modules', 'pieceboard', 'vite.js')).href);
     assert.equal(typeof vitePlugin.uiSheetSource, 'function');
+    const launcherModule = await import(pathToFileURL(path.join(consumer, 'node_modules', 'pieceboard', 'src', 'launcher.js')).href);
+    const launcher = await launcherModule.startLauncher({ workspace: consumer });
+    try {
+      const page = await fetch(launcher.url);
+      assert.equal(page.status, 200);
+      assert.match(await page.text(), /Choose what to look at/);
+      assert.equal((await fetch(new URL('app.js', launcher.url))).status, 200);
+    } finally { await launcher.close(); }
     runNpm(['exec', '--', 'pieceboard', 'scan', '.'], consumer);
     assert.equal(JSON.parse(await fs.readFile(path.join(consumer, '.ui-sheet', '.ui-sheet-scan.json'), 'utf8')).status, 'completed');
     const report = JSON.parse(await fs.readFile(path.join(consumer, '.ui-sheet', 'ui-sheet.json'), 'utf8'));

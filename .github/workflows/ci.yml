@@ -43,7 +43,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install chromium
-      - run: node --test --test-concurrency=1 --test-timeout=180000 test/scan-status.test.js test/vite-source.browser.test.js
+      - run: node --test --test-concurrency=1 --test-timeout=180000 test/scan-status.test.js test/vite-source.browser.test.js test/launcher.browser.test.js
 
   full-matrix:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.full_matrix }}

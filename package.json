@@ -49,6 +49,7 @@
     "LICENSE"
   ],
   "scripts": {
+    "start": "node bin/ui-sheet.js start",
     "demo": "node scripts/demo-elements.js",
     "demo:inventory": "node bin/ui-sheet.js scan examples/harbor --out .ui-sheet-demo",
     "demo:consistency": "node scripts/demo-consistency.js",

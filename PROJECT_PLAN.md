@@ -23,6 +23,8 @@ The package should be useful without an AI provider. Optional Codex and Claude C
 
 The alpha scans JSX/TSX, static HTML and PHP template markup, CSS custom properties, fonts and image assets. It generates an offline visual inventory with real high-density captures, compares native buttons and explicitly configured UI groups, and supports approved references and source-anchored review decisions. It can inspect selected pages at multiple browser widths for possible overflow, clipping, and text overlap. It ships JSON schemas, coding-agent instructions and report-only CI checks. A second coding agent exercised the documented workflow, and a separately authored accessibility review found and verified fixes for three issues. Configured non-button families remain experimental; representative accuracy, real screen-reader/native-zoom review, and Claude execution remain open. The checklist records those limits rather than treating an alpha as the entire roadmap.
 
+The source checkout also includes a local start page for selecting repositories, limiting source paths, and optionally capturing one test page with a separate user-led sign-in. The launcher and its local-request boundaries have synthetic browser checks; user onboarding, actual assisted reviews, complex sign-in flows, and complete joined-application coverage still need real-world evaluation. It is not part of the already published alpha.5 package.
+
 ## Milestone 1: protect the prototype and establish the baseline
 
 - [x] Review and preserve the existing prototype and its tests; keep local reports and screenshots out of the public repository.

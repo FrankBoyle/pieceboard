@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Add a loopback-only local start page for selecting and scoping repositories, capturing an optional test page, and opening the resulting sheet.
+- Allow the user to sign in to a test account in a separate browser; keep reusable state local and require it explicitly for capture.
+- Cover the launcher, source scoping, local request boundaries, signed-in synthetic capture, accessibility, and package assets in automated checks.
+
 ## 0.1.0-alpha.5 — 2026-11-07
 
 - Use the owner-approved sharp Pieceboard artwork as the single packaged logo source, preserving the smooth blue-to-amber connection.

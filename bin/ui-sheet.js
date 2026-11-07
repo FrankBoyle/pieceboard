@@ -26,6 +26,7 @@ import { listFindingLocations } from '../src/finding-locations.js';
 import { listTokens, setTokenBaseline, checkTokens } from '../src/token-baselines.js';
 import { checkLayout } from '../src/layout-check.js';
 import { DEFAULT_RESPONSIVE_VIEWPORTS, validateResponsiveViewports } from '../src/responsive-audit.js';
+import { startLauncher, openLauncher } from '../src/launcher.js';
 
 async function configuredProjectFile(root, input, label) {
   const realRoot = await fs.realpath(root);
@@ -38,6 +39,7 @@ async function configuredProjectFile(root, input, label) {
 const help = `Pieceboard — a visual inventory for your UI
 
 Usage:
+  pieceboard start [--workspace directory] [--browser path] [--no-open]
   pieceboard scan [project-directory] [--out output-directory] [--include path ...] [--exclude path ...] [--page URL ...] [--capture] [--responsive] [--responsive-viewport WIDTHxHEIGHT ...] [--cross-page] [--viewport WIDTHxHEIGHT] [--color-scheme light|dark] [--pixel-ratio 1|2|3|4] [--mask-selector CSS ...] [--browser path] [--storage-state file] [--baseline file] [--decisions file]
   pieceboard init [project-directory]
   pieceboard auth --url URL --out state.json [--browser path]
@@ -60,6 +62,7 @@ Usage:
   pieceboard --help
 
 Scans JSX/TSX, HTML/PHP templates, CSS, images, and fonts without running them.
+start opens a local page for choosing projects and creating a report.
 The legacy ui-sheet command remains available for existing integrations.
 The default project is the current directory; the default output is .ui-sheet.
 Repeat --include to scan only specific files or directories within the project.
@@ -98,6 +101,35 @@ async function main(args) {
     && !(args[0] === 'tokens' && index > 0 && args[index - 1] === '--name'));
   if (args.length === 0 || helpRequested) {
     console.log(help);
+    return;
+  }
+  if (args[0] === 'start') {
+    let workspace;
+    let browserPath;
+    let noOpen = false;
+    for (let i = 1; i < args.length; i++) {
+      if (args[i] === '--no-open' && !noOpen) noOpen = true;
+      else if (args[i] === '--workspace' && !workspace && args[i + 1] && !args[i + 1].startsWith('-')) workspace = path.resolve(args[++i]);
+      else if (args[i] === '--browser' && !browserPath && args[i + 1] && !args[i + 1].startsWith('-')) browserPath = path.resolve(args[++i]);
+      else throw new Error(`Unknown or repeated start option: ${args[i]}`);
+    }
+    if (!workspace) {
+      const manifest = await fs.readFile(path.join(process.cwd(), 'package.json'), 'utf8').then(JSON.parse).catch(() => null);
+      workspace = manifest?.name === 'pieceboard' ? path.dirname(process.cwd()) : process.cwd();
+    }
+    const launcher = await startLauncher({ workspace, browserPath });
+    console.log(`Pieceboard is running on your computer. Open ${launcher.url}`);
+    console.log('Press Ctrl+C in this terminal when you are finished.');
+    if (!noOpen) openLauncher(launcher.url);
+    let closing = false;
+    const close = async () => {
+      if (closing) return;
+      closing = true;
+      console.log('Closing Pieceboard after any active scan finishes…');
+      await launcher.close();
+    };
+    process.once('SIGINT', close);
+    process.once('SIGTERM', close);
     return;
   }
   if (args[0] === 'check-layout') {

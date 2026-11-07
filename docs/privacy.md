@@ -2,6 +2,8 @@
 
 Pieceboard runs locally. Source-only scanning does not execute the scanned application's JavaScript or PHP. Rendering is explicit and runs the selected page's JavaScript with normal page network access. A capture browser is not a sandbox for hostile application code.
 
+The optional local start page listens only on `127.0.0.1` and uses a fresh, unguessable URL for each run. Requests that change state also require the local page's origin. Anyone with that running URL can use the launcher, so keep it private and stop the process after the review. Reports and test sign-in state remain on disk after the launcher stops.
+
 | Surface | What can be retained | Limits |
 | --- | --- | --- |
 | Selected source | Paths, definitions, usages, static text, CSS values, fonts, and small image assets | Include/exclude rules reduce reading; references in other selected files can still disclose excluded names or values. |

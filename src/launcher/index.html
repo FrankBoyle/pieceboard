@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Start a review | Pieceboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to the review setup</a>
+  <header class="topbar">
+    <div class="brand"><img src="logo.png" alt="" class="logo"><span>Pieceboard</span></div>
+    <span class="local-badge"><span aria-hidden="true">●</span> Running on your computer</span>
+  </header>
+  <main class="page" id="main">
+    <section class="intro">
+      <p class="eyebrow">A clearer view of your interface</p>
+      <h1>Let’s make your first sheet.</h1>
+      <p>Choose the projects you want to review. Pieceboard will gather their UI pieces into one report you can explore with your team.</p>
+    </section>
+
+    <div class="layout">
+      <div class="steps">
+        <section class="step" aria-labelledby="projects-title">
+          <div class="step-number">01</div>
+          <div class="step-content">
+            <div class="section-heading"><div><p class="kicker">YOUR PROJECTS</p><h2 id="projects-title">Choose what to look at</h2></div><span class="tag">Required</span></div>
+            <p class="section-copy">Find the folder containing your projects, then select one or more repositories.</p>
+            <label class="field-label" for="workspace">Folder containing your projects</label>
+            <div class="path-row"><input id="workspace" type="text" autocomplete="off" spellcheck="false" aria-describedby="workspace-help"><button id="find" type="button" class="button secondary">Find projects</button><button id="parent" type="button" class="button quiet" aria-label="Go up one folder">Up one folder</button></div>
+            <p id="workspace-help" class="help">Paste a local folder path, or go up a folder to find neighboring projects.</p>
+            <p id="project-status" class="inline-status" role="status" aria-live="polite">Finding projects…</p>
+            <div id="project-filter" class="project-filter" hidden><label class="field-label" for="project-search">Filter projects</label><input id="project-search" type="text" placeholder="Type a project name" autocomplete="off"></div>
+            <div id="project-list" class="project-list" role="region" aria-label="Available projects" tabindex="0"></div>
+            <p id="selection-summary" class="help" role="status" aria-live="polite">No projects selected yet.</p>
+          </div>
+        </section>
+
+        <section class="step" aria-labelledby="page-title">
+          <div class="step-number">02</div>
+          <div class="step-content">
+            <div class="section-heading"><div><p class="kicker">OPTIONAL VISUAL CAPTURE</p><h2 id="page-title">Add a page you want to see</h2></div><span class="tag muted">Optional</span></div>
+            <p class="section-copy">Without a page, your sheet is a source inventory. Add a test page to include real screenshots and possible button differences.</p>
+            <label class="capture-toggle"><input type="checkbox" id="capture"><span><strong>Capture a test page</strong><small>The page’s JavaScript and normal network requests will run.</small></span></label>
+            <div id="capture-fields" class="capture-fields" hidden>
+              <label class="field-label" for="page-url">Test page URL</label>
+              <input id="page-url" type="url" placeholder="http://localhost:3000/" autocomplete="off" spellcheck="false">
+              <p class="help">Use an authorized development or demo page with synthetic data. Pieceboard checks this page and its current state; it doesn’t click through the whole app or inspect embedded frames.</p>
+              <div class="signin-card">
+                <div><strong>Does this page require sign-in?</strong><p>Open a separate browser and sign in yourself with a test account. Your regular browser profile stays separate. The reusable test sign-in is stored locally in <code>.ui-sheet-auth/</code>; keep it private.</p></div>
+                <div class="signin-actions"><button id="signin" type="button" class="button secondary">Open test sign-in</button><button id="signin-finish" type="button" class="button secondary" hidden>I’m signed in</button><button id="signin-cancel" type="button" class="button quiet" hidden>Cancel</button></div>
+                <p id="auth-status" class="inline-status" role="status" aria-live="polite"></p>
+                <label id="use-auth-label" class="use-auth" hidden><input id="use-auth" type="checkbox"> Use this test sign-in for the capture</label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="step last" aria-labelledby="review-title">
+          <div class="step-number">03</div>
+          <div class="step-content">
+            <div class="section-heading"><div><p class="kicker">READY WHEN YOU ARE</p><h2 id="review-title">Create your sheet</h2></div></div>
+            <p class="section-copy">Your report stays on this computer. Review its warnings and context before sharing it.</p>
+            <div class="action-row"><button id="scan" type="button" class="button primary">Create my sheet <span aria-hidden="true">→</span></button><span id="scan-status" class="inline-status" role="status" aria-live="polite"></span></div>
+            <div id="result" class="result" hidden><div><strong>Your sheet is ready.</strong><p>Open it to review your UI. If you captured a page, check that it shows the screen and role you intended.</p></div><a id="report-link" class="button primary" target="_blank" rel="noopener noreferrer">Open my sheet ↗</a><p id="report-path" class="help"></p></div>
+            <pre id="scan-error" class="error-detail" hidden></pre>
+          </div>
+        </section>
+      </div>
+      <aside class="sidebar" aria-label="How Pieceboard works">
+        <div class="aside-icon" aria-hidden="true">✳</div>
+        <p class="kicker">WHAT YOU’LL GET</p>
+        <h2>See the pieces.<br>Make the call.</h2>
+        <p>Explore components, styles, and assets from the projects you select. Captured pages can show real examples side by side.</p>
+        <div class="aside-rule"></div>
+        <h3>Your judgment matters</h3>
+        <p>A suggested difference is a starting point. Check the role, page, and state before choosing what should match.</p>
+        <div class="aside-rule"></div>
+        <h3>Made for local work</h3>
+        <p>Reports can contain source details and screenshots. Keep them private until you’ve reviewed what they contain.</p>
+      </aside>
+    </div>
+    <footer>Need a hand? Ask your coding agent to help choose the right projects and test page.</footer>
+  </main>
+</body>
+</html>
