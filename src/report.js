@@ -23,10 +23,12 @@ export async function writeReport(data, outputDir) {
   await fs.mkdir(outputDir, { recursive: true });
   await canReplace(htmlPath, 'html');
   await canReplace(dataPath, 'json');
-  const [css, js] = await Promise.all([
+  const [css, js, mark] = await Promise.all([
     fs.readFile(new URL('./viewer.css', import.meta.url), 'utf8'),
     fs.readFile(new URL('./viewer.js', import.meta.url), 'utf8'),
+    fs.readFile(new URL('../docs/images/pieceboard-mark.svg', import.meta.url), 'utf8'),
   ]);
+  const brandMark = mark.replace('<svg ', '<svg class="brand-mark" aria-hidden="true" ');
   // Prevent project content from ending the script element in the generated report.
   const serialized = JSON.stringify(data).replaceAll('<', '\\u003c').replaceAll('\u2028', '\\u2028').replaceAll('\u2029', '\\u2029');
   const html = `${MARKER}
@@ -43,7 +45,7 @@ export async function writeReport(data, outputDir) {
   <a class="skip-link" href="#main-content">Skip to main content</a>
   <div class="app-shell">
     <aside class="sidebar" aria-label="Pieceboard navigation">
-      <div class="brand"><svg class="brand-mark" viewBox="0 0 96 96" aria-hidden="true"><rect x="8" y="8" width="43" height="39" rx="8" fill="#17385b"/><rect x="55" y="8" width="33" height="39" rx="8" fill="#2b7898"/><rect x="40" y="39" width="29" height="22" rx="7" fill="#2b7898"/><rect x="8" y="57" width="29" height="31" rx="8" fill="#248da1"/><rect x="40" y="57" width="48" height="31" rx="8" fill="#f2b344"/></svg><span>pieceboard<span class="brand-dot">.</span><small>THIS OR THAT. SEE THE DIFFERENCE.</small></span></div>
+      <div class="brand">${brandMark}<span>pieceboard<span class="brand-dot">.</span><small>THIS OR THAT. SEE THE DIFFERENCE.</small></span></div>
       <div class="workspace-label">WORKSPACE</div>
       <div class="workspace"><span class="workspace-icon" id="workspace-initial">U</span><span><strong id="workspace-name"></strong><small>Local project</small></span><span class="workspace-chevron">⌄</span></div>
       <div class="nav-heading">LIBRARY <span>01</span></div>

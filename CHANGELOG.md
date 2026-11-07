@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-alpha.4 — 2026-11-07
+
+- Replace the soft-glow README logo with crisp vector artwork and a small raster fallback for npm.
+- Use the packaged connected-piece mark inside generated reports so the small icon stays consistent with the public logo.
+- Verify the release-pinned README logo and packaged brand assets during the package smoke test.
+
 ## 0.1.0-alpha.3 — 2026-11-07
 
 - Connect the lower-left and upper-right blue pieces in the logo and small vector mark for clearer recognition at header size.
