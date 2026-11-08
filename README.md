@@ -10,13 +10,13 @@ The npm package and primary command are `pieceboard`. The older `ui-sheet` comma
 
 You can ask your coding agent to install Pieceboard in a separate tools folder and start a local page where you choose the projects to review. For example:
 
-> Install `pieceboard@alpha` in a separate tools folder. Scan the projects I identify and discover the linked pages on my authorized test site. Let me sign in myself with a synthetic test account. Show me all detected UI findings and page coverage, with A/B choices when comparable screenshots are available. Do not replace the scan results with a hand-picked list.
+> Install `pieceboard` in a separate tools folder. Scan the projects I identify and discover the linked pages on my authorized test site. Let me sign in myself with a synthetic test account. Show me all detected UI findings and page coverage, with A/B choices when comparable screenshots are available. Do not replace the scan results with a hand-picked list.
 
 With Node.js 22 or newer, the agent can run these commands from an empty tools folder outside the projects being reviewed:
 
 ```sh
 npm init -y
-npm install --save-dev pieceboard@alpha
+npm install --save-dev pieceboard
 npx playwright install chromium
 npx pieceboard start
 ```
@@ -25,14 +25,14 @@ Alternatively, clone `https://github.com/FrankBoyle/pieceboard`, run `npm ci` an
 
 The start command opens a local page and prints its address. Choose a folder and one or more repositories, select **Inspect a test site**, enter its start page, and keep **Find and inspect linked pages** selected. For a signed-in test page, **Open test sign-in** opens a separate browser for you to sign in; return to the site, then choose **I’m signed in** on the start page. The report starts with the full detected findings and page coverage; A/B comparisons follow where both images are available. Keep the terminal running while you use Pieceboard, and press Ctrl+C when finished.
 
-Without a test page, the report is a source inventory, not a rendering of your app. Site review follows discovered same-origin links and same-origin embedded page URLs, up to the displayed limit, without clicking buttons or submitting forms. It checks only supported visual patterns and responsive problems in reachable states; other roles, interactive states, hidden routes, and different origins need separate reviews. Non-read requests and known action links are blocked, which can leave some pages incomplete. Use a synthetic test environment, and review the page coverage and warnings. Test sign-in state and reports can contain private information; keep them out of version control and review them before sharing. The [agent quick start](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/docs/agent-quickstart.md) explains the workflow.
+Without a test page, the report is a source inventory, not a rendering of your app. Site review follows discovered same-origin links and same-origin embedded page URLs, up to the displayed limit, without clicking buttons or submitting forms. It checks only supported visual patterns and responsive problems in reachable states; other roles, interactive states, hidden routes, and different origins need separate reviews. Non-read requests and known action links are blocked, which can leave some pages incomplete. Use a synthetic test environment, and review the page coverage and warnings. Test sign-in state and reports can contain private information; keep them out of version control and review them before sharing. The [agent quick start](https://github.com/FrankBoyle/pieceboard/blob/main/docs/agent-quickstart.md) explains the workflow.
 
 ## Quick start
 
 Requires Node.js 22 or newer:
 
 ```sh
-npm install --save-dev pieceboard@alpha
+npm install --save-dev pieceboard
 npx pieceboard scan .
 ```
 
@@ -101,14 +101,20 @@ npm whoami
 
 Review the dry-run file list. It must include the Pieceboard mark, CLI, source, tests' required runtime assets, README, and public examples; it must exclude local design-review folders, `.ui-sheet-lab/`, `.ui-sheet-auth/`, `node_modules/`, credentials, and project-specific screenshots. `npm run test:package` installs both the checkout and packed tarball in isolated temporary consumers and checks the command and report. If a command fails, fix it and rerun that command before publishing. Check `git status --short`, commit the reviewed release files, and push the source so the published tarball can be traced to a clean commit. Verify that the npm account shown by `npm whoami` is the intended owner.
 
-For the first public prerelease, `npm view pieceboard version` may return `E404` because the name has not yet been claimed. That is a registry lookup, not a successful reservation. After all checks and file review, run:
+After all checks and file review, stage the release with the `latest` tag. This makes the approved version the default for a normal `npm install pieceboard`:
 
 ```powershell
-npm publish --tag alpha --access public
-npm view pieceboard@alpha version
+npx --yes npm@11.15.0 stage publish --tag latest --access public
+npx --yes npm@11.15.0 stage list pieceboard
 ```
 
-Complete the npm authentication or two-factor prompt locally; do not paste tokens or one-time codes into a chat, README, or shell history. The final command must print the exact version in `package.json`. If publishing fails, do not bump the version or retry blindly: read the registry error, check whether that version exists, then correct the cause. After success, install `pieceboard@alpha` in a fresh temporary project and run `npx pieceboard --help` and a source scan before announcing the release. Publish GitHub source only from a reviewed, clean history; local capture reports and private project screenshots must never enter that history.
+On npm, review and approve the staged package using two-factor authentication. Then verify the default version:
+
+```powershell
+npm view pieceboard version
+```
+
+Do not paste tokens or one-time codes into a chat, README, or shell history. Until approval, npm continues serving the previous default. The final command must print the exact version in `package.json`. If publishing fails, do not bump the version or retry blindly: read the registry error, check whether that version exists, then correct the cause. After success, install `pieceboard` in a fresh temporary project and run `npx pieceboard --help` and a source scan before announcing the release. Publish GitHub source only from a reviewed, clean history; local capture reports and private project screenshots must never enter that history.
 
 The package includes the [project plan](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/PROJECT_PLAN.md) and [synthetic evaluations](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/evaluation/README.md) so readers can inspect the known successes and misses. Those studies are development evidence, not product-wide accuracy claims. See [data formats](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/docs/data-format.md) for the current agent and CI outputs.
 
@@ -164,7 +170,7 @@ To refresh the visual-approval example, run `npm run demo:consistency` and then 
 From the root of your own project, install the early alpha from npm:
 
 ```sh
-npm install --save-dev pieceboard@alpha
+npm install --save-dev pieceboard
 npx pieceboard scan .
 ```
 

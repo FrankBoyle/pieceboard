@@ -14,7 +14,7 @@ In an empty tools folder outside the projects to review, run these commands in a
 
 ```sh
 npm init -y
-npm install --save-dev pieceboard@alpha
+npm install --save-dev pieceboard
 npx playwright install chromium
 npx pieceboard start
 ```
