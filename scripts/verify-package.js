@@ -22,7 +22,9 @@ try {
   for (const file of ['src/launcher.js', 'src/launcher/index.html', 'src/launcher/app.js', 'src/launcher/style.css', 'docs/agent-quickstart.md']) assert.ok(included.has(file), `package is missing ${file}`);
   for (const file of ['src/site-discovery.js', 'schemas/site-scan-v1.schema.json']) assert.ok(included.has(file), `package is missing ${file}`);
   for (const file of ['src/choice-board.js', 'src/choice-board-viewer.js', 'src/choice-board.css']) assert.ok(included.has(file), `package is missing ${file}`);
-  const packageVersion = JSON.parse(await fs.readFile(path.join(repo, 'package.json'), 'utf8')).version;
+  const manifest = JSON.parse(await fs.readFile(path.join(repo, 'package.json'), 'utf8'));
+  const packageVersion = manifest.version;
+  assert.equal(manifest.publishConfig?.tag, 'latest', 'releases must default to the main npm package');
   const readme = await fs.readFile(path.join(repo, 'README.md'), 'utf8');
   assert.ok(readme.includes(`src="https://raw.githubusercontent.com/FrankBoyle/pieceboard/v${packageVersion}/docs/images/pieceboard-logo.png"`), 'npm README must display this release\'s logo');
   assert.equal([...included].some((file) => file.startsWith('.ui-sheet') || file.startsWith('node_modules/')), false, 'local reports, browser state, and dependencies are not packed');
