@@ -26,7 +26,7 @@ async function imageData(root, input, total) {
   return `data:${mime};base64,${bytes.toString('base64')}`;
 }
 
-/** Generate one portable, offline A/B review from deliberately paired examples. */
+/** Generate a portable, offline review from two to four real examples. */
 export async function writeChoiceBoard(manifestPath, outputPath) {
   const manifest = path.resolve(manifestPath);
   const contents = await fs.readFile(manifest, 'utf8');
@@ -38,7 +38,7 @@ export async function writeChoiceBoard(manifestPath, outputPath) {
   const total = { size: 0 };
   const choices = [];
   for (const [index, item] of input.choices.entries()) {
-    if (!item || !Array.isArray(item.options) || item.options.length !== 2) throw new Error(`Choice ${index + 1} must have exactly two options.`);
+    if (!item || !Array.isArray(item.options) || item.options.length < 2 || item.options.length > 4) throw new Error(`Choice ${index + 1} must have two to four options.`);
     const options = [];
     for (const option of item.options) {
       if (!option || typeof option !== 'object') throw new Error(`Choice ${index + 1} has an invalid option.`);
@@ -50,7 +50,7 @@ export async function writeChoiceBoard(manifestPath, outputPath) {
   data.storageKey = `pieceboard:board:${createHash('sha256').update(JSON.stringify(data)).digest('hex').slice(0, 24)}`;
   const [css, js] = await Promise.all([fs.readFile(new URL('./choice-board.css', import.meta.url), 'utf8'), fs.readFile(new URL('./choice-board-viewer.js', import.meta.url), 'utf8')]);
   const serialized = JSON.stringify(data).replaceAll('<', '\\u003c').replaceAll('\u2028', '\\u2028').replaceAll('\u2029', '\\u2029');
-  const html = `<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'"><title>Pieceboard visual choices</title><style>${css}</style></head><body><main><header><p class="eyebrow">PIECEBOARD · THIS OR THAT</p><h1 id="title"></h1><p id="introduction"></p><p>Choose A or B for each question. Add an optional note, then download your answers to share them.</p></header><form id="choices"></form><section class="finish"><button id="download" type="button">Download my answers</button><p id="status" role="status">Your answers stay on this device until you download and share them.</p></section></main><script>window.__CHOICES__=${serialized};</script><script>${js}</script></body></html>`;
+  const html = `<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'"><title>Pieceboard visual choices</title><style>${css}</style></head><body><main><header><p class="eyebrow">PIECEBOARD · CHOOSE WHAT FITS</p><h1 id="title"></h1><p id="introduction"></p><p>Choose an observed option, neither, ignore, or ask for more context. Explain your decision, then download your review.</p></header><form id="choices"></form><section class="finish"><button id="download" type="button">Download my answers</button><p id="status" role="status">Your answers stay on this device until you download and share them.</p></section></main><script>window.__CHOICES__=${serialized};</script><script>${js}</script></body></html>`;
   await fs.writeFile(path.resolve(outputPath), html, { encoding: 'utf8', flag: 'wx' });
   return { output: path.resolve(outputPath), choices: choices.length };
 }

@@ -64,6 +64,14 @@ function inspectResponsiveInPage() {
     for (let current = element; current; current = current.parentElement) {
       const style = getComputedStyle(current);
       if (style.display === 'none' || style.visibility === 'hidden' || style.visibility === 'collapse' || Number(style.opacity) === 0 || style.contentVisibility === 'hidden') return false;
+      if (current.localName === 'details' && !current.open) {
+        const summary = [...current.children].find((child) => child.localName === 'summary');
+        if (!summary?.contains(element)) return false;
+      }
+      if ((style.clip && style.clip !== 'auto') || (style.clipPath && style.clipPath !== 'none')) {
+        const rect = current.getBoundingClientRect();
+        if (rect.width <= 2 && rect.height <= 2) return false;
+      }
     }
     return true;
   };

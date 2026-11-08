@@ -19,7 +19,7 @@ test('a portable choice board opens offline, records selections, and exports ans
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'pieceboard-choices-'));
   t.after(async () => { for (const file of ['a.png', 'input.json', 'review.html', 'answers.md', 'bad.json']) await fs.rm(path.join(dir, file), { force: true }); await fs.rmdir(dir); });
   await fs.writeFile(path.join(dir, 'a.png'), png);
-  await fs.writeFile(path.join(dir, 'input.json'), JSON.stringify({ title: 'Compare <script>bad()</script>', introduction: 'Two real test examples', choices: [{ question: 'Which navigation?', context: 'Test captures', options: [{ label: 'One', image: 'a.png' }, { label: 'Two', description: 'Text example' }] }] }));
+  await fs.writeFile(path.join(dir, 'input.json'), JSON.stringify({ title: 'Compare <script>bad()</script>', introduction: 'Test examples', choices: [{ question: 'Which navigation?', context: 'Test captures', options: [{ label: 'One', image: 'a.png' }, { label: 'Two', description: 'Text example' }, { label: 'Three' }, { label: 'Four' }] }] }));
   await exec(process.execPath, [cli, 'choices', '--manifest', path.join(dir, 'input.json'), '--out', path.join(dir, 'review.html')]);
   await assert.rejects(exec(process.execPath, [cli, 'choices', '--manifest', path.join(dir, 'input.json'), '--out', path.join(dir, 'review.html')]));
   await fs.writeFile(path.join(dir, 'bad.json'), JSON.stringify({ title: 'Bad', choices: [{ question: 'Bad?', options: [{ label: 'One', image: '../outside.png' }, { label: 'Two' }] }] }));
@@ -34,13 +34,16 @@ test('a portable choice board opens offline, records selections, and exports ans
     assert.match(await page.locator('h1').innerText(), /<script>bad/);
     assert.equal(await page.locator('.option img').count(), 1);
     await page.getByText('Choose B · Two').click();
+    await page.getByText('Choose D · Four').click();
+    assert.equal(await page.locator('input[value="D"]').isChecked(), true);
+    await page.getByText('Ignore — this difference is intentional or unrelated').click();
     await page.locator('textarea').fill('Keep this one');
     await page.reload();
-    assert.equal(await page.locator('input[value="B"]').isChecked(), true);
+    assert.equal(await page.locator('input[value="IGNORE"]').isChecked(), true);
     const event = page.waitForEvent('download'); await page.getByRole('button', { name: 'Download my answers' }).click();
     const download = await event; await download.saveAs(path.join(dir, 'answers.md'));
     const markdown = await fs.readFile(path.join(dir, 'answers.md'), 'utf8');
-    assert.match(markdown, /Choice: B · Two/); assert.match(markdown, /Keep this one/); assert.deepEqual(errors, []);
+    assert.match(markdown, /Choice: Ignore/); assert.match(markdown, /Keep this one/); assert.deepEqual(errors, []);
   } finally { await browser.close(); }
 });
 
@@ -48,10 +51,11 @@ test('a captured finding appears as a clickable A/B choice before the inventory'
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'pieceboard-report-choice-'));
   t.after(async () => { for (const file of ['index.html', 'ui-sheet.json', 'answers.md']) await fs.rm(path.join(dir, file), { force: true }); await fs.rmdir(dir); });
   const image = `data:image/png;base64,${png.toString('base64')}`;
+  const otherImage = `data:image/png;base64,${Buffer.concat([png, Buffer.from('other')]).toString('base64')}`;
   const data = { format: 'ui-sheet/v1', name: 'Demo', scannedFiles: 1, warnings: [], items: [], scanRunId: 'synthetic-test', consistency: {
     scope: { url: 'https://example.com/', viewport: { width: 1440, height: 900 }, pixelRatio: 2 },
     counts: { seen: 3, eligible: 3 }, observations: [{ id: 'button:0', source: { status: 'unresolved' } }, { id: 'button:2', source: { status: 'unresolved' } }],
-    previews: { 'button:0': { image }, 'button:2': { image } }, appearances: [],
+    previews: { 'button:0': { image }, 'button:2': { image: otherImage } }, appearances: [],
     findings: [{ id: '0123456789abcdef', evidence: 'small sample', group: { family: 'actions', variant: 'primary' }, total: 3, common: { count: 2, example: 'button:0' }, outlier: { count: 1, example: 'button:2' }, differences: [] }],
   } };
   await writeReport(data, dir);
@@ -59,11 +63,11 @@ test('a captured finding appears as a clickable A/B choice before the inventory'
   try {
     const page = await browser.newPage({ acceptDownloads: true }); const errors = []; page.on('pageerror', error => errors.push(error.message));
     await page.goto(pathToFileURL(path.join(dir, 'index.html')).href);
-    assert.equal(await page.locator('#choice-review input[type=radio]').count(), 2);
+    assert.equal(await page.locator('#choice-review input[type=radio]').count(), 5);
     await page.locator('#choice-review input[value=b]').check();
-    const event = page.waitForEvent('download'); await page.locator('#choice-review button').click();
+    const event = page.waitForEvent('download'); await page.getByRole('button', { name: 'Download my review' }).first().click();
     await (await event).saveAs(path.join(dir, 'answers.md'));
-    assert.match(await fs.readFile(path.join(dir, 'answers.md'), 'utf8'), /Choice: B/);
+    assert.match(await fs.readFile(path.join(dir, 'answers.md'), 'utf8'), /Decision: B/);
     assert.deepEqual(errors, []);
   } finally { await browser.close(); }
 });

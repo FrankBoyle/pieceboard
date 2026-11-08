@@ -81,6 +81,30 @@ test('site reviews report when responsive screenshots exceed their budget', brow
   assert.equal(siteGuard.previewBudget.omitted, 1);
 });
 
+test('does not report closed menu content or screen-reader-only labels as visible text', browserOptions, async (t) => {
+  const server = http.createServer((request, response) => {
+    response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+    response.end(`<!doctype html><meta name="viewport" content="width=device-width"><style>
+      #closed-text { position:fixed; top:0; left:0 }
+      #screenreader { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0) }
+      #clip { height:10px; overflow:hidden }
+    </style><details id="closed-menu"><summary>Menu</summary><div id="closed-text">Hidden menu item</div></details>
+    <span id="screenreader">A visually hidden accessible label</span><div id="clip"><span id="visible-clipped">Real clipped text</span></div>`);
+  });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
+  const browser = await chromium.launch({ headless: true, ...(browserPath ? { executablePath: browserPath } : {}) });
+  t.after(() => browser.close());
+  const result = await auditResponsive(browser, { items: [] }, `http://127.0.0.1:${server.address().port}/`, {
+    viewports: [{ width: 390, height: 844 }], colorScheme: 'light', pixelRatio: 1,
+    maskSelectors: [], actions: [], browserVersion: browser.version(), throwIfExpired() {},
+  });
+  const findings = result.viewports[0].findings;
+  assert.ok(findings.some((finding) => finding.kind === 'clipped-text' && finding.selector === '#visible-clipped'));
+  assert.equal(findings.some((finding) => `${finding.selector} ${finding.otherSelector || ''}`.includes('closed-text')), false);
+  assert.equal(findings.some((finding) => `${finding.selector} ${finding.otherSelector || ''}`.includes('screenreader')), false);
+});
+
 test('keeps hash-router paths while excluding queries, fragments used as tokens, and encoded parameters', () => {
   const display = (value) => displayResponsiveRoute(new URL(value));
   assert.equal(display('https://example.test/app?outer=private#/settings?token=private'), 'https://example.test/app#/settings');

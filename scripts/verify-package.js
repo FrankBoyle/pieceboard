@@ -74,7 +74,7 @@ try {
     await fs.writeFile(path.join(consumer, 'preview.png'), Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLttAAAAABJRU5ErkJggg==', 'base64'));
     await fs.writeFile(path.join(consumer, 'choices.json'), JSON.stringify({ title: 'Choose a style', choices: [{ question: 'Which?', options: [{ label: 'First', image: 'preview.png' }, { label: 'Second' }] }] }));
     runNpm(['exec', '--', 'pieceboard', 'choices', '--manifest', 'choices.json', '--out', 'choices.html'], consumer);
-    assert.match(await fs.readFile(path.join(consumer, 'choices.html'), 'utf8'), /Choose A or B/);
+    assert.match(await fs.readFile(path.join(consumer, 'choices.html'), 'utf8'), /Choose an observed option/);
     await fs.writeFile(path.join(consumer, 'previews.json'), JSON.stringify({ previews: [{ item: 'component:HTML#button', image: 'preview.png', source: { file: 'App.jsx', line: 1 }, label: 'Example' }] }));
     runNpm(['exec', '--', 'ui-sheet', 'add-previews', '.ui-sheet', '--manifest', 'previews.json'], consumer);
     const updated = JSON.parse(await fs.readFile(path.join(consumer, '.ui-sheet', 'ui-sheet.json'), 'utf8'));

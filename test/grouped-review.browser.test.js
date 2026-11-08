@@ -1,0 +1,64 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { chromium } from 'playwright';
+import AxeBuilder from '@axe-core/playwright';
+import { writeReport } from '../src/report.js';
+
+const browserPath = process.env.UI_SHEET_TEST_BROWSER || (existsSync(chromium.executablePath()) ? chromium.executablePath() : '');
+const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a/5sAAAAASUVORK5CYII=', 'base64');
+const image = (suffix) => `data:image/png;base64,${Buffer.concat([png, Buffer.from(suffix)]).toString('base64')}`;
+
+test('groups repeated comparisons, supports four appearances and exports layout decisions', { skip: !browserPath && 'Install Playwright Chromium or set UI_SHEET_TEST_BROWSER.' }, async (t) => {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'pieceboard-grouped-'));
+  t.after(async () => { for (const file of ['index.html', 'ui-sheet.json', 'review.md', 'review.json']) await fs.rm(path.join(dir, file), { force: true }); await fs.rmdir(dir); });
+  const group = { family: '.action', familyEvidence: 'component class', variant: 'primary', type: 'button' };
+  const finding = (id, other) => ({ id, group, total: 4, common: { count: 3, example: 'button:0' }, outlier: { count: 1, example: `button:${other}` }, differences: [] });
+  const page = (url, findings) => ({ scope: { url, viewport: { width: 1440, height: 900 }, theme: 'light', pixelRatio: 1 }, counts: { seen: 5, eligible: 5 }, observations: [0, 1, 2, 3, 4].map((id) => ({ id: `button:${id}`, source: { status: 'unresolved' } })), previews: Object.fromEntries([0, 1, 2, 3, 4].map((id) => [`button:${id}`, { image: image(String(id === 4 ? 0 : id)) }])), appearances: [], findings });
+  const responsive = (url) => ({ url, viewport: { width: 390, height: 844 }, colorScheme: 'light', pixelRatio: 1, browser: { version: 'test' }, viewports: [{ viewport: { width: 390, height: 844 }, coverage: 'observed', findings: [{ kind: 'overlapping-text', selector: '#first', otherSelector: '#second', message: 'Text overlaps.', previewIndex: 0, bounds: { x: 0, y: 0, width: 10, height: 10 } }], previews: [{ image: image('layout'), scroll: { x: 0, y: 0 } }] }] });
+  const data = { format: 'ui-sheet/v1', name: 'Grouped demo', scannedFiles: 1, warnings: [], items: [], scanRunId: 'grouped-test', consistency: { pages: [page('https://example.test/a', [finding('one', 1), finding('two', 2), finding('three', 3)]), page('https://example.test/b', [finding('four', 1), finding('indistinct', 4)])] }, responsiveAudit: { format: 'ui-sheet/responsive-pages-v1', pages: [responsive('https://example.test/students/123/attendance'), responsive('https://example.test/students/456/attendance')] } };
+  await writeReport(data, dir);
+  const browser = await chromium.launch({ headless: true, executablePath: browserPath });
+  try {
+    const context = await browser.newContext({ acceptDownloads: true });
+    const page = await context.newPage(); const errors = []; page.on('pageerror', (error) => errors.push(error.message));
+    await page.goto(pathToFileURL(path.join(dir, 'index.html')).href);
+    assert.equal(await page.locator('#choice-review fieldset').count(), 1);
+    assert.equal(await page.locator('#choice-review .choice-option').count(), 4);
+    assert.match(await page.locator('#choice-review').innerText(), /4 matching comparisons/);
+    assert.match(await page.locator('#choice-review').innerText(), /1 comparison had identical captures/);
+    await page.locator('#choice-review input[value="d"]').check();
+    await page.locator('#choice-review textarea').fill('Fourth is clearest.');
+    assert.equal(await page.locator('#layout-decisions fieldset').count(), 1);
+    assert.match(await page.locator('#layout-decisions').innerText(), /2 matching occurrences/);
+    await page.locator('#layout-decisions input[value="ignore"]').check();
+    await page.locator('#layout-decisions textarea').fill('This overlap is an intentional overlay.');
+    await page.reload();
+    assert.equal(await page.locator('#choice-review input[value="d"]').isChecked(), true);
+    assert.equal(await page.locator('#layout-decisions input[value="ignore"]').isChecked(), true);
+    const event = page.waitForEvent('download'); await page.getByRole('button', { name: 'Download my review' }).first().click();
+    await (await event).saveAs(path.join(dir, 'review.md'));
+    const review = await fs.readFile(path.join(dir, 'review.md'), 'utf8');
+    assert.match(review, /Decision: D/); assert.match(review, /Fourth is clearest/);
+    assert.match(review, /Decision: Ignore/); assert.match(review, /intentional overlay/);
+    const jsonEvent = page.waitForEvent('download'); await page.getByRole('button', { name: 'Download JSON' }).first().click();
+    await (await jsonEvent).saveAs(path.join(dir, 'review.json'));
+    const exported = JSON.parse(await fs.readFile(path.join(dir, 'review.json'), 'utf8'));
+    assert.equal(exported.format, 'pieceboard/review-v1'); assert.equal(exported.visual.length, 1); assert.equal(exported.layout.length, 1);
+    await page.evaluate(() => localStorage.clear()); await page.reload();
+    await page.locator('#choice-review input[value="b"]').check();
+    const reloaded = page.waitForEvent('load'); await page.locator('#choice-review input[type=file]').setInputFiles(path.join(dir, 'review.json')); await reloaded;
+    assert.equal(await page.locator('#choice-review input[value="b"]').isChecked(), true, 'existing answers are not overwritten');
+    assert.equal(await page.locator('#layout-decisions input[value="ignore"]').isChecked(), true, 'unanswered decisions are imported');
+    const accessibility = await new AxeBuilder({ page }).include('#choice-review').include('#layout-decisions').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+    assert.deepEqual(accessibility.violations.map((violation) => ({ id: violation.id, targets: violation.nodes.map((node) => node.target) })), []);
+    await page.setViewportSize({ width: 320, height: 640 });
+    const width = await page.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth, overflow: [...document.querySelectorAll('#choice-review *, #layout-decisions *')].map((element) => ({ tag: element.tagName, className: element.className, right: Math.round(element.getBoundingClientRect().right) })).filter((entry) => entry.right > innerWidth + 1).slice(0, 10) }));
+    assert.equal(width.document, width.viewport, JSON.stringify(width.overflow));
+    assert.deepEqual(errors, []);
+  } finally { await browser.close(); }
+});

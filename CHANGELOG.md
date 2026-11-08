@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-alpha.9 — 2026-11-07
+
+- Match the setup and report colors to the Pieceboard mark while preserving the colors of captured examples.
+- Group repeated comparisons and layout findings, support two to four observed appearances, and record neither, ignore, and needs-more-context decisions with explanations.
+- Export Markdown or JSON reviews and import matching JSON decisions without replacing existing answers.
+- Avoid treating text in closed menus and standard visually hidden accessibility labels as visible layout problems.
+
 ## 0.1.0-alpha.8 — 2026-11-07
 
 - Discover linked same-origin pages and embedded screens in an authorized test site, then inspect reachable pages at multiple widths.

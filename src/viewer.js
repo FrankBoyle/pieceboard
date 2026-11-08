@@ -1,5 +1,85 @@
+// Group only repeated, observed evidence. Captures remain unchanged and every
+// original finding is still available in the detailed report.
+function createPieceboardReviewModel() {
+  const fingerprint = (value) => {
+    let a = 2166136261, b = 2246822519;
+    for (let i = 0; i < value.length; i++) { const c = value.charCodeAt(i); a = Math.imul(a ^ c, 16777619); b = Math.imul(b ^ c, 3266489917); }
+    return `${value.length.toString(16)}-${(a >>> 0).toString(16)}-${(b >>> 0).toString(16)}`;
+  };
+  const normalize = (value) => String(value || '')
+    .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, ':id')
+    .replace(/\/\d+(?=\/|$)/g, '/:number');
+  const image = (page, observation) => {
+    const value = page?.previews?.[observation]?.image;
+    return typeof value === 'string' && /^data:image\/(?:png|jpeg|webp);base64,/i.test(value) ? value : null;
+  };
+  function visual(data) {
+    const buttons = data.consistency ? (data.consistency.pages || [data.consistency]) : [];
+    const elements = data.elementConsistency?.pages || [];
+    const groups = [], buckets = new Map();
+    let missing = 0, indistinct = 0, originalIndex = 0;
+    function add(kind, finding, pageA, idA, pageB, idB, context, target) {
+      const a = image(pageA, idA), b = image(pageB, idB);
+      if (!a || !b) { missing++; return; }
+      const original = originalIndex++;
+      if (a === b) { indistinct++; return; }
+      const group = finding.group || {};
+      const name = [group.family, group.variant, group.type].filter(Boolean).join(' · ') || 'UI appearance';
+      const scope = pageA?.scope || {};
+      const bucketKey = JSON.stringify([kind, group.family, group.variant, group.type, group.familyEvidence, scope.viewport?.width, scope.viewport?.height, scope.theme]);
+      const bucket = buckets.get(bucketKey) || [];
+      let current = bucket.find((entry) => {
+        const hasA = entry.options.some((option) => option.image === a), hasB = entry.options.some((option) => option.image === b);
+        return (hasA || hasB) && entry.options.length + Number(!hasA) + Number(!hasB) <= 4;
+      });
+      if (!current) {
+        current = { key: `visual:${finding.id || 'choice'}:${fingerprint(a)}:${fingerprint(b)}:${bucketKey}`, name, options: [], occurrences: [], legacy: [] };
+        bucket.push(current); buckets.set(bucketKey, bucket); groups.push(current);
+      }
+      const addOption = (src, label) => {
+        let index = current.options.findIndex((option) => option.image === src);
+        if (index < 0) { index = current.options.length; current.options.push({ image: src, label }); }
+        return index;
+      };
+      const first = addOption(a, 'Observed appearance');
+      const second = addOption(b, 'Observed appearance');
+      current.occurrences.push({ id: finding.id || `choice-${original + 1}`, context, target });
+      current.legacy.push({ key: `${original}:${finding.id || `choice-${original + 1}`}`, first, second });
+    }
+    for (const [kind, pages] of [['Button', buttons], ['UI group', elements]]) {
+      for (const [index, page] of pages.entries()) for (const [findingIndex, finding] of (page.findings || []).entries()) {
+        const scope = page.scope || {};
+        const viewport = scope.viewport ? `${scope.viewport.width} × ${scope.viewport.height}` : 'viewport unknown';
+        add(kind, finding, page, finding.common?.example, page, finding.outlier?.example,
+          `${kind} · page ${index + 1} · ${scope.url || 'page unknown'} · ${viewport} · ${scope.theme || 'theme unknown'}`,
+          `#site-${kind === 'Button' ? 'button' : 'element'}-${index}-${findingIndex}`);
+      }
+    }
+    for (const [index, finding] of (data.crossPageConsistency?.findings || []).entries()) {
+      const a = finding.common?.example, b = finding.outlier?.example;
+      add('Button', finding, buttons[(a?.page || 0) - 1], a?.observation, buttons[(b?.page || 0) - 1], b?.observation,
+        `Button across selected pages ${a?.page || '?'} and ${b?.page || '?'}`, `#site-cross-${index}`);
+    }
+    return { groups, missing, indistinct, original: originalIndex };
+  }
+  function layout(data) {
+    const groups = new Map();
+    for (const [pageIndex, page] of (data.responsiveAudit?.pages || []).entries()) for (const [widthIndex, width] of (page.viewports || []).entries()) for (const [findingIndex, finding] of (width.findings || []).entries()) {
+      const route = normalize(page.url), selector = normalize(finding.selector), other = normalize(finding.otherSelector), container = normalize(finding.container);
+      const key = JSON.stringify([finding.kind, route, width.viewport?.width, width.viewport?.height, selector, other, container]);
+      if (!groups.has(key)) groups.set(key, { key, kind: finding.kind, route, selector, other, container, viewport: width.viewport, occurrences: [] });
+      const evidence = Number.isInteger(finding.previewIndex) ? width.previews?.[finding.previewIndex] : undefined;
+      groups.get(key).occurrences.push({ page: pageIndex + 1, target: `#site-responsive-${pageIndex}-${widthIndex}-${findingIndex}`, finding, evidence });
+    }
+    return [...groups.values()].sort((a, b) => b.occurrences.length - a.occurrences.length);
+  }
+  return { visual, layout };
+}
+
 (() => {
   const data = window.__UI_SHEET_DATA__;
+  const reviewModel = createPieceboardReviewModel();
+  const reviewState = { visual: [], visualAnswers: {}, layout: [], layoutAnswers: {}, status: [] };
   const byId = (id) => document.getElementById(id);
   const grid = byId('grid');
   const dialog = byId('detail-dialog');
@@ -194,7 +274,7 @@
         for (const [findingIndex, finding] of (entry.findings || []).entries()) {
           const card = el('details', 'layout-result');
           card.id = `site-responsive-${pageIndex}-${widthIndex}-${findingIndex}`;
-          card.open = true;
+          card.open = !data.siteScan;
           const summary = el('summary', 'finding-heading');
           summary.append(el('strong', '', labels[finding.kind] || 'Possible layout issue'), el('span', 'finding-badge layout-status-finding', 'Review'));
           card.append(summary, el('p', 'layout-message', finding.message || ''), el('code', 'layout-selector', finding.selector || 'Unknown element'));
@@ -210,6 +290,7 @@
             const image = el('img', 'responsive-evidence-image');
             image.src = evidence.image;
             image.alt = `Browser capture near ${finding.selector} at ${size} CSS pixels`;
+            image.loading = 'lazy';
             frame.append(image);
             if (finding.bounds && evidence.scroll) {
               const x1 = Math.max(0, Math.min(entry.viewport.width, finding.bounds.x - evidence.scroll.x));
@@ -332,9 +413,15 @@
     if (data.warnings?.length) area.append(el('p', 'site-note', `${plural(data.warnings.length, 'source file')} could not be fully read. Details appear in the inventory warnings below.`));
     if (site.excluded?.length || site.excludedTruncated) area.append(el('p', 'site-note', `${plural(site.excluded?.length || 0, 'action or sensitive link')} not followed${site.excludedTruncated ? '; additional links were omitted' : ''}. See page coverage below.`));
     if (site.previewsOmitted) area.append(el('p', 'site-note', `${plural(site.previewsOmitted, 'preview')} could not be included because of image limits or capture problems. Findings remain listed.`));
+    const withoutScreenshot = (data.responsiveAudit?.pages || []).flatMap((page) => page.viewports || []).reduce((total, width) => total + (width.findings || []).filter((finding) => !Number.isInteger(finding.previewIndex) || !width.previews?.[finding.previewIndex]?.image).length, 0);
+    if (withoutScreenshot) area.append(el('p', 'site-note', `Screenshots are unavailable for ${plural(withoutScreenshot, 'layout finding')}; those findings need additional context.`));
     if (site.crossPageSkipped) area.append(el('p', 'site-note', `${plural(site.crossPageSkipped, 'page state')} shared a route with another page and could not be included in the cross-page comparison.`));
-    const choiceLink = el('a', 'site-choice-link', 'Jump to A/B choices ↓'); choiceLink.href = '#choice-review'; area.append(choiceLink);
+    const choiceLink = el('a', 'site-choice-link', 'Jump to appearance choices ↓'); choiceLink.href = '#choice-review'; area.append(choiceLink);
+    if (data.responsiveAudit?.pages?.some((page) => page.viewports?.some((width) => width.findings?.length))) { const layoutLink = el('a', 'site-choice-link site-secondary-link', 'Jump to layout decisions ↓'); layoutLink.href = '#layout-decisions'; area.append(layoutLink); }
     if (results.length) {
+      const findingsBlock = el('details', 'site-findings-block');
+      findingsBlock.open = results.length <= 20;
+      findingsBlock.append(el('summary', '', `See all ${plural(results.length, 'detected finding')}`));
       const controls = el('div', 'site-filters');
       const searchLabel = el('label', '', 'Search findings');
       const search = el('input'); search.type = 'search'; search.placeholder = 'Page, element, or issue'; searchLabel.append(search);
@@ -344,7 +431,7 @@
       for (const name of [...new Set(results.map((result) => result.category))]) { const option = el('option', '', name); option.value = name; category.append(option); }
       categoryLabel.append(category);
       const status = el('p', 'site-filter-status'); status.setAttribute('aria-live', 'polite');
-      controls.append(searchLabel, categoryLabel, status); area.append(controls);
+      controls.append(searchLabel, categoryLabel, status); findingsBlock.append(controls);
       const list = el('ol', 'site-findings');
       const rows = [];
       for (const result of results) {
@@ -358,7 +445,7 @@
         status.textContent = `Showing ${visible} of ${results.length} possible issues.`;
       }
       search.addEventListener('input', filterFindings); category.addEventListener('change', filterFindings); filterFindings();
-      area.append(list);
+      findingsBlock.append(list); area.append(findingsBlock);
     } else area.append(el('p', 'site-note', 'No issues were reported by the checks that completed. This is not proof that the site has no UI issues.'));
     const coverage = el('details', 'site-coverage');
     coverage.append(el('summary', '', 'See every inspected or incomplete page'));
@@ -376,98 +463,233 @@
     coverage.append(list); area.append(coverage);
   }
 
+  function downloadReview() {
+    const chosenVisual = reviewState.visual.filter((choice) => reviewState.visualAnswers[choice.key]?.selection);
+    const chosenLayout = reviewState.layout.filter((group) => reviewState.layoutAnswers[group.key]?.selection);
+    const lines = ['# Pieceboard review', '', `Saved: ${new Date().toISOString()}`, '', 'These are review notes; no application changes have been made.', '', `- Visual decisions: ${chosenVisual.length} of ${reviewState.visual.length}`, `- Layout decisions: ${chosenLayout.length} of ${reviewState.layout.length}`, ''];
+    if (chosenVisual.length) lines.push('## Appearance decisions', '');
+    for (const [index, choice] of chosenVisual.entries()) {
+      const answer = reviewState.visualAnswers[choice.key];
+      const letter = answer.selection.toUpperCase();
+      const option = choice.options['abcd'.indexOf(answer.selection)];
+      const label = answer.selection === 'ignore' ? 'Ignore this comparison' : answer.selection === 'none' ? 'Neither appearance' : answer.selection === 'unsure' ? 'Needs more context' : `${letter} · ${option?.label || 'Observed appearance'}`;
+      lines.push(`### ${index + 1}. ${choice.name}`, '', `- Decision: ${label}`, `- Repeated findings grouped: ${choice.occurrences.length}`, `- Example: ${choice.occurrences[0].context}`, `- Finding IDs: ${[...new Set(choice.occurrences.map((item) => item.id))].join(', ')}`);
+      if (answer.note.trim()) lines.push(`- Explanation: ${answer.note.trim().replaceAll('\n', '\n  ')}`);
+      lines.push('');
+    }
+    if (chosenLayout.length) lines.push('## Layout decisions', '');
+    const labels = { fix: 'Needs a fix', keep: 'Keep as is', ignore: 'Ignore', unsure: 'Needs more context' };
+    for (const [index, group] of chosenLayout.entries()) {
+      const answer = reviewState.layoutAnswers[group.key];
+      lines.push(`### ${index + 1}. ${layoutLabels[group.kind] || 'Possible layout issue'}`, '', `- Decision: ${labels[answer.selection] || answer.selection}`, `- Repeated findings grouped: ${group.occurrences.length}`, `- Route pattern: ${group.route || 'Unknown route'}`, `- Width: ${group.viewport?.width || '?'} px`, `- Element: ${group.selector || 'Unknown element'}`);
+      if (group.other) lines.push(`- Other element: ${group.other}`);
+      if (group.container) lines.push(`- Container: ${group.container}`);
+      if (answer.note.trim()) lines.push(`- Explanation: ${answer.note.trim().replaceAll('\n', '\n  ')}`);
+      lines.push('');
+    }
+    const url = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8' }));
+    const link = el('a'); link.href = url; link.download = 'pieceboard-review.md'; document.body.append(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    for (const status of reviewState.status) status.textContent = 'Review downloaded. Share it only after checking its contents.';
+  }
+
+  function downloadReviewJson() {
+    const visual = reviewState.visual.flatMap((choice) => {
+      const answer = reviewState.visualAnswers[choice.key];
+      return answer?.selection ? [{ key: choice.key, selection: answer.selection, note: answer.note || '' }] : [];
+    });
+    const layout = reviewState.layout.flatMap((group) => {
+      const answer = reviewState.layoutAnswers[group.key];
+      return answer?.selection ? [{ key: group.key, selection: answer.selection, note: answer.note || '' }] : [];
+    });
+    const contents = JSON.stringify({ format: 'pieceboard/review-v1', scanRunId: data.scanRunId || 'report', visual, layout }, null, 2) + '\n';
+    const url = URL.createObjectURL(new Blob([contents], { type: 'application/json;charset=utf-8' }));
+    const link = el('a'); link.href = url; link.download = 'pieceboard-review.json'; document.body.append(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    for (const status of reviewState.status) status.textContent = 'Review downloaded. Share it only after checking its contents.';
+  }
+
+  function reviewFileControls() {
+    const controls = el('div', 'review-file-controls');
+    const download = el('button', 'review-button', 'Download JSON'); download.type = 'button'; download.addEventListener('click', downloadReviewJson);
+    const label = el('label', 'review-file-import', 'Import review JSON'); const input = el('input'); input.type = 'file'; input.accept = '.json,application/json'; label.append(input);
+    input.addEventListener('change', async () => {
+      try {
+        const file = input.files?.[0];
+        if (!file || file.size > 2 * 1024 * 1024) throw new Error('Choose a review JSON file under 2 MB.');
+        const imported = JSON.parse(await file.text());
+        if (imported?.format !== 'pieceboard/review-v1' || imported.scanRunId !== (data.scanRunId || 'report') || !Array.isArray(imported.visual) || !Array.isArray(imported.layout) || imported.visual.length + imported.layout.length > 5000) throw new Error('This review does not match the current scan.');
+        const visual = new Map(reviewState.visual.map((choice) => [choice.key, choice]));
+        const layout = new Set(reviewState.layout.map((group) => group.key));
+        let applied = 0, skipped = 0;
+        for (const [items, known, answers, allowed] of [[imported.visual, visual, reviewState.visualAnswers, null], [imported.layout, layout, reviewState.layoutAnswers, ['fix', 'keep', 'ignore', 'unsure']]]) {
+          for (const item of items) {
+            const target = known instanceof Map ? known.get(item?.key) : known.has(item?.key);
+            const valid = allowed || (target ? [...'abcd'.slice(0, target.options.length), 'none', 'ignore', 'unsure'] : []);
+            if (!target || !valid.includes(item?.selection) || typeof item.note !== 'string' || item.note.length > 1000 || answers[item.key]?.selection || answers[item.key]?.note) { skipped++; continue; }
+            answers[item.key] = { selection: item.selection, note: item.note }; applied++;
+          }
+        }
+        const visualKey = `pieceboard:choices:${data.scanRunId || 'report'}`, layoutKey = `pieceboard:layout:${data.scanRunId || 'report'}`;
+        const priorVisual = JSON.parse(localStorage.getItem(visualKey) || '{}'), priorLayout = JSON.parse(localStorage.getItem(layoutKey) || '{}');
+        localStorage.setItem(visualKey, JSON.stringify({ ...priorVisual, ...reviewState.visualAnswers }));
+        localStorage.setItem(layoutKey, JSON.stringify({ ...priorLayout, ...reviewState.layoutAnswers }));
+        sessionStorage.setItem('pieceboard:import-status', `Imported ${applied} decisions; ${skipped} existing or unmatched entries were left unchanged.`);
+        location.reload();
+      } catch (error) { for (const status of reviewState.status) status.textContent = error.message || 'The review could not be imported.'; }
+      finally { input.value = ''; }
+    });
+    controls.append(download, label); return controls;
+  }
+
   function renderChoices() {
     const area = byId('choice-review');
     if (!area) return;
-    const buttonPages = data.consistency ? (data.consistency.pages || [data.consistency]) : [];
-    const elementPages = data.elementConsistency?.pages || [];
-    const candidates = [];
-    let missing = 0;
-    const picture = (page, observation) => {
-      const image = page?.previews?.[observation]?.image;
-      return typeof image === 'string' && /^data:image\/(?:png|jpeg|webp);base64,/i.test(image) ? image : null;
-    };
-    function add(finding, firstPage, firstId, secondPage, secondId, context) {
-      const a = picture(firstPage, firstId);
-      const b = picture(secondPage, secondId);
-      if (!a || !b) { missing++; return; }
-      const group = finding.group || {};
-      const name = [group.family, group.variant, group.type].filter(Boolean).join(' · ') || 'UI appearance';
-      candidates.push({ id: finding.id || `choice-${candidates.length + 1}`, name, context, a, b,
-        aLabel: finding.reference === 'approved' ? 'Previously approved appearance' : 'More common appearance',
-        bLabel: 'Different appearance' });
-    }
-    for (const [kind, pages] of [['Button', buttonPages], ['UI group', elementPages]]) {
-      for (const [index, page] of pages.entries()) {
-        for (const finding of page.findings || []) {
-          const scope = page.scope || {};
-          const viewport = scope.viewport ? `${scope.viewport.width} × ${scope.viewport.height}` : 'viewport unknown';
-          add(finding, page, finding.common?.example, page, finding.outlier?.example,
-            `${kind} · page ${index + 1} · ${scope.url || 'page unknown'} · ${viewport} · ${scope.theme || 'theme unknown'}`);
-        }
-      }
-    }
-    for (const finding of data.crossPageConsistency?.findings || []) {
-      const a = finding.common?.example, b = finding.outlier?.example;
-      add(finding, buttonPages[(a?.page || 0) - 1], a?.observation, buttonPages[(b?.page || 0) - 1], b?.observation,
-        `Button across selected pages ${a?.page || '?'} and ${b?.page || '?'}`);
-    }
-    area.append(el('div', 'section-kicker', 'START HERE · THIS OR THAT'), el('h2', '', 'Which version should we use?'));
+    const result = reviewModel.visual(data), candidates = result.groups;
+    reviewState.visual = candidates;
+    area.append(el('div', 'section-kicker', 'START HERE · CHOOSE WHAT FITS'), el('h2', '', 'Which version should we use?'));
     if (!candidates.length) {
       area.append(el('p', 'choice-empty', data.consistency || data.elementConsistency
-        ? 'No side-by-side choices are available from the captured evidence. A comparison needs two actual screenshots; check the capture and its coverage below.'
+        ? 'No side-by-side choices are available from the captured evidence. A comparison needs real screenshots; check the capture and its coverage below.'
         : 'This is a source inventory, so it does not yet contain visual choices. Ask your agent to capture authorized test screens and compare the same interface in each one.'));
+      if (result.indistinct) area.append(el('p', 'choice-empty', `${plural(result.indistinct, 'comparison')} had identical captures and needs closer inspection before making a visual choice.`));
       return;
     }
-    area.append(el('p', 'choice-intro', 'Choose A or B for each comparison, add an optional note, and download your answers. These are suggestions from the captured pages; a common style is not automatically correct.'));
-    if (missing) area.append(el('p', 'choice-empty', `${plural(missing, 'additional comparison')} could not be shown because an image is unavailable.`));
+    area.append(el('p', 'choice-intro', `${plural(result.original - result.indistinct, 'captured comparison')} grouped into ${plural(candidates.length, 'decision')}. Choose an observed appearance, neither, ignore, or ask for more context; explain your reasoning and download your review.`));
+    if (result.missing) area.append(el('p', 'choice-empty', `${plural(result.missing, 'additional comparison')} could not be shown because an image is unavailable.`));
+    if (result.indistinct) area.append(el('p', 'choice-empty', `${plural(result.indistinct, 'comparison')} had identical captures and needs closer inspection before making a visual choice.`));
     let saved = {};
     const storageKey = `pieceboard:choices:${data.scanRunId || 'report'}`;
     try { saved = JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch { /* Browser storage can be unavailable. */ }
-    const answers = {};
-    const status = el('p', 'choice-status'); status.setAttribute('role', 'status');
+    const answers = reviewState.visualAnswers;
+    const status = el('p', 'choice-status'); status.setAttribute('role', 'status'); reviewState.status.push(status);
+    try { const message = sessionStorage.getItem('pieceboard:import-status'); if (message) { status.textContent = message; sessionStorage.removeItem('pieceboard:import-status'); } } catch { /* Optional confirmation only. */ }
     const save = () => {
-      try { localStorage.setItem(storageKey, JSON.stringify(answers)); status.textContent = 'Saved on this device. Download your answers to share them.'; }
-      catch { status.textContent = 'Download your answers to keep them.'; }
+      try { localStorage.setItem(storageKey, JSON.stringify({ ...saved, ...answers })); status.textContent = 'Saved on this device. Download your review to keep or share it.'; }
+      catch { status.textContent = 'Download your review to keep it.'; }
     };
     const list = el('div', 'choice-list');
     candidates.forEach((choice, index) => {
-      const key = `${index}:${choice.id}`;
-      const previous = saved?.[key] || {};
-      answers[key] = { selection: ['a', 'b'].includes(previous.selection) ? previous.selection : '', note: typeof previous.note === 'string' ? previous.note.slice(0, 1000) : '' };
-      const card = el('fieldset', 'choice-card');
-      card.append(el('legend', '', `${index + 1}. Which ${choice.name} should we use?`), el('p', 'choice-context', choice.context));
-      const pair = el('div', 'choice-pair');
-      for (const [value, name, image] of [['a', choice.aLabel, choice.a], ['b', choice.bLabel, choice.b]]) {
-        const label = el('label', 'choice-option');
-        const input = document.createElement('input'); input.type = 'radio'; input.name = `choice-${index}`; input.value = value; input.checked = answers[key].selection === value;
-        const copy = el('span', 'choice-option-copy');
-        copy.append(el('strong', '', `Choose ${value.toUpperCase()} · ${name}`));
-        const preview = document.createElement('img'); preview.src = image; preview.alt = `${name} captured from the selected test page`; preview.loading = 'lazy';
-        copy.append(preview); label.append(input, copy); pair.append(label);
-        input.addEventListener('change', () => { answers[key].selection = value; save(); });
+      let previous = saved?.[choice.key];
+      if (!previous) {
+        const legacy = choice.legacy.flatMap((entry) => {
+          const answer = saved?.[entry.key];
+          if (!answer || typeof answer !== 'object') return [];
+          const option = answer.selection === 'a' ? entry.first : answer.selection === 'b' ? entry.second : -1;
+          return [{ selection: option >= 0 ? 'abcd'[option] : '', note: typeof answer.note === 'string' ? answer.note : '' }];
+        });
+        const unique = [...new Set(legacy.map((entry) => entry.selection).filter(Boolean))];
+        const notes = [...new Set(legacy.map((entry) => entry.note.trim()).filter(Boolean))].join('\n\n');
+        if (unique.length > 1) previous = { selection: '', note: `Earlier answers for these repeated comparisons differed; please review this grouped decision.\n\n${notes}` };
+        else if (legacy.length) previous = { selection: unique[0] || '', note: notes };
       }
-      const noteLabel = el('label', 'choice-note', 'Optional note');
-      const note = document.createElement('textarea'); note.maxLength = 1000; note.rows = 2; note.value = answers[key].note; noteLabel.append(note);
-      note.addEventListener('input', () => { answers[key].note = note.value; save(); });
-      card.append(pair, noteLabel); list.append(card);
-    });
-    const download = el('button', 'review-button choice-download', 'Download my answers'); download.type = 'button';
-    download.addEventListener('click', () => {
-      const lines = ['# Pieceboard visual choices', '', `Saved: ${new Date().toISOString()}`, '', 'These are review notes, not applied approvals or application changes.', ''];
-      candidates.forEach((choice, index) => {
-        const answer = answers[`${index}:${choice.id}`];
-        lines.push(`## ${index + 1}. ${choice.name}`, '', `- Context: ${choice.context}`,
-          `- Finding: ${choice.id}`, `- Choice: ${answer.selection ? `${answer.selection.toUpperCase()} · ${answer.selection === 'a' ? choice.aLabel : choice.bLabel}` : 'Not answered'}`);
-        if (answer.note.trim()) lines.push(`- Note: ${answer.note.trim().replaceAll('\n', '\n  ')}`);
-        lines.push('');
+      const allowed = [...'abcd'.slice(0, choice.options.length), 'none', 'ignore', 'unsure'];
+      answers[choice.key] = { selection: allowed.includes(previous?.selection) ? previous.selection : '', note: typeof previous?.note === 'string' ? previous.note.slice(0, 1000) : '' };
+      const card = el('fieldset', 'choice-card');
+      card.append(el('legend', '', `${index + 1}. Which ${choice.name} should we use?`), el('p', 'choice-context', `${plural(choice.occurrences.length, 'matching comparison')} · ${choice.occurrences[0].context}`));
+      if (choice.occurrences.length > 1) {
+        const more = el('details', 'choice-occurrences'); more.append(el('summary', '', 'See matching occurrences'));
+        const entries = el('ul');
+        for (const occurrence of choice.occurrences) { const item = el('li'); const link = el('a', '', occurrence.context); link.href = occurrence.target; item.append(link); entries.append(item); }
+        more.append(entries); card.append(more);
+      }
+      const options = el('div', 'choice-pair');
+      choice.options.forEach((option, optionIndex) => {
+        const value = 'abcd'[optionIndex], label = el('label', 'choice-option');
+        const input = el('input'); input.type = 'radio'; input.name = `choice-${index}`; input.value = value; input.checked = answers[choice.key].selection === value;
+        const copy = el('span', 'choice-option-copy'); copy.append(el('strong', '', `Choose ${value.toUpperCase()} · ${option.label}`));
+        const preview = el('img'); preview.src = option.image; preview.alt = `${option.label} captured from the selected test page`; preview.loading = 'lazy'; copy.append(preview);
+        label.append(input, copy); options.append(label); input.addEventListener('change', () => { answers[choice.key].selection = value; save(); });
       });
-      const url = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8' }));
-      const link = el('a'); link.href = url; link.download = 'pieceboard-choices.md'; document.body.append(link); link.click(); link.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000); status.textContent = 'Answers downloaded. Share the file with your team.';
+      const other = el('div', 'choice-other');
+      for (const [value, labelText] of [['none', 'Neither — a different design is needed'], ['ignore', 'Ignore — this difference is intentional or unrelated'], ['unsure', 'Needs more context']]) {
+        const label = el('label', 'choice-action'); const input = el('input'); input.type = 'radio'; input.name = `choice-${index}`; input.value = value; input.checked = answers[choice.key].selection === value;
+        input.addEventListener('change', () => { answers[choice.key].selection = value; save(); }); label.append(input, el('span', '', labelText)); other.append(label);
+      }
+      const noteLabel = el('label', 'choice-note', 'Explanation');
+      const note = el('textarea'); note.maxLength = 1000; note.rows = 2; note.placeholder = 'Why this choice, or why should it be ignored?'; note.value = answers[choice.key].note; noteLabel.append(note);
+      note.addEventListener('input', () => { answers[choice.key].note = note.value; save(); });
+      card.append(options, other, noteLabel); list.append(card);
     });
-    area.append(list, download, status);
+    const download = el('button', 'review-button choice-download', 'Download my review'); download.type = 'button'; download.addEventListener('click', downloadReview);
+    area.append(list, download, reviewFileControls(), status);
   }
+
+  const layoutLabels = { 'horizontal-overflow': 'Horizontal overflow', 'clipped-text': 'Clipped text', 'overlapping-text': 'Overlapping text' };
+  function renderLayoutDecisions() {
+    const groups = reviewModel.layout(data); reviewState.layout = groups;
+    if (!groups.length) return;
+    const area = el('section', 'choice-review layout-decisions'); area.id = 'layout-decisions'; area.setAttribute('aria-label', 'Grouped layout decisions');
+    byId('choice-review').after(area);
+    const total = groups.reduce((count, group) => count + group.occurrences.length, 0);
+    area.append(el('div', 'section-kicker', 'LAYOUT · GROUPED FOR REVIEW'), el('h2', '', 'What should happen to these layout issues?'), el('p', 'choice-intro', `${plural(total, 'detected occurrence')} grouped into ${plural(groups.length, 'pattern')} by route, elements, and screen size. Review the example and decide whether it needs a fix, is intentional, should be ignored, or needs more context. Matching routes can contain different states, so check the listed occurrences before applying a decision.`));
+    const storageKey = `pieceboard:layout:${data.scanRunId || 'report'}`;
+    let saved = {};
+    try {
+      saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      for (const group of groups) {
+        const answer = saved?.[group.key];
+        if (answer && typeof answer === 'object') reviewState.layoutAnswers[group.key] = { selection: ['fix', 'keep', 'ignore', 'unsure'].includes(answer.selection) ? answer.selection : '', note: typeof answer.note === 'string' ? answer.note.slice(0, 1000) : '' };
+      }
+    } catch { /* Download remains available. */ }
+    const answers = reviewState.layoutAnswers;
+    const status = el('p', 'choice-status'); status.setAttribute('role', 'status'); reviewState.status.push(status);
+    const save = () => { try { localStorage.setItem(storageKey, JSON.stringify({ ...saved, ...answers })); status.textContent = 'Saved on this device. Download your review to keep or share it.'; } catch { status.textContent = 'Download your review to keep it.'; } };
+    const controls = el('div', 'site-filters');
+    const searchLabel = el('label', '', 'Search layout patterns'); const search = el('input'); search.type = 'search'; search.placeholder = 'Route, element, or issue'; searchLabel.append(search);
+    const kindLabel = el('label', '', 'Layout issue type'); const kind = el('select'); const all = el('option', '', 'All issue types'); all.value = ''; kind.append(all);
+    for (const [value, label] of Object.entries(layoutLabels)) { const option = el('option', '', label); option.value = value; kind.append(option); }
+    kindLabel.append(kind); controls.append(searchLabel, kindLabel); area.append(controls);
+    const list = el('div', 'choice-list'), pager = el('div', 'layout-pager'), count = el('p', 'site-filter-status');
+    const previous = el('button', 'review-button', 'Previous'); previous.type = 'button';
+    const next = el('button', 'review-button', 'Next'); next.type = 'button';
+    pager.append(previous, count, next); area.append(list, pager);
+    let pageNumber = 0;
+    const pageSize = 20;
+    function draw() {
+      const query = search.value.trim().toLowerCase();
+      const filtered = groups.filter((group) => (!kind.value || group.kind === kind.value) && (!query || `${layoutLabels[group.kind] || ''} ${group.route} ${group.selector} ${group.other} ${group.container}`.toLowerCase().includes(query)));
+      const pages = Math.max(1, Math.ceil(filtered.length / pageSize)); pageNumber = Math.min(pageNumber, pages - 1);
+      previous.disabled = pageNumber === 0; next.disabled = pageNumber >= pages - 1;
+      count.textContent = `${filtered.length} patterns · page ${pageNumber + 1} of ${pages}`;
+      list.replaceChildren();
+      for (const [offset, group] of filtered.slice(pageNumber * pageSize, (pageNumber + 1) * pageSize).entries()) {
+        const card = el('fieldset', 'choice-card layout-decision-card');
+        card.append(el('legend', '', `${pageNumber * pageSize + offset + 1}. ${layoutLabels[group.kind] || 'Possible layout issue'}`), el('p', 'choice-context', `${plural(group.occurrences.length, 'matching occurrence')} · ${group.route || 'Unknown route'} · ${group.viewport?.width || '?'} px`), el('code', 'layout-selector', group.selector || 'Unknown element'));
+        if (group.other) card.append(el('p', 'choice-context', `Overlaps: ${group.other}`));
+        if (group.container) card.append(el('p', 'choice-context', `Container: ${group.container}`));
+        const sample = group.occurrences.find((entry) => entry.evidence?.image) || group.occurrences[0];
+        if (sample?.evidence?.image) {
+          const frame = el('div', 'responsive-evidence layout-decision-preview');
+          const viewport = group.viewport || {}, bounds = sample.finding?.bounds, scroll = sample.evidence.scroll;
+          if (viewport.width && viewport.height) frame.style.width = `${Math.min(viewport.width, 500, 320 * viewport.width / viewport.height)}px`;
+          const preview = el('img', 'responsive-evidence-image'); preview.src = sample.evidence.image; preview.alt = `Captured example of ${layoutLabels[group.kind] || 'a layout issue'}`; preview.loading = 'lazy'; frame.append(preview);
+          if (bounds && scroll && viewport.width && viewport.height) {
+            const x1 = Math.max(0, Math.min(viewport.width, bounds.x - scroll.x)), y1 = Math.max(0, Math.min(viewport.height, bounds.y - scroll.y));
+            const x2 = Math.max(0, Math.min(viewport.width, bounds.x + bounds.width - scroll.x)), y2 = Math.max(0, Math.min(viewport.height, bounds.y + bounds.height - scroll.y));
+            if (x2 > x1 && y2 > y1) { const marker = el('span', 'responsive-highlight'); marker.setAttribute('aria-hidden', 'true'); marker.style.left = `${x1 / viewport.width * 100}%`; marker.style.top = `${y1 / viewport.height * 100}%`; marker.style.width = `${(x2 - x1) / viewport.width * 100}%`; marker.style.height = `${(y2 - y1) / viewport.height * 100}%`; frame.append(marker); }
+          }
+          card.append(frame, el('p', 'choice-context', 'The outline marks the measured area when visible.'));
+        }
+        else card.append(el('p', 'choice-empty', 'No screenshot is available for this pattern. Choose “Needs more context” if the evidence is insufficient.'));
+        const detail = el('details', 'choice-occurrences'); detail.append(el('summary', '', 'See every matching occurrence')); const entries = el('ul');
+        for (const occurrence of group.occurrences) { const item = el('li'); const link = el('a', '', `Page ${occurrence.page} · inspect finding`); link.href = occurrence.target; item.append(link); entries.append(item); }
+        detail.append(entries); card.append(detail);
+        const row = el('div', 'choice-other');
+        for (const [value, labelText] of [['fix', 'Needs a fix'], ['keep', 'Keep as is'], ['ignore', 'Ignore'], ['unsure', 'Needs more context']]) {
+          const label = el('label', 'choice-action'), input = el('input'); input.type = 'radio'; input.name = `layout-${pageNumber}-${offset}`; input.value = value; input.checked = answers[group.key]?.selection === value;
+          input.addEventListener('change', () => { answers[group.key] = { ...(answers[group.key] || {}), selection: value, note: answers[group.key]?.note || '' }; save(); }); label.append(input, el('span', '', labelText)); row.append(label);
+        }
+        const noteLabel = el('label', 'choice-note', 'Explanation'); const note = el('textarea'); note.rows = 2; note.maxLength = 1000; note.placeholder = 'Why is this a problem, intentional, or uncertain?'; note.value = answers[group.key]?.note || '';
+        note.addEventListener('input', () => { answers[group.key] = { ...(answers[group.key] || {}), selection: answers[group.key]?.selection || '', note: note.value }; save(); }); noteLabel.append(note); card.append(row, noteLabel); list.append(card);
+      }
+      if (!filtered.length) list.append(el('p', 'choice-empty', 'No layout patterns match these filters.'));
+    }
+    previous.addEventListener('click', () => { pageNumber--; draw(); }); next.addEventListener('click', () => { pageNumber++; draw(); });
+    search.addEventListener('input', () => { pageNumber = 0; draw(); }); kind.addEventListener('change', () => { pageNumber = 0; draw(); }); draw();
+    const download = el('button', 'review-button choice-download', 'Download my review'); download.type = 'button'; download.addEventListener('click', downloadReview); area.append(download, reviewFileControls(), status);
+  }
+
 
   function renderConsistency() {
     const review = byId('consistency-review');
@@ -1235,6 +1457,7 @@
   renderTypes();
   renderGrid();
   renderChoices();
+  renderLayoutDecisions();
   renderResponsive();
   renderLayout();
   renderConsistency();
