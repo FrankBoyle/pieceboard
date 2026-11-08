@@ -89,7 +89,7 @@ test('launcher discovers linked pages and opens a site review', { skip: !browser
   const { root, workspace, cleanup } = await fixture(t);
   const site = http.createServer((request, response) => {
     response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
-    response.end(`<!doctype html><meta name="viewport" content="width=device-width"><h1>Test screen</h1>${request.url === '/' ? '<a href="/second">Second screen</a>' : ''}`);
+    response.end(`<!doctype html><meta name="viewport" content="width=device-width"><h1>Test screen</h1><button>Escalate request</button>${request.url === '/' ? '<a href="/second">Second screen</a>' : ''}`);
   });
   await new Promise(resolve => site.listen(0, '127.0.0.1', resolve));
   cleanup.push(() => new Promise(resolve => { site.closeAllConnections(); site.close(resolve); }));
@@ -105,6 +105,8 @@ test('launcher discovers linked pages and opens a site review', { skip: !browser
   await page.getByLabel('Test page URL').fill(`http://127.0.0.1:${site.address().port}/`);
   assert.equal(await page.getByLabel('Find and inspect linked pages').isChecked(), true);
   await page.getByLabel('Maximum pages').fill('2');
+  await page.locator('#review-focus').fill('escalate');
+  await page.locator('#search-button-labels').check();
   await page.getByRole('button', { name: /Create my sheet/ }).click();
   await page.getByRole('link', { name: /Open my sheet/ }).waitFor({ timeout: 100000 });
   const job = await (await fetch(new URL('api/job', launcher.url))).json();
@@ -112,9 +114,14 @@ test('launcher discovers linked pages and opens a site review', { skip: !browser
   assert.equal(job.status, 'complete');
   assert.equal(report.siteScan.captured, 2);
   assert.equal(report.siteScan.incomplete, 0);
+  assert.equal(report.reviewFocus, 'escalate');
+  assert.ok(report.consistency.pages.some((entry) => entry.observations.some((observation) => observation.focus?.requested)));
+  assert.ok(report.consistency.pages.some((entry) => entry.observations.some((observation) => observation.searchLabel === 'Escalate request')));
   const resultPage = await browser.newPage();
   await resultPage.goto(new URL(job.report, launcher.url).href);
   assert.match(await resultPage.locator('#site-review').innerText(), /2 pages inspected/);
+  await resultPage.getByLabel('Feature or action').fill('request');
+  assert.ok(await resultPage.locator('#focus-review .focus-example').count() > 0, 'an arbitrary captured button label can be searched after the scan');
 });
 
 test('launcher refuses cross-origin requests, forged projects, and paths outside a selected project', async (t) => {

@@ -48,7 +48,10 @@ try {
     try {
       const page = await fetch(launcher.url);
       assert.equal(page.status, 200);
-      assert.match(await page.text(), /Choose what to look at/);
+      const setupHtml = await page.text();
+      assert.match(setupHtml, /Choose what to look at/);
+      assert.match(setupHtml, /What would you like help with\?/);
+      assert.match(setupHtml, /Make button labels searchable/);
       assert.equal((await fetch(new URL('app.js', launcher.url))).status, 200);
     } finally { await launcher.close(); }
     runNpm(['exec', '--', 'pieceboard', 'scan', '.'], consumer);
@@ -56,6 +59,7 @@ try {
     const report = JSON.parse(await fs.readFile(path.join(consumer, '.ui-sheet', 'ui-sheet.json'), 'utf8'));
     assert.ok(report.items.some((entry) => entry.name === '<button>'));
     const reportHtml = await fs.readFile(path.join(consumer, '.ui-sheet', 'index.html'), 'utf8');
+    assert.match(reportHtml, /id="focus-review"/, 'the installed package must include focused review');
     const mark = await fs.readFile(path.join(consumer, 'node_modules', 'pieceboard', 'docs', 'images', 'pieceboard-mark.svg'), 'utf8');
     const logo = await fs.readFile(path.join(consumer, 'node_modules', 'pieceboard', 'docs', 'images', 'pieceboard-logo.png'));
     const embeddedMark = mark.replace('<svg ', '<svg class="brand-mark" aria-hidden="true" ')

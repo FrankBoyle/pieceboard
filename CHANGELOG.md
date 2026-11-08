@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-alpha.10 — 2026-11-08
+
+- Focus the report on requested features or actions while keeping the complete site findings available.
+- Browse captured sidebar, header, and button examples; optionally retain eligible button labels for free-text search.
+- Explain layout decisions in plain language and outline both measured text areas for overlaps when possible.
+- Mark known selected and outside-month states as stateful, and warn when compared buttons may serve different actions.
+
 ## 0.1.0-alpha.9 — 2026-11-07
 
 - Match the setup and report colors to the Pieceboard mark while preserving the colors of captured examples.

@@ -29,9 +29,11 @@
       "type": "object", "required": ["kind", "selector", "tag", "bounds", "viewportWidth", "message", "recommendation"],
       "properties": {
         "kind": { "enum": ["horizontal-overflow", "clipped-text", "overlapping-text"] },
+        "regions": { "type": "array", "uniqueItems": true, "items": { "enum": ["sidebar", "header", "navigation"] } },
         "selector": { "type": "string", "minLength": 1, "maxLength": 500 }, "otherSelector": { "type": "string", "minLength": 1, "maxLength": 500 },
         "container": { "type": "string", "minLength": 1, "maxLength": 500 }, "sameParent": { "type": "boolean" },
         "tag": { "type": "string", "minLength": 1 }, "bounds": { "$ref": "#/$defs/bounds" }, "viewportWidth": { "type": "integer", "minimum": 1, "maximum": 4096 },
+        "otherBounds": { "$ref": "#/$defs/bounds" },
         "overflowPx": { "type": "number", "minimum": 0 },
         "overlap": { "type": "object", "required": ["width", "height"], "properties": { "width": { "type": "number", "minimum": 0 }, "height": { "type": "number", "minimum": 0 } } },
         "message": { "type": "string", "minLength": 1 }, "previewIndex": { "type": "integer", "minimum": 0, "maximum": 7 },
@@ -49,6 +51,7 @@
         "document": { "type": "object", "required": ["viewportWidth", "scrollWidth"], "properties": { "viewportWidth": { "type": "integer", "minimum": 0 }, "scrollWidth": { "type": "integer", "minimum": 0 } } },
         "inspected": { "type": "object", "required": ["elements", "textNodes", "textFragments", "limited", "uninspected"], "properties": { "elements": { "type": "integer", "minimum": 0, "maximum": 4000 }, "textNodes": { "type": "integer", "minimum": 0, "maximum": 2500 }, "textFragments": { "type": "integer", "minimum": 0, "maximum": 3000 }, "limited": { "type": "boolean" }, "uninspected": { "type": "integer", "minimum": 0, "maximum": 4000 } } },
         "findings": { "type": "array", "maxItems": 80, "items": { "$ref": "#/$defs/finding" } },
+        "landmarks": { "type": "array", "maxItems": 6, "items": { "type": "object", "required": ["kind", "bounds"], "properties": { "kind": { "enum": ["sidebar", "header", "navigation"] }, "bounds": { "$ref": "#/$defs/bounds" }, "previewIndex": { "type": "integer", "minimum": 0, "maximum": 7 } } } },
         "previews": { "type": "array", "maxItems": 8, "items": { "$ref": "#/$defs/preview" } }
       },
       "allOf": [

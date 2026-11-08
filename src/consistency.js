@@ -182,8 +182,36 @@ export function decisionAnchorIdentity(anchor) {
   return anchor?.elementId ? { file: anchor.file, elementId: anchor.elementId } : anchor;
 }
 
+// Retain only a small, fixed vocabulary rather than the page's actual label.
+// These are browsing hints, not proof of what a control does.
+const ACTION_HINTS = [
+  ['save', /\b(save|saving)\b/i], ['cancel', /\b(cancel|discard)\b/i],
+  ['submit', /\b(submit|send)\b/i], ['delete', /\b(delete|remove)\b/i],
+  ['edit', /\b(edit|modify)\b/i], ['add', /\b(add|create|new)\b/i],
+  ['download', /\b(download|export)\b/i], ['upload', /\b(upload|import)\b/i],
+  ['search', /\b(search|find)\b/i], ['close', /\b(close|dismiss)\b/i],
+  ['open', /\b(open|view)\b/i], ['back', /\b(back|previous)\b/i],
+  ['next', /\b(next|continue)\b/i], ['print', /\bprint\b/i],
+  ['refresh', /\b(refresh|reload)\b/i], ['confirm', /\b(confirm|approve)\b/i],
+  ['reject', /\b(reject|decline)\b/i], ['archive', /\barchive\b/i],
+];
+
+const focusWords = (value) => String(value || '').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()
+  .match(/[\p{L}\p{N}]+/gu)?.map((word) => word.length > 4 && word.endsWith('s') && !word.endsWith('ss') ? word.slice(0, -1) : word) || [];
+const focusFiller = new Set(['a', 'an', 'the', 'that', 'which', 'for', 'look', 'at', 'please', 'show', 'me', 'buttons', 'button', 'controls', 'control']);
+
+export function buttonFocusHints(button, requestedFocus = '') {
+  const label = button.searchMasked ? '' : [button.text, button.ariaLabel].filter(Boolean).join(' ');
+  const actions = ACTION_HINTS.filter(([, pattern]) => pattern.test(label)).map(([action]) => action);
+  const regions = (button.regions || []).filter((region) => ['sidebar', 'header', 'navigation'].includes(region));
+  const terms = focusWords(requestedFocus).filter((term) => !focusFiller.has(term));
+  const haystack = focusWords([label, button.id, ...(button.classes || []), button.tag, ...regions].filter(Boolean).join(' '));
+  const requested = !button.searchMasked && terms.length > 0 && terms.every((term) => haystack.some((word) => word.includes(term)));
+  return { actions, regions: [...new Set(regions)], requested };
+}
+
 /** Analyze one rendered page. The result is evidence, not a verdict or baseline. */
-export function analyzeButtonConsistency(buttons, { url = '', viewport = { width: 1440, height: 900 }, theme = 'unknown', pixelRatio = 2, baselines = [] } = {}) {
+export function analyzeButtonConsistency(buttons, { url = '', viewport = { width: 1440, height: 900 }, theme = 'unknown', pixelRatio = 2, baselines = [], requestedFocus = '', searchButtonLabels = false } = {}) {
   const scope = { url, viewport, theme, pixelRatio, state: 'enabled, non-toggle buttons' };
   const counts = { seen: 0, eligible: 0, hidden: 0, disabled: 0, otherRole: 0, stateful: 0, possiblyBlocked: 0, visibilityUnverified: 0, missingStyle: 0, comparable: 0, undersampled: 0, tied: 0, ambiguous: 0, repeatedMinority: 0 };
   const groups = new Map();
@@ -206,7 +234,11 @@ export function analyzeButtonConsistency(buttons, { url = '', viewport = { width
     const group = { family: family.name, familyEvidence: family.evidence, variant: variant.name, variantEvidence: variant.evidence, type };
     const groupKey = JSON.stringify([family.name, variant.name, type]);
     const styleKey = JSON.stringify(style);
-    const observation = { id: `button:${button.index}`, group, style, visibilityEvidence: button.visibilityEvidence === 'clear' ? 'clear' : 'unverified', ...(button.source ? { source: button.source } : {}) };
+    const focus = buttonFocusHints(button, requestedFocus);
+    const label = (value) => String(value || '').replace(/\s+/g, ' ').trim().slice(0, 120);
+    const searchLabel = searchButtonLabels && !button.searchMasked ? label(button.text) || label(button.ariaLabel) : '';
+    const searchAlias = searchButtonLabels && !button.searchMasked && label(button.ariaLabel) !== searchLabel ? label(button.ariaLabel) : '';
+    const observation = { id: `button:${button.index}`, group, style, visibilityEvidence: button.visibilityEvidence === 'clear' ? 'clear' : 'unverified', ...(button.source ? { source: button.source } : {}), ...(focus.actions.length || focus.regions.length || focus.requested ? { focus } : {}), ...(searchLabel ? { searchLabel } : {}), ...(searchAlias ? { searchAlias } : {}) };
     observations.push(observation);
     counts.eligible++;
     if (!groups.has(groupKey)) groups.set(groupKey, { group, styles: new Map(), count: 0 });

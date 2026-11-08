@@ -21,6 +21,7 @@
     "name": {
       "type": "string"
     },
+    "reviewFocus": { "type": "string", "minLength": 1, "maxLength": 80 },
     "generatedAt": {
       "type": "string"
     },

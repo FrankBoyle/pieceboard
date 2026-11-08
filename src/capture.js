@@ -15,6 +15,7 @@ const MAX_CAPTURES = 80;
 const MAX_PER_ITEM = 4;
 const MAX_IMAGE_BYTES = 1024 * 1024;
 const MAX_COMPARISON_IMAGES = 40;
+const MAX_FOCUS_IMAGES = 6;
 const MAX_VISIBILITY_CHECKS = 500;
 const normalize = (text) => typeof text === 'string' ? text.replace(/\s+/g, ' ').trim() : '';
 const contentKey = (element) => element?.tag && normalize(element.text) ? JSON.stringify([element.tag, normalize(element.text)]) : '';
@@ -285,7 +286,7 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
       .filter((tag) => /^[a-z][a-z0-9-]*$/.test(tag));
     const styleProperties = BUTTON_STYLE_FIELDS.map(([property]) => property);
     const backgroundPolicy = { gradient: GRADIENT_PATTERN, filter: FILTER_PATTERN, unsafe: UNSAFE_IMAGE_PATTERN, maxLength: MAX_BACKGROUND_IMAGE_LENGTH, maxFilterLength: MAX_FILTER_LENGTH };
-    const snapshot = await page.evaluate(({ wantedTags, styleProperties, buttonGroups, sourceLinks, visibilityCheckLimit, instrumentedSources, backgroundPolicy }) => {
+    const snapshot = await page.evaluate(({ wantedTags, styleProperties, buttonGroups, sourceLinks, visibilityCheckLimit, instrumentedSources, backgroundPolicy, maskSelectors }) => {
       const wanted = new Set(wantedTags);
       const gradient = new RegExp(backgroundPolicy.gradient, 'i');
       const filter = new RegExp(backgroundPolicy.filter, 'i');
@@ -304,6 +305,17 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
       let overlappingSourceLinks = false;
       let visibilityChecks = 0;
       const sourceLinkCounts = sourceLinks.map(() => 0);
+      const regionHints = (element) => {
+        const regions = new Set();
+        for (let current = element; current; current = current.parentElement) {
+          const role = current.getAttribute('role') || '';
+          const names = `${current.id || ''} ${typeof current.className === 'string' ? current.className : ''}`;
+          if (current.localName === 'aside' || role === 'complementary' || /(?:^|[\s_-])(sidebar|side[-_]?nav)(?:$|[\s_-])/i.test(names)) regions.add('sidebar');
+          if (current.localName === 'header' || role === 'banner' || /(?:^|[\s_-])(header|top[-_]?bar)(?:$|[\s_-])/i.test(names)) regions.add('header');
+          if (current.localName === 'nav' || role === 'navigation') regions.add('navigation');
+        }
+        return [...regions];
+      };
       for (const element of document.querySelectorAll('*')) {
         const tag = element.localName;
         const index = counts[tag] || 0;
@@ -343,7 +355,9 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
         if (assignedLinks.length === 1) sourceLinkCounts[assignedLinks[0]]++;
         const buttonData = tag === 'button' ? {
           disabled: element.matches(':disabled') || element.getAttribute('aria-disabled') === 'true',
-          stateful: ['aria-pressed', 'aria-expanded', 'aria-selected', 'aria-checked', 'aria-current'].some((name) => element.hasAttribute(name)) || element.classList.contains('active') || element.matches(':focus, :hover'),
+          stateful: ['aria-pressed', 'aria-expanded', 'aria-selected', 'aria-checked', 'aria-current'].some((name) => element.hasAttribute(name)) || ['active', 'is-active', 'selected', 'is-selected', 'outside-month'].some((name) => element.classList.contains(name)) || element.matches(':focus, :hover'),
+          regions: regionHints(element),
+          searchMasked: maskSelectors.some((selector) => element.closest(selector) || element.querySelector(selector)),
           variant: assigned?.variant || element.getAttribute('data-ui-sheet-variant') || element.getAttribute('data-variant') || '',
           variantEvidence: assigned?.variant ? 'configured variant' : 'page-provided variant',
           family: assigned?.family || element.getAttribute('data-ui-sheet-group') || '',
@@ -364,7 +378,7 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
           : [root, body].some((node) => node?.classList.contains('light') || node?.classList.contains('theme-light')) ? 'light' : 'unspecified';
       const theme = `app:${appTheme};browser:${matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'}`;
       return { elements: result, theme, overlappingGroups, overlappingSourceLinks, sourceLinkCounts };
-    }, { wantedTags: tags, styleProperties, buttonGroups, sourceLinks, visibilityCheckLimit: MAX_VISIBILITY_CHECKS, instrumentedSources: options.instrumentedSources === true, backgroundPolicy });
+    }, { wantedTags: tags, styleProperties, buttonGroups, sourceLinks, visibilityCheckLimit: MAX_VISIBILITY_CHECKS, instrumentedSources: options.instrumentedSources === true, backgroundPolicy, maskSelectors });
     if (snapshot.overlappingGroups) throw new Error('Configured button groups overlap on at least one button. Make their selectors mutually exclusive.');
     if (snapshot.overlappingSourceLinks) throw new Error('Configured source links overlap on at least one visible element. Make their selectors mutually exclusive.');
     if (snapshot.sourceLinkCounts?.some((count) => count > 1)) throw new Error('A configured source link matches more than one visible element on this page. Use a more specific selector.');
@@ -395,7 +409,7 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
     }
     const buttons = rendered.filter((element) => element.tag === 'button').map((element) => ({ ...element, source: sourceByElement.get(`button:${element.index}`) || { status: 'unresolved' } }));
     const pageElements = elementSnapshot ? analyzeElementConsistency(elementSnapshot.elements.map((element) => ({ ...element, source: sourceByElement.get(`${element.tag}:${element.index}`) || { status: 'unresolved' } })), { url: displayUrl, viewport, theme, pixelRatio: capturePixelRatio, browser: { engine: 'chromium', version }, baselines: options.elementBaselines || [] }) : null;
-    const pageConsistency = analyzeButtonConsistency(buttons, { url: displayUrl, viewport, theme, pixelRatio: capturePixelRatio, baselines: options.baselines || [] });
+    const pageConsistency = analyzeButtonConsistency(buttons, { url: displayUrl, viewport, theme, pixelRatio: capturePixelRatio, baselines: options.baselines || [], requestedFocus: options.requestedFocus || '', searchButtonLabels: options.searchButtonLabels === true });
     pageConsistency.scope.instrumentedSources = options.instrumentedSources === true;
     if (pageConsistency.scope.instrumentedSources) {
       const byId = new Map(buttons.map((button) => [`button:${button.index}`, button]));
@@ -406,6 +420,7 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
     }
     pageConsistency.scope.browser = { engine: 'chromium', version: typeof version === 'string' ? version.slice(0, 100) : '' };
     pageConsistency.scope.maskSelectorsConfigured = maskSelectors.length;
+    if (options.searchButtonLabels === true) pageConsistency.scope.searchButtonLabels = true;
     if (buttonGroups.length) pageConsistency.scope.buttonGroups = buttonGroups;
     if (actions.length) pageConsistency.scope.actions = actions;
     pageConsistency.scope.visibilityCheckLimit = MAX_VISIBILITY_CHECKS;
@@ -421,7 +436,13 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
       catch { /* Cross-page approval needs explicit group and variant evidence. */ }
     }
     const buttonSnapshots = new Map(buttons.map((button) => [`button:${button.index}`, button]));
-    const examples = [...new Set([...pageConsistency.findings.flatMap((finding) => [finding.common.example, finding.outlier.example]), ...pageConsistency.appearances.map((appearance) => appearance.example)].filter(Boolean))];
+    const focused = pageConsistency.observations;
+    const actionExamples = new Map();
+    for (const observation of focused) for (const hint of observation.focus?.actions || []) if (!actionExamples.has(hint)) actionExamples.set(hint, observation.id);
+    const focusExamples = [focused.find((entry) => entry.focus?.requested)?.id,
+      ...['save', 'cancel'].map((hint) => actionExamples.get(hint)), ...actionExamples.values(), ...(options.searchButtonLabels ? focused.filter((entry) => entry.searchLabel).map((entry) => entry.id) : [])].filter(Boolean);
+    const limitedFocusExamples = [...new Set(focusExamples)].slice(0, options.searchButtonLabels ? MAX_FOCUS_IMAGES : 3);
+    const examples = [...new Set([...pageConsistency.findings.flatMap((finding) => [finding.common.example, finding.outlier.example]), ...limitedFocusExamples, ...pageConsistency.appearances.map((appearance) => appearance.example)].filter(Boolean))];
     // Compare every eligible button first; capture only representative examples.
     // Dynamic or covered elements remain in the observations with no image.
     for (const example of examples.slice(0, MAX_COMPARISON_IMAGES)) {

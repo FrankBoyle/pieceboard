@@ -254,6 +254,8 @@ export async function startLauncher(options = {}) {
         if (typeof body.capture !== 'boolean' || typeof body.useAuth !== 'boolean') throw new RequestError(400, 'Check the capture options.');
         if (body.site !== undefined && typeof body.site !== 'boolean') throw new RequestError(400, 'Check the site review option.');
         if (body.site && (!body.capture || !Number.isInteger(body.siteLimit) || body.siteLimit < 1 || body.siteLimit > 500)) throw new RequestError(400, 'Choose a site page limit from 1 to 500.');
+        if (body.focus !== undefined && (typeof body.focus !== 'string' || body.focus.length > 80 || /[\r\n]/.test(body.focus))) throw new RequestError(400, 'Enter a short focus of up to 80 characters.');
+        if (body.searchButtonLabels !== undefined && (typeof body.searchButtonLabels !== 'boolean' || (body.searchButtonLabels && !body.capture))) throw new RequestError(400, 'Button-label search requires a test site.');
         const selectedWorkspace = workspace;
         const includes = await selectedPaths(selectedWorkspace, body.projects);
         if (workspace !== selectedWorkspace) throw new RequestError(409, 'The project list changed. Select the projects again.');
@@ -263,6 +265,8 @@ export async function startLauncher(options = {}) {
         const id = randomUUID();
         const output = path.join(reportRoot, id);
         const args = [cli, 'scan', selectedWorkspace.root, ...includes.flatMap((item) => ['--include', item]), '--out', output];
+        if (body.focus?.trim()) args.push('--focus', body.focus.trim());
+        if (body.searchButtonLabels) args.push('--search-button-labels');
         if (page && body.site) args.push('--site', page.href, '--site-limit', String(body.siteLimit));
         else if (page) args.push('--page', page.href, '--capture');
         if (body.useAuth) args.push('--storage-state', auth.path);

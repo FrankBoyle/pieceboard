@@ -54,9 +54,10 @@ function measuredPage(route, changed = false) {
     tag: 'button', index, visible: true, type: 'button', visibilityEvidence: 'clear',
     family: 'account actions', familyEvidence: 'configured group',
     variant: 'primary', variantEvidence: 'configured variant',
+    text: index === 0 ? 'Save settings' : 'Other', regions: ['sidebar'],
     style: changed && index === 2 ? { ...style, borderTopLeftRadius: '3px' } : style,
     source: { status: 'likely', file: 'App.jsx', line: index + 1, method: 'unique ID and tag', elementId: `action-${index}` },
-  })), { url: `http://localhost:3210/${route}`, theme: 'app:light;browser:light' });
+  })), { url: `http://localhost:3210/${route}`, theme: 'app:light;browser:light', requestedFocus: 'save', searchButtonLabels: true });
   analysis.scope.browser = { engine: 'chromium', version: 'schema-fixture' };
   analysis.scope.instrumentedSources = false;
   analysis.appearances = summarizeAppearances(analysis.observations);
@@ -102,6 +103,7 @@ test('schemas validate generated reports, compact outputs and saved review files
   const docsItem = data.items.find((item) => item.docs);
   assert.equal(typeof docsItem?.docs, 'string', 'the report contract covers configured documentation links');
   const first = measuredPage('one', true);
+  data.reviewFocus = 'save';
   data.consistency = first;
   validate('report-v1', data);
   const pages = [first, measuredPage('two'), measuredPage('three')];

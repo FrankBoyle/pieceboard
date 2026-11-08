@@ -155,7 +155,7 @@
     $('scan').disabled = true;
     $('scan-status').textContent = 'Starting your review…';
     try {
-      await api('scan', { projects, capture: $('capture').checked, page: $('page-url').value.trim(), site: $('capture').checked && $('site-scan').checked, siteLimit: Number($('site-limit').value), useAuth: $('capture').checked && $('use-auth').checked });
+      await api('scan', { projects, capture: $('capture').checked, page: $('page-url').value.trim(), site: $('capture').checked && $('site-scan').checked, siteLimit: Number($('site-limit').value), useAuth: $('capture').checked && $('use-auth').checked, focus: $('review-focus').value.trim(), searchButtonLabels: $('capture').checked && $('search-button-labels').checked });
       state.scanning = true;
       pollJob();
     } catch (error) { $('scan').disabled = false; $('scan-status').textContent = error.message; }

@@ -24,6 +24,8 @@ function createPieceboardReviewModel() {
       const original = originalIndex++;
       if (a === b) { indistinct++; return; }
       const group = finding.group || {};
+      const observationA = (pageA?.observations || []).find((entry) => entry.id === idA);
+      const observationB = (pageB?.observations || []).find((entry) => entry.id === idB);
       const name = [group.family, group.variant, group.type].filter(Boolean).join(' · ') || 'UI appearance';
       const scope = pageA?.scope || {};
       const bucketKey = JSON.stringify([kind, group.family, group.variant, group.type, group.familyEvidence, scope.viewport?.width, scope.viewport?.height, scope.theme]);
@@ -33,16 +35,25 @@ function createPieceboardReviewModel() {
         return (hasA || hasB) && entry.options.length + Number(!hasA) + Number(!hasB) <= 4;
       });
       if (!current) {
-        current = { key: `visual:${finding.id || 'choice'}:${fingerprint(a)}:${fingerprint(b)}:${bucketKey}`, name, options: [], occurrences: [], legacy: [] };
+        current = { key: `visual:${finding.id || 'choice'}:${fingerprint(a)}:${fingerprint(b)}:${bucketKey}`, name, options: [], occurrences: [], legacy: [], search: '', requested: false };
         bucket.push(current); buckets.set(bucketKey, bucket); groups.push(current);
       }
-      const addOption = (src, label) => {
+      const addOption = (src, observation) => {
         let index = current.options.findIndex((option) => option.image === src);
-        if (index < 0) { index = current.options.length; current.options.push({ image: src, label }); }
+        if (index < 0) { index = current.options.length; current.options.push({ image: src, label: 'Observed appearance', actions: [], labels: [] }); }
+        const option = current.options[index];
+        option.actions = [...new Set([...option.actions, ...(observation?.focus?.actions || [])])];
+        option.labels = [...new Set([...option.labels, ...(observation?.searchLabel ? [observation.searchLabel] : [])])];
+        if (option.labels.length === 1) option.label = option.labels[0];
+        else if (option.actions.length === 1) option.label = `${option.actions[0][0].toUpperCase()}${option.actions[0].slice(1)} action`;
+        else if (option.actions.length > 1) option.label = 'Observed actions';
+        else option.label = 'Observed appearance';
         return index;
       };
-      const first = addOption(a, 'Observed appearance');
-      const second = addOption(b, 'Observed appearance');
+      const first = addOption(a, observationA);
+      const second = addOption(b, observationB);
+      current.search += ` ${name} ${kind} ${context} ${[observationA, observationB].flatMap((entry) => [entry?.source?.file, entry?.searchLabel, entry?.searchAlias, ...(entry?.focus?.actions || []), ...(entry?.focus?.regions || [])]).filter(Boolean).join(' ')}`;
+      current.requested ||= Boolean(observationA?.focus?.requested || observationB?.focus?.requested);
       current.occurrences.push({ id: finding.id || `choice-${original + 1}`, context, target });
       current.legacy.push({ key: `${original}:${finding.id || `choice-${original + 1}`}`, first, second });
     }
@@ -67,9 +78,11 @@ function createPieceboardReviewModel() {
     for (const [pageIndex, page] of (data.responsiveAudit?.pages || []).entries()) for (const [widthIndex, width] of (page.viewports || []).entries()) for (const [findingIndex, finding] of (width.findings || []).entries()) {
       const route = normalize(page.url), selector = normalize(finding.selector), other = normalize(finding.otherSelector), container = normalize(finding.container);
       const key = JSON.stringify([finding.kind, route, width.viewport?.width, width.viewport?.height, selector, other, container]);
-      if (!groups.has(key)) groups.set(key, { key, kind: finding.kind, route, selector, other, container, viewport: width.viewport, occurrences: [] });
+      if (!groups.has(key)) groups.set(key, { key, kind: finding.kind, route, selector, other, container, viewport: width.viewport, regions: [], occurrences: [] });
+      const group = groups.get(key);
+      group.regions = [...new Set([...group.regions, ...(finding.regions || [])])];
       const evidence = Number.isInteger(finding.previewIndex) ? width.previews?.[finding.previewIndex] : undefined;
-      groups.get(key).occurrences.push({ page: pageIndex + 1, target: `#site-responsive-${pageIndex}-${widthIndex}-${findingIndex}`, finding, evidence });
+      group.occurrences.push({ page: pageIndex + 1, target: `#site-responsive-${pageIndex}-${widthIndex}-${findingIndex}`, finding, evidence });
     }
     return [...groups.values()].sort((a, b) => b.occurrences.length - a.occurrences.length);
   }
@@ -80,6 +93,24 @@ function createPieceboardReviewModel() {
   const data = window.__UI_SHEET_DATA__;
   const reviewModel = createPieceboardReviewModel();
   const reviewState = { visual: [], visualAnswers: {}, layout: [], layoutAnswers: {}, status: [] };
+  const focusState = { value: '', listeners: [] };
+  const focusWords = (value) => String(value || '').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()
+    .match(/[\p{L}\p{N}]+/gu)?.map((word) => word.length > 4 && word.endsWith('s') && !word.endsWith('ss') ? word.slice(0, -1) : word) || [];
+  const focusFiller = new Set(['a', 'an', 'the', 'that', 'which', 'for', 'look', 'at', 'please', 'show', 'me']);
+  const focusAliases = { sidebar: ['sidebar', 'sidenav', 'aside'], header: ['header', 'banner', 'topbar'], button: ['button', 'btn'], cancel: ['cancel', 'discard'], save: ['save', 'saving'] };
+  function focusMatches(value, requested = false) {
+    const terms = focusWords(focusState.value).filter((term) => !focusFiller.has(term));
+    if (!terms.length) return true;
+    const requestedTerms = focusWords(data.reviewFocus).filter((term) => !focusFiller.has(term) && !['button', 'control'].includes(term));
+    const comparableTerms = terms.filter((term) => !['button', 'control'].includes(term));
+    if (requested && comparableTerms.length && comparableTerms.join(' ') === requestedTerms.join(' ')) return true;
+    const words = focusWords(value);
+    return terms.every((term) => (focusAliases[term] || [term]).some((alias) => words.some((word) => word.includes(alias))));
+  }
+  function updateFocus(value) {
+    focusState.value = String(value || '').trim().slice(0, 80);
+    for (const listener of focusState.listeners) listener();
+  }
   const byId = (id) => document.getElementById(id);
   const grid = byId('grid');
   const dialog = byId('detail-dialog');
@@ -542,6 +573,90 @@ function createPieceboardReviewModel() {
     controls.append(download, label); return controls;
   }
 
+  function renderFocus() {
+    const area = byId('focus-review');
+    if (!area) return;
+    const title = el('div');
+    const heading = el('h2', '', 'What would you like help with?'); heading.id = 'focus-title';
+    title.append(el('div', 'section-kicker', 'FOCUS YOUR REVIEW'), heading, el('p', 'choice-intro', 'Filter the decisions, layout patterns, and captured pieces below. The full scan and all findings are still available.'));
+    const searchLabel = el('label', 'focus-label', 'Feature or action');
+    const search = el('input'); search.type = 'search'; search.maxLength = 80; search.placeholder = 'For example: sidebar, header, or save buttons'; searchLabel.append(search);
+    const shortcuts = el('div', 'focus-shortcuts'); shortcuts.setAttribute('aria-label', 'Suggested review focuses');
+    const buttons = [];
+    for (const [label, value] of [['Everything', ''], ['Sidebars', 'sidebar'], ['Headers', 'header'], ['Save buttons', 'save buttons'], ['Cancel buttons', 'cancel buttons']]) {
+      const button = el('button', 'focus-chip', label); button.type = 'button';
+      button.addEventListener('click', () => { search.value = value; updateFocus(value); });
+      buttons.push({ button, value }); shortcuts.append(button);
+    }
+    const labelSearchEnabled = data.consistency && (data.consistency.pages || [data.consistency]).some((page) => page.scope?.searchButtonLabels);
+    const explanation = el('p', 'focus-help', labelSearchEnabled
+      ? 'Matches use captured button labels, action and region hints, source names, and locations. Capture limits and hints can still miss controls.'
+      : 'Matches use captured action and region hints, source names, and locations. To search another button label, enter its action before scanning or turn on button-label search. Hints can miss controls or identify the wrong purpose.');
+    const status = el('p', 'focus-status'); status.setAttribute('aria-live', 'polite');
+    const examples = el('div', 'focus-examples');
+    const more = el('button', 'review-button focus-more', 'Show more examples'); more.type = 'button';
+    area.append(title, searchLabel, shortcuts, explanation, status, examples, more);
+    const pages = data.consistency ? (data.consistency.pages || [data.consistency]) : [];
+    const observed = pages.flatMap((page, pageIndex) => (page.observations || []).map((observation) => ({
+      observation, page: page.scope?.url || 'Unknown page', pageIndex: pageIndex + 1, image: page.previews?.[observation.id]?.image,
+      search: `button ${page.scope?.url || ''} ${observation.group?.family || ''} ${observation.source?.file || ''} ${observation.searchLabel || ''} ${observation.searchAlias || ''} ${(observation.focus?.actions || []).join(' ')} ${(observation.focus?.regions || []).join(' ')}`,
+    })));
+    const landmarks = (data.responsiveAudit?.pages || []).flatMap((page, pageIndex) => (page.viewports || []).flatMap((width) => (width.landmarks || []).map((landmark) => ({
+      landmark, viewport: width.viewport, preview: width.previews?.[landmark.previewIndex], page: page.url || 'Unknown page', pageIndex: pageIndex + 1,
+      search: `${landmark.kind} ${page.url || ''}`,
+    }))));
+    const sourceExamples = capturedEntries.filter(({ capture }) => typeof capture?.image === 'string');
+    let shown = 12;
+    function draw() {
+      buttons.forEach(({ button, value }) => button.setAttribute('aria-pressed', String(focusState.value.toLowerCase() === value.toLowerCase())));
+      examples.replaceChildren(); more.hidden = true;
+      if (!focusState.value) { status.textContent = 'Choose a focus or explore everything below.'; return; }
+      const matchingButtons = observed.filter((entry) => focusMatches(entry.search, entry.observation.focus?.requested));
+      const matchingLandmarks = landmarks.filter((entry) => focusMatches(entry.search));
+      const matchingSources = sourceExamples.filter(({ item, capture, types: entryTypes }) => focusMatches(`${item.name} ${item.kind} ${item.source || ''} ${capture.label || ''} ${capture.file || ''} ${capture.page || ''} ${entryTypes.join(' ')} ${capture.element?.tag || ''}`));
+      const unique = new Map();
+      for (const entry of matchingButtons) if (entry.image && !unique.has(entry.image)) unique.set(entry.image, { kind: 'button', ...entry });
+      for (const entry of matchingLandmarks) if (entry.preview?.image && !unique.has(entry.preview.image)) unique.set(entry.preview.image, { kind: 'region', ...entry });
+      for (const entry of matchingSources) if (!unique.has(entry.capture.image)) unique.set(entry.capture.image, { kind: 'source', ...entry });
+      const list = [...unique.values()];
+      status.textContent = list.length
+        ? `${plural(list.length, 'captured example')} match this focus. Matching decisions and layout patterns are below.`
+        : 'No captured examples match this focus. Check matching decisions and layout patterns below, or scan another page or state.';
+      for (const entry of list.slice(0, shown)) {
+        const card = el('article', 'focus-example');
+        const image = el('img'); image.src = entry.kind === 'button' ? entry.image : entry.kind === 'region' ? entry.preview.image : entry.capture.image; image.alt = 'Captured interface example'; image.loading = 'lazy';
+        const description = entry.kind === 'button'
+          ? `${entry.observation.searchLabel || entry.observation.focus?.actions?.join(' / ') || 'Observed'} button · page ${entry.pageIndex}`
+          : entry.kind === 'region' ? `${entry.landmark.kind} · page ${entry.pageIndex} · ${entry.viewport.width} px` : entry.capture.label || entry.item.name || 'Captured interface piece';
+        if (entry.kind === 'region') {
+          const frame = el('div', 'focus-region-preview'); frame.append(image);
+          const bounds = entry.landmark.bounds, scroll = entry.preview.scroll, viewport = entry.viewport;
+          if (bounds && scroll && viewport?.width && viewport?.height) {
+            const x1 = Math.max(0, Math.min(viewport.width, bounds.x - scroll.x)), y1 = Math.max(0, Math.min(viewport.height, bounds.y - scroll.y));
+            const x2 = Math.max(0, Math.min(viewport.width, bounds.x + bounds.width - scroll.x)), y2 = Math.max(0, Math.min(viewport.height, bounds.y + bounds.height - scroll.y));
+            if (x2 > x1 && y2 > y1) {
+              const width = x2 - x1, height = y2 - y1;
+              frame.style.width = `${Math.min(240, 180 * width / height)}px`; frame.style.aspectRatio = `${width} / ${height}`;
+              image.style.width = `${viewport.width / width * 100}%`; image.style.left = `${-x1 / width * 100}%`; image.style.top = `${-y1 / height * 100}%`;
+            }
+          }
+          card.append(frame);
+        } else card.append(image);
+        card.append(el('strong', '', description), el('span', '', entry.kind === 'button' || entry.kind === 'region' ? entry.page : entry.capture.page || entry.capture.file || 'Source-linked example'));
+        if (entry.kind === 'source') { const details = el('button', 'focus-detail', 'View details'); details.type = 'button'; details.addEventListener('click', () => showItem(entry.item, entry.capture)); card.append(details); }
+        examples.append(card);
+      }
+      if (list.length > shown) { more.hidden = false; more.textContent = `Show more examples (${list.length - shown} remaining)`; }
+      if (matchingButtons.some((entry) => !entry.image)) examples.append(el('p', 'focus-help', 'Some matching controls were observed without a captured preview.'));
+      if (matchingLandmarks.some((entry) => !entry.preview?.image)) examples.append(el('p', 'focus-help', 'Some matching regions did not have an available screenshot.'));
+    }
+    search.addEventListener('input', () => { shown = 12; updateFocus(search.value); });
+    more.addEventListener('click', () => { shown += 12; draw(); });
+    focusState.listeners.push(draw);
+    search.value = typeof data.reviewFocus === 'string' ? data.reviewFocus : '';
+    updateFocus(search.value);
+  }
+
   function renderChoices() {
     const area = byId('choice-review');
     if (!area) return;
@@ -550,7 +665,9 @@ function createPieceboardReviewModel() {
     area.append(el('div', 'section-kicker', 'START HERE · CHOOSE WHAT FITS'), el('h2', '', 'Which version should we use?'));
     if (!candidates.length) {
       area.append(el('p', 'choice-empty', data.consistency || data.elementConsistency
-        ? 'No side-by-side choices are available from the captured evidence. A comparison needs real screenshots; check the capture and its coverage below.'
+        ? result.missing
+          ? 'No side-by-side choices can be shown because comparison screenshots are unavailable. Check capture coverage and try the relevant page again.'
+          : 'No differences were identified that can be shown as a choice in these captures. Browse the focused examples and check coverage; this does not establish that the interface is consistent.'
         : 'This is a source inventory, so it does not yet contain visual choices. Ask your agent to capture authorized test screens and compare the same interface in each one.'));
       if (result.indistinct) area.append(el('p', 'choice-empty', `${plural(result.indistinct, 'comparison')} had identical captures and needs closer inspection before making a visual choice.`));
       return;
@@ -569,6 +686,9 @@ function createPieceboardReviewModel() {
       catch { status.textContent = 'Download your review to keep it.'; }
     };
     const list = el('div', 'choice-list');
+    const cards = [];
+    const focusedEmpty = el('p', 'choice-empty', 'No appearance decisions match this focus. Check the examples and layout findings, or try another focus.');
+    focusedEmpty.hidden = true;
     candidates.forEach((choice, index) => {
       let previous = saved?.[choice.key];
       if (!previous) {
@@ -586,7 +706,10 @@ function createPieceboardReviewModel() {
       const allowed = [...'abcd'.slice(0, choice.options.length), 'none', 'ignore', 'unsure'];
       answers[choice.key] = { selection: allowed.includes(previous?.selection) ? previous.selection : '', note: typeof previous?.note === 'string' ? previous.note.slice(0, 1000) : '' };
       const card = el('fieldset', 'choice-card');
+      cards.push({ card, choice });
       card.append(el('legend', '', `${index + 1}. Which ${choice.name} should we use?`), el('p', 'choice-context', `${plural(choice.occurrences.length, 'matching comparison')} · ${choice.occurrences[0].context}`));
+      const actionSets = choice.options.map((option) => (option.actions || []).join(','));
+      if (actionSets.every(Boolean) && new Set(actionSets).size > 1) card.append(el('p', 'choice-context', 'These examples may serve different actions. They may intentionally look different; check their purpose before choosing.'));
       if (choice.occurrences.length > 1) {
         const more = el('details', 'choice-occurrences'); more.append(el('summary', '', 'See matching occurrences'));
         const entries = el('ul');
@@ -612,7 +735,14 @@ function createPieceboardReviewModel() {
       card.append(options, other, noteLabel); list.append(card);
     });
     const download = el('button', 'review-button choice-download', 'Download my review'); download.type = 'button'; download.addEventListener('click', downloadReview);
-    area.append(list, download, reviewFileControls(), status);
+    area.append(list, focusedEmpty, download, reviewFileControls(), status);
+    const applyFocus = () => {
+      let visible = 0;
+      for (const { card, choice } of cards) { card.hidden = !focusMatches(choice.search, choice.requested); if (!card.hidden) visible++; }
+      focusedEmpty.hidden = visible > 0;
+    };
+    focusState.listeners.push(applyFocus);
+    applyFocus();
   }
 
   const layoutLabels = { 'horizontal-overflow': 'Horizontal overflow', 'clipped-text': 'Clipped text', 'overlapping-text': 'Overlapping text' };
@@ -648,7 +778,10 @@ function createPieceboardReviewModel() {
     const pageSize = 20;
     function draw() {
       const query = search.value.trim().toLowerCase();
-      const filtered = groups.filter((group) => (!kind.value || group.kind === kind.value) && (!query || `${layoutLabels[group.kind] || ''} ${group.route} ${group.selector} ${group.other} ${group.container}`.toLowerCase().includes(query)));
+      const filtered = groups.filter((group) => {
+        const description = `${layoutLabels[group.kind] || ''} ${group.route} ${group.selector} ${group.other} ${group.container} ${(group.regions || []).join(' ')} ${group.occurrences.map((entry) => entry.finding?.source?.file || '').join(' ')}`;
+        return (!kind.value || group.kind === kind.value) && (!query || description.toLowerCase().includes(query)) && focusMatches(description);
+      });
       const pages = Math.max(1, Math.ceil(filtered.length / pageSize)); pageNumber = Math.min(pageNumber, pages - 1);
       previous.disabled = pageNumber === 0; next.disabled = pageNumber >= pages - 1;
       count.textContent = `${filtered.length} patterns · page ${pageNumber + 1} of ${pages}`;
@@ -656,6 +789,12 @@ function createPieceboardReviewModel() {
       for (const [offset, group] of filtered.slice(pageNumber * pageSize, (pageNumber + 1) * pageSize).entries()) {
         const card = el('fieldset', 'choice-card layout-decision-card');
         card.append(el('legend', '', `${pageNumber * pageSize + offset + 1}. ${layoutLabels[group.kind] || 'Possible layout issue'}`), el('p', 'choice-context', `${plural(group.occurrences.length, 'matching occurrence')} · ${group.route || 'Unknown route'} · ${group.viewport?.width || '?'} px`), el('code', 'layout-selector', group.selector || 'Unknown element'));
+        const guidance = {
+          'overlapping-text': 'Two text areas occupy the same space. Check whether both are visible at once; if so, give them room or adjust their positioning.',
+          'clipped-text': 'Text extends beyond an area that clips its contents. Check whether truncation is intentional and the full text is available.',
+          'horizontal-overflow': 'Content extends beyond the screen width. Check that people can reach it without unintended sideways scrolling.',
+        };
+        card.append(el('p', 'layout-message', guidance[group.kind] || 'Inspect the captured area and decide whether it needs a change.'));
         if (group.other) card.append(el('p', 'choice-context', `Overlaps: ${group.other}`));
         if (group.container) card.append(el('p', 'choice-context', `Container: ${group.container}`));
         const sample = group.occurrences.find((entry) => entry.evidence?.image) || group.occurrences[0];
@@ -669,9 +808,18 @@ function createPieceboardReviewModel() {
             const x2 = Math.max(0, Math.min(viewport.width, bounds.x + bounds.width - scroll.x)), y2 = Math.max(0, Math.min(viewport.height, bounds.y + bounds.height - scroll.y));
             if (x2 > x1 && y2 > y1) { const marker = el('span', 'responsive-highlight'); marker.setAttribute('aria-hidden', 'true'); marker.style.left = `${x1 / viewport.width * 100}%`; marker.style.top = `${y1 / viewport.height * 100}%`; marker.style.width = `${(x2 - x1) / viewport.width * 100}%`; marker.style.height = `${(y2 - y1) / viewport.height * 100}%`; frame.append(marker); }
           }
-          card.append(frame, el('p', 'choice-context', 'The outline marks the measured area when visible.'));
+          const otherBounds = sample.finding?.otherBounds;
+          if (otherBounds && scroll && viewport.width && viewport.height) {
+            const x1 = Math.max(0, Math.min(viewport.width, otherBounds.x - scroll.x)), y1 = Math.max(0, Math.min(viewport.height, otherBounds.y - scroll.y));
+            const x2 = Math.max(0, Math.min(viewport.width, otherBounds.x + otherBounds.width - scroll.x)), y2 = Math.max(0, Math.min(viewport.height, otherBounds.y + otherBounds.height - scroll.y));
+            if (x2 > x1 && y2 > y1) { const marker = el('span', 'responsive-highlight responsive-highlight-other'); marker.setAttribute('aria-hidden', 'true'); marker.style.left = `${x1 / viewport.width * 100}%`; marker.style.top = `${y1 / viewport.height * 100}%`; marker.style.width = `${(x2 - x1) / viewport.width * 100}%`; marker.style.height = `${(y2 - y1) / viewport.height * 100}%`; frame.append(marker); }
+          }
+          card.append(frame, el('p', 'choice-context', otherBounds ? 'Orange and blue outlines mark the two measured text areas when visible.' : 'The outline marks the measured area when visible.'));
         }
         else card.append(el('p', 'choice-empty', 'No screenshot is available for this pattern. Choose “Needs more context” if the evidence is insufficient.'));
+        if (sample?.finding?.recommendation?.summary) {
+          const suggestion = el('details', 'choice-occurrences'); suggestion.append(el('summary', '', 'Technical suggestion'), el('p', 'layout-message', sample.finding.recommendation.summary)); card.append(suggestion);
+        }
         const detail = el('details', 'choice-occurrences'); detail.append(el('summary', '', 'See every matching occurrence')); const entries = el('ul');
         for (const occurrence of group.occurrences) { const item = el('li'); const link = el('a', '', `Page ${occurrence.page} · inspect finding`); link.href = occurrence.target; item.append(link); entries.append(item); }
         detail.append(entries); card.append(detail);
@@ -686,7 +834,8 @@ function createPieceboardReviewModel() {
       if (!filtered.length) list.append(el('p', 'choice-empty', 'No layout patterns match these filters.'));
     }
     previous.addEventListener('click', () => { pageNumber--; draw(); }); next.addEventListener('click', () => { pageNumber++; draw(); });
-    search.addEventListener('input', () => { pageNumber = 0; draw(); }); kind.addEventListener('change', () => { pageNumber = 0; draw(); }); draw();
+    search.addEventListener('input', () => { pageNumber = 0; draw(); }); kind.addEventListener('change', () => { pageNumber = 0; draw(); });
+    focusState.listeners.push(() => { pageNumber = 0; draw(); }); draw();
     const download = el('button', 'review-button choice-download', 'Download my review'); download.type = 'button'; download.addEventListener('click', downloadReview); area.append(download, reviewFileControls(), status);
   }
 
@@ -1281,8 +1430,8 @@ function createPieceboardReviewModel() {
       if (activeType !== 'all' && !entry.types.includes(activeType)) continue;
       const locations = capture ? item.usages.filter((usage) => usage.file === capture.file && usage.line === capture.line) : item.usages;
       const haystack = [item.name, item.kind, item.subtype, item.source, item.value, item.description,
-        capture?.label, capture?.file, capture?.page, ...locations.map((usage) => `${usage.file} ${usage.detail}`)].join(' ').toLowerCase();
-      if (haystack.includes(query)) filtered.push(entry);
+        capture?.label, capture?.file, capture?.page, ...entry.types, ...locations.map((usage) => `${usage.file} ${usage.detail} ${usage.element?.tag || ''} ${usage.element?.ariaLabel || ''}`)].join(' ').toLowerCase();
+      if (haystack.includes(query) && focusMatches(haystack)) filtered.push(entry);
     }
     byId('active-filter').textContent = `${filters.find((filter) => filter.id === active).label}${activeType === 'all' ? '' : ` · ${types.find((type) => type.id === activeType).label}`}`.toUpperCase();
     byId('result-count').textContent = `${String(filtered.length).padStart(2, '0')} ${filtered.length === 1 ? 'ITEM' : 'ITEMS'}`;
@@ -1462,4 +1611,6 @@ function createPieceboardReviewModel() {
   renderLayout();
   renderConsistency();
   renderSiteReview();
+  focusState.listeners.push(renderGrid);
+  renderFocus();
 })();

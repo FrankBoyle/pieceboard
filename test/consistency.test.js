@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { analyzeButtonConsistency, baselineRuleId, isComparableFilter, normalizeButtonStyle } from '../src/consistency.js';
+import { analyzeButtonConsistency, baselineRuleId, buttonFocusHints, isComparableFilter, normalizeButtonStyle } from '../src/consistency.js';
 
 const baseStyle = {
   backgroundColor: 'rgb(37, 99, 235)', backgroundImage: 'none', color: 'rgb(255, 255, 255)', opacity: '1', filter: 'none',
@@ -13,6 +13,22 @@ const baseStyle = {
   paddingTop: '8px', paddingRight: '16px', paddingBottom: '8px', paddingLeft: '16px', boxShadow: 'none',
 };
 const button = (index, changes = {}) => ({ tag: 'button', index, visible: true, visibilityEvidence: 'clear', type: 'button', classes: ['button', 'primary'], style: { ...baseStyle }, ...changes });
+
+test('retains bounded action and region hints without storing page labels', () => {
+  const secret = 'SYNTHETIC_PRIVATE_LABEL';
+  const save = buttonFocusHints(button(0, { text: `Save ${secret}`, regions: ['sidebar'] }), 'buttons that save');
+  assert.deepEqual(save, { actions: ['save'], regions: ['sidebar'], requested: true });
+  const custom = buttonFocusHints(button(1, { text: `Escalate ${secret}` }), 'escalate');
+  assert.equal(custom.requested, true);
+  assert.deepEqual(custom.actions, []);
+  const masked = buttonFocusHints(button(2, { text: `Save ${secret}`, searchMasked: true, regions: ['header'] }), 'save');
+  assert.deepEqual(masked, { actions: [], regions: ['header'], requested: false });
+  assert.equal(JSON.stringify([save, custom, masked]).includes(secret), false);
+  const optional = analyzeButtonConsistency([button(0, { text: `Escalate ${secret}`, ariaLabel: 'Request assistance' }), button(1, { text: `Save ${secret}`, searchMasked: true })], { searchButtonLabels: true });
+  assert.equal(optional.observations[0].searchLabel, `Escalate ${secret}`);
+  assert.equal(optional.observations[0].searchAlias, 'Request assistance');
+  assert.equal(optional.observations[1].searchLabel, undefined, 'masked controls never retain searchable labels');
+});
 
 test('flags a rare appearance with the exact differences and counts all occurrences', () => {
   const items = [button(0), button(1), button(2, { style: { ...baseStyle, borderTopLeftRadius: '3px' }, source: { status: 'likely', file: 'src/Settings.jsx', line: 42, method: 'unique ID and tag' } })];

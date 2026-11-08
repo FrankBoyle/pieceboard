@@ -85,19 +85,45 @@ function inspectResponsiveInPage() {
     return false;
   };
   const findings = [];
-  const add = (finding) => {
+  const regionHints = (element) => {
+    const regions = new Set();
+    for (let current = element; current; current = current.parentElement) {
+      const role = current.getAttribute('role') || '';
+      const names = `${current.id || ''} ${typeof current.className === 'string' ? current.className : ''}`;
+      if (current.localName === 'aside' || role === 'complementary' || /(?:^|[\s_-])(sidebar|side[-_]?nav)(?:$|[\s_-])/i.test(names)) regions.add('sidebar');
+      if (current.localName === 'header' || role === 'banner' || /(?:^|[\s_-])(header|top[-_]?bar)(?:$|[\s_-])/i.test(names)) regions.add('header');
+      if (current.localName === 'nav' || role === 'navigation') regions.add('navigation');
+    }
+    return [...regions];
+  };
+  const add = (finding, ...elements) => {
     if (findings.length >= MAX_FINDINGS) { limited = true; return; }
+    const regions = [...new Set(elements.flatMap(regionHints))];
+    if (regions.length) finding.regions = regions;
     findings.push(finding);
   };
   const all = document.querySelectorAll('body *');
   const elementCount = Math.min(all.length, MAX_ELEMENTS);
   if (all.length > MAX_ELEMENTS) limited = true;
   let uninspected = 0;
+  const landmarks = [];
   for (let i = 0; i < elementCount; i++) {
     const element = all[i];
     if ((element.localName === 'iframe' || element.localName === 'frame' || element.shadowRoot) && isVisible(element)) {
       const rect = element.getBoundingClientRect();
       if (rect.width > 0 && rect.height > 0) uninspected++;
+    }
+    const role = element.getAttribute('role') || '';
+    const names = `${element.id || ''} ${typeof element.className === 'string' ? element.className : ''}`;
+    const kinds = [];
+    if (element.localName === 'aside' || role === 'complementary' || /(?:^|[\s_-])(sidebar|side[-_]?nav)(?:$|[\s_-])/i.test(names)) kinds.push('sidebar');
+    if (element.localName === 'header' || role === 'banner' || /(?:^|[\s_-])(header|top[-_]?bar)(?:$|[\s_-])/i.test(names)) kinds.push('header');
+    if (element.localName === 'nav' || role === 'navigation') kinds.push('navigation');
+    if (kinds.length && isVisible(element)) {
+      const rect = element.getBoundingClientRect();
+      if (rect.width > 1 && rect.height > 1) for (const kind of kinds) {
+        if (landmarks.filter((entry) => entry.kind === kind).length < 2) landmarks.push({ kind, bounds: bounds(rect) });
+      }
     }
   }
   const overflowing = [];
@@ -111,7 +137,7 @@ function inspectResponsiveInPage() {
       const selector = selectorFor(element);
       if (!selector) { limited = true; continue; }
       overflowing.push(element);
-      add({ kind: 'horizontal-overflow', selector, tag: element.localName, elementId: uniqueId(element), bounds: bounds(rect), overflowPx: round(Math.max(0, rect.right - viewportWidth, -rect.left)), message: 'This element extends beyond the viewport and may cause horizontal overflow or clipping.' });
+      add({ kind: 'horizontal-overflow', selector, tag: element.localName, elementId: uniqueId(element), bounds: bounds(rect), overflowPx: round(Math.max(0, rect.right - viewportWidth, -rect.left)), message: 'This element extends beyond the viewport and may cause horizontal overflow or clipping.' }, element);
     }
     if (!overflowing.length) add({ kind: 'horizontal-overflow', selector: 'html', tag: 'html', elementId: '', bounds: { x: 0, y: 0, width: viewportWidth, height: document.documentElement.clientHeight }, overflowPx: round(scrollWidth - viewportWidth), message: 'The document is wider than the viewport; inspect its overflow and positioned content.' });
   }
@@ -144,7 +170,7 @@ function inspectResponsiveInPage() {
         const key = `${selector}\n${container}`;
         if (!clipped.has(key)) {
           clipped.add(key);
-          add({ kind: 'clipped-text', selector, container, tag: parent.localName, elementId: uniqueId(parent), bounds: bounds(rect), message: 'Text extends beyond a clipping container and may be cut off; truncation may be intentional.' });
+          add({ kind: 'clipped-text', selector, container, tag: parent.localName, elementId: uniqueId(parent), bounds: bounds(rect), message: 'Text extends beyond a clipping container and may be cut off; truncation may be intentional.' }, parent);
         }
         break;
       }
@@ -176,7 +202,7 @@ function inspectResponsiveInPage() {
         overlapKeys.add(key);
         const sameParent = fragment.element.parentElement === other.element.parentElement;
         const container = sameParent ? selectorFor(fragment.element.parentElement) : null;
-        add({ kind: 'overlapping-text', selector, otherSelector, ...(container ? { container, sameParent: true } : {}), tag: fragment.element.localName, elementId: uniqueId(fragment.element), bounds: fragment.bounds, overlap: { width: round(overlapX), height: round(overlapY) }, message: 'Text from these elements occupies the same area; check whether the overlap is intentional.' });
+        add({ kind: 'overlapping-text', selector, otherSelector, ...(container ? { container, sameParent: true } : {}), tag: fragment.element.localName, elementId: uniqueId(fragment.element), bounds: fragment.bounds, otherBounds: other.bounds, overlap: { width: round(overlapX), height: round(overlapY) }, message: 'Text from these elements occupies the same area; check whether the overlap is intentional.' }, fragment.element, other.element);
       }
       if (pairs > MAX_PAIRS) break;
       if (!buckets.has(bucket)) buckets.set(bucket, []);
@@ -184,7 +210,7 @@ function inspectResponsiveInPage() {
     }
     if (pairs > MAX_PAIRS) break;
   }
-  return { viewportWidth, scrollWidth, inspected: { elements: elementCount, textNodes: Math.min(textNodes, MAX_TEXT_NODES), textFragments: fragments.length, limited, uninspected }, findings };
+  return { viewportWidth, scrollWidth, inspected: { elements: elementCount, textNodes: Math.min(textNodes, MAX_TEXT_NODES), textFragments: fragments.length, limited, uninspected }, findings, landmarks };
 }
 
 // Preserve conventional hash-router paths while excluding fragments that are
@@ -299,6 +325,10 @@ export async function auditResponsive(browser, data, inputUrl, options) {
         previewBudgetChars -= image.image.length;
       };
       await savePreview();
+      const landmarks = measured.landmarks.map((landmark) => {
+        const previewIndex = previews.findIndex((image) => landmark.bounds.x < image.scroll.x + viewport.width && landmark.bounds.x + landmark.bounds.width > image.scroll.x && landmark.bounds.y < image.scroll.y + viewport.height && landmark.bounds.y + landmark.bounds.height > image.scroll.y);
+        return { ...landmark, ...(previewIndex >= 0 ? { previewIndex } : {}) };
+      });
       // Chrome DevTools Protocol supplies the same inspected box and computed
       // styles shown in the browser's Elements panel, without modifying the DOM.
       let session;
@@ -336,7 +366,7 @@ export async function auditResponsive(browser, data, inputUrl, options) {
         if (previewIndex >= 0) finding.previewIndex = previewIndex;
       }
       if (!sameRoute()) throw new Error('Page navigated away during inspection.');
-      results.push({ viewport, coverage: stable && !measured.inspected.limited && !measured.inspected.uninspected ? 'observed' : 'partial', stable, document: { viewportWidth: measured.viewportWidth, scrollWidth: measured.scrollWidth }, inspected: measured.inspected, findings, previews });
+      results.push({ viewport, coverage: stable && !measured.inspected.limited && !measured.inspected.uninspected ? 'observed' : 'partial', stable, document: { viewportWidth: measured.viewportWidth, scrollWidth: measured.scrollWidth }, inspected: measured.inspected, findings, previews, landmarks });
     } catch (error) {
       options.throwIfExpired();
       results.push({ viewport, coverage: 'incomplete', reason: error.message?.startsWith('A configured page action') || error.message === 'Page navigated away from the requested route.' || error.message === 'Page navigated away during inspection.' ? error.message : 'The browser could not complete this viewport inspection.', findings: [] });

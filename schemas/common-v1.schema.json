@@ -832,7 +832,19 @@
         },
         "source": {
           "$ref": "#/$defs/source"
-        }
+        },
+        "focus": {
+          "type": "object",
+          "required": ["actions", "regions", "requested"],
+          "properties": {
+            "actions": { "type": "array", "uniqueItems": true, "items": { "enum": ["save", "cancel", "submit", "delete", "edit", "add", "download", "upload", "search", "close", "open", "back", "next", "print", "refresh", "confirm", "reject", "archive"] } },
+            "regions": { "type": "array", "uniqueItems": true, "items": { "enum": ["sidebar", "header", "navigation"] } },
+            "requested": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "searchLabel": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "searchAlias": { "type": "string", "minLength": 1, "maxLength": 120 }
       },
       "additionalProperties": true
     },

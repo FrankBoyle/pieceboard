@@ -46,7 +46,7 @@ Usage:
   pieceboard start [--workspace directory] [--browser path] [--no-open]
   pieceboard choices --manifest choices.json --out review.html
   pieceboard scan [project-directory] [--out output-directory] [--include path ...] [--exclude path ...] [--page URL ...] [--capture] [--responsive] [--responsive-viewport WIDTHxHEIGHT ...] [--cross-page] [--viewport WIDTHxHEIGHT] [--color-scheme light|dark] [--pixel-ratio 1|2|3|4] [--mask-selector CSS ...] [--browser path] [--storage-state file] [--baseline file] [--decisions file]
-  pieceboard scan [project-directory] --site URL [--site-limit N] [--page URL ...] [--out output-directory] [--browser path] [--storage-state file]
+  pieceboard scan [project-directory] --site URL [--site-limit N] [--page URL ...] [--focus TEXT] [--search-button-labels] [--out output-directory] [--browser path] [--storage-state file]
   pieceboard init [project-directory]
   pieceboard auth --url URL --out state.json [--browser path] [--storage-state previous-state.json]
   pieceboard add-previews report-directory --manifest previews.json
@@ -77,6 +77,8 @@ Repeat --exclude to omit additional project-relative files or directories.
 Repeat --page to compare static element IDs with selected public HTML pages.
 --site discovers same-origin links and frames, captures reachable pages, and checks responsive layout. It does not click buttons or submit forms.
 --site-limit bounds discovery to 1–500 pages; the report states when links or pages were not inspected.
+--focus starts the report filtered to a feature or action; it does not limit the pages scanned.
+--search-button-labels includes visible button labels in the private report for later text searches.
 --capture takes real screenshots from the page using an isolated browser session.
 --responsive inspects each selected page at multiple widths for possible overflow, clipped text, and overlapping text.
 Repeat --responsive-viewport WIDTHxHEIGHT to choose sizes for the responsive audit.
@@ -459,6 +461,8 @@ async function main(args) {
   let siteSeed;
   let siteLimit = MAX_SITE_PAGES;
   let siteLimitProvided = false;
+  let requestedFocus = '';
+  let searchButtonLabels = false;
   let capture = false;
   let responsive = false;
   const responsiveViewports = [];
@@ -498,6 +502,13 @@ async function main(args) {
       siteLimit = Number(args[++i]);
       if (siteLimit < 1 || siteLimit > MAX_SITE_PAGES) throw new Error(`--site-limit must be from 1 to ${MAX_SITE_PAGES}.`);
       siteLimitProvided = true;
+    } else if (args[i] === '--focus') {
+      const value = args[++i];
+      if (typeof value !== 'string' || !value.trim() || value.length > 80 || /[\r\n]/.test(value) || value.startsWith('-') || requestedFocus) throw new Error('--focus requires one short feature or action (up to 80 characters).');
+      requestedFocus = value.trim();
+    } else if (args[i] === '--search-button-labels') {
+      if (searchButtonLabels) throw new Error('--search-button-labels can be supplied once.');
+      searchButtonLabels = true;
     } else if (args[i] === '--capture') {
       capture = true;
     } else if (args[i] === '--responsive') {
@@ -565,6 +576,7 @@ async function main(args) {
     const selectedResponsiveViewports = responsive ? validateResponsiveViewports(responsiveViewports.length ? responsiveViewports : config.responsiveViewports || DEFAULT_RESPONSIVE_VIEWPORTS, pixelRatio ?? config.pixelRatio ?? 2) : null;
     if (crossPage && (!capture || (!siteSeed && pages.length < 2))) throw new Error('--cross-page requires --capture and at least two selected pages.');
     if (browserPath && !capture) throw new Error('--browser requires --capture.');
+    if (searchButtonLabels && !capture) throw new Error('--search-button-labels requires --capture or --site.');
     if (decisionFile && !capture) throw new Error('--decisions requires --capture.');
     if (storageStateFile && !capture) throw new Error('--storage-state requires --capture.');
     if (baselineFile && !capture) throw new Error('--baseline requires --capture.');
@@ -578,6 +590,7 @@ async function main(args) {
     if (capture && !elementBaselineFile && config.elementBaseline) elementBaselineFile = await configuredProjectFile(root, config.elementBaseline, 'element baseline');
     const scannedSourcePaths = [];
     data = await scanProject(root, { outputDir: out, includePaths: includes, excludePaths: excludes, onScannedFile: (file) => scannedSourcePaths.push(file) });
+    if (requestedFocus) data.reviewFocus = requestedFocus;
     data.sourceRevision = await inspectSourceRevision(root, { sourcePaths: scannedSourcePaths });
     const storageState = storageStateFile ? await readStorageState(storageStateFile) : undefined;
     const baseline = baselineFile ? await readBaselines(baselineFile) : null;
@@ -621,7 +634,7 @@ async function main(args) {
       const beforePreviews = siteGuard?.previewBudget.omitted || 0;
       const beforeBudget = siteGuard?.previewBudget.remaining;
       try {
-        await capturePage(data, page, { browserPath, storageState, viewport: viewport || config.viewport, colorScheme: colorScheme || config.colorScheme, pixelRatio: pixelRatio ?? config.pixelRatio, maskSelectors: maskSelectors.length ? maskSelectors : config.maskSelectors, buttonGroups: config.buttonGroups, elementGroups: config.elementGroups, layoutChecks: config.layoutChecks, layoutMedia: config.layoutMedia, responsiveViewports: selectedResponsiveViewports, sourceLinks: config.sourceLinks, instrumentedSources: config.instrumentedSources, captureTimeoutMs: config.captureTimeoutMs, actions: config.pageActions?.find((entry) => entry.page === page)?.actions, baselines: baseline?.rules, elementBaselines: elementBaseline?.rules, append: successfulCaptures > 0, siteGuard });
+        await capturePage(data, page, { browserPath, storageState, viewport: viewport || config.viewport, colorScheme: colorScheme || config.colorScheme, pixelRatio: pixelRatio ?? config.pixelRatio, maskSelectors: maskSelectors.length ? maskSelectors : config.maskSelectors, buttonGroups: config.buttonGroups, elementGroups: config.elementGroups, layoutChecks: config.layoutChecks, layoutMedia: config.layoutMedia, responsiveViewports: selectedResponsiveViewports, sourceLinks: config.sourceLinks, instrumentedSources: config.instrumentedSources, captureTimeoutMs: config.captureTimeoutMs, actions: config.pageActions?.find((entry) => entry.page === page)?.actions, baselines: baseline?.rules, elementBaselines: elementBaseline?.rules, append: successfulCaptures > 0, siteGuard, requestedFocus, searchButtonLabels });
         successfulCaptures++;
         if (site) {
           sitePageKeys.push(createHash('sha256').update(page).digest('hex'));

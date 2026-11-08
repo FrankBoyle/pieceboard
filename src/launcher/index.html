@@ -47,6 +47,7 @@
             <div id="capture-fields" class="capture-fields" hidden>
               <label class="field-label" for="page-url">Test page URL</label>
               <input id="page-url" type="url" placeholder="http://localhost:3000/" autocomplete="off" spellcheck="false">
+              <label class="capture-toggle"><input type="checkbox" id="search-button-labels"><span><strong>Make button labels searchable</strong><small>Stores captured button labels in the private report so you can search for other actions later. Some controls may not be captured.</small></span></label>
               <label class="capture-toggle"><input type="checkbox" id="site-scan" checked><span><strong>Find and inspect linked pages</strong><small>Checks reachable pages at desktop and phone widths and lists every detected finding.</small></span></label>
               <div id="site-options"><label class="field-label" for="site-limit">Maximum pages</label><input id="site-limit" type="number" min="1" max="500" value="500"><p class="help">Up to 500 pages per review. The report shows if the limit is reached, pages fail, or requests are blocked.</p></div>
               <p class="help">Use an authorized development or demo site with synthetic data. Pieceboard follows same-site links and embedded page URLs without clicking buttons or submitting forms. Other roles and states may need separate reviews.</p>
@@ -65,6 +66,9 @@
           <div class="step-content">
             <div class="section-heading"><div><p class="kicker">READY WHEN YOU ARE</p><h2 id="review-title">Create your sheet</h2></div></div>
             <p class="section-copy">Your report stays on this computer. Review its warnings and context before sharing it.</p>
+            <label class="field-label" for="review-focus">What would you like help with? <span class="muted">Optional</span></label>
+            <input id="review-focus" type="text" maxlength="80" placeholder="For example: sidebar or Save buttons" autocomplete="off" aria-describedby="review-focus-help">
+            <p id="review-focus-help" class="help">Start with a feature or action. You can change the focus in the report; this does not restrict which pages are scanned.</p>
             <div class="action-row"><button id="scan" type="button" class="button primary">Create my sheet <span aria-hidden="true">→</span></button><span id="scan-status" class="inline-status" role="status" aria-live="polite"></span></div>
             <div id="partial-result" class="result" hidden><div><strong>Some results are ready.</strong><p>This is a partial report. Refresh it for later progress; cross-page comparisons are added after the last page.</p></div><a id="partial-link" class="button secondary" target="_blank" rel="noopener noreferrer">Open findings so far ↗</a></div>
             <div id="result" class="result" hidden><div><strong>Your sheet is ready.</strong><p>Open it to see all detected findings and coverage, then review grouped appearance and layout decisions.</p></div><a id="report-link" class="button primary" target="_blank" rel="noopener noreferrer">Open my sheet ↗</a><p id="report-path" class="help"></p></div>
