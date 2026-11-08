@@ -96,6 +96,27 @@ test('rejects ambiguous routes and keeps viewport and theme contexts separate', 
   assert.equal(analyzeAcrossPages(pages).findings.length, 0, 'different pixel ratios are not compared');
 });
 
+test('compares distinct discovered site states without exposing their private URLs', () => {
+  const pages = [page('https://example.test/students'), page('https://example.test/students'), page('https://example.test/students', '3px')];
+  assert.throws(() => analyzeAcrossPages(pages), /duplicate route/);
+  const pageKeys = ['a'.repeat(64), 'b'.repeat(64), 'c'.repeat(64)];
+  const result = analyzeAcrossPages(pages, { pageKeys });
+  assert.equal(result.findings.length, 1);
+  assert.equal(result.findings[0].outlier.example.page, 3);
+  assert.throws(() => analyzeAcrossPages(pages, { pageKeys: ['not-a-digest'] }), /identities/);
+});
+
+test('site review compares named component-class variants as unapproved leads', () => {
+  const pages = [page('https://example.test/a'), page('https://example.test/b'), page('https://example.test/c', '3px')];
+  for (const entry of pages) Object.assign(entry.observations[0].group, { family: '.btn', familyEvidence: 'component class', variant: 'primary', variantEvidence: 'class name' });
+  assert.equal(analyzeAcrossPages(pages).findings.length, 0);
+  const result = analyzeAcrossPages(pages, { includeInferredClasses: true });
+  assert.equal(result.findings.length, 1);
+  assert.equal(result.findings[0].reference, 'inferred');
+  assert.match(result.findings[0].evidence, /inferred component class/);
+  assert.equal(result.coverage, 'partial');
+});
+
 test('an approved cross-page reference detects drift even when it is absent everywhere', () => {
   const pages = [page('https://example.test/a', '3px'), page('https://example.test/b', '3px'), page('https://example.test/c', '3px')];
   const scope = { url: '*', viewport: { width: 1440, height: 900 }, theme: 'light' };

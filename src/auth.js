@@ -11,6 +11,18 @@ function pageUrl(input) {
   return url;
 }
 
+function stateForSite(state, url) {
+  const hostname = url.hostname.toLowerCase();
+  const cookies = (state.cookies || []).filter((cookie) => {
+    const domain = String(cookie.domain || '').replace(/^\./, '').toLowerCase();
+    return domain && (hostname === domain || hostname.endsWith(`.${domain}`));
+  });
+  const origins = (state.origins || []).filter((entry) => {
+    try { return new URL(entry.origin).origin === url.origin; } catch { return false; }
+  });
+  return { cookies, origins };
+}
+
 /** Load an explicitly supplied Playwright state without logging its contents. */
 export async function readStorageState(file) {
   try {
@@ -40,20 +52,12 @@ export async function saveBrowserState(inputUrl, outputFile, options = {}) {
     } catch {
       throw new Error('Could not start the sign-in browser. Install Playwright Chromium or supply --browser.');
     }
-    const context = await browser.newContext();
+    const context = await browser.newContext(options.storageState ? { storageState: stateForSite(options.storageState, url) } : {});
     const page = await context.newPage();
     await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await options.waitForUser();
     if (new URL(page.url()).origin !== url.origin) throw new Error('Return to the requested site before saving browser state.');
-    const state = await context.storageState({ indexedDB: true });
-    const hostname = url.hostname.toLowerCase();
-    const cookies = (state.cookies || []).filter((cookie) => {
-      const domain = String(cookie.domain || '').replace(/^\./, '').toLowerCase();
-      return domain && (hostname === domain || hostname.endsWith(`.${domain}`));
-    });
-    const origins = (state.origins || []).filter((entry) => {
-      try { return new URL(entry.origin).origin === url.origin; } catch { return false; }
-    });
+    const { cookies, origins } = stateForSite(await context.storageState({ indexedDB: true }), url);
     if (!cookies.length && !origins.length) throw new Error('No reusable browser state was found for the requested site.');
     const serialized = JSON.stringify({ cookies, origins }, null, 2) + '\n';
     if (Buffer.byteLength(serialized, 'utf8') > MAX_STATE_BYTES) throw new Error('Browser state exceeds the 2 MB limit.');

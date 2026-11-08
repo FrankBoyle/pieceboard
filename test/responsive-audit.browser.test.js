@@ -67,6 +67,20 @@ test('validates responsive viewport selections', () => {
   assert.throws(() => validateResponsiveViewports([{ width: 4096, height: 2000 }], 4), /device-pixel limit/);
 });
 
+test('site reviews report when responsive screenshots exceed their budget', browserOptions, async (t) => {
+  const { url } = await setup(t);
+  const browser = await chromium.launch({ headless: true, ...(browserPath ? { executablePath: browserPath } : {}) });
+  t.after(() => browser.close());
+  const siteGuard = { origin: new URL(url).origin, counts: { blockedWrites: 0, blockedNavigation: 0 }, previewBudget: { remaining: 1024, omitted: 0 } };
+  const result = await auditResponsive(browser, { items: [] }, url, {
+    viewports: [{ width: 390, height: 844 }], colorScheme: 'light', pixelRatio: 1,
+    maskSelectors: [], actions: [], browserVersion: browser.version(), throwIfExpired() {}, siteGuard, previewBudgetChars: 0,
+  });
+  assert.ok(result.viewports[0].findings.length > 0, 'findings remain available without screenshots');
+  assert.equal(result.viewports[0].previews.length, 0);
+  assert.equal(siteGuard.previewBudget.omitted, 1);
+});
+
 test('keeps hash-router paths while excluding queries, fragments used as tokens, and encoded parameters', () => {
   const display = (value) => displayResponsiveRoute(new URL(value));
   assert.equal(display('https://example.test/app?outer=private#/settings?token=private'), 'https://example.test/app#/settings');

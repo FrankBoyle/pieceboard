@@ -45,7 +45,8 @@ export async function checkReport(reportDir) {
   const elements = summarizeElementChecks(data, { scanStatus, sourceWarnings });
   findings.push(...elements.findings);
   const coverageValues = [...summaries.filter((page) => !elements.pages.length || page.counts.seen > 0).map((page) => page.coverage), ...elements.pages.map((page) => page.coverage), ...(cross ? [crossCoverage] : [])];
-  const coverage = coverageValues.includes('insufficient') ? 'insufficient' : coverageValues.includes('partial') ? 'partial' : 'observed';
+  const siteIncomplete = Boolean(data.siteScan && (data.siteScan.truncated || data.siteScan.incomplete || data.siteScan.partial || data.siteScan.previewsOmitted || data.siteScan.blockedWrites || data.siteScan.blockedNavigation || data.siteScan.crossPageSkipped || data.siteScan.excluded?.length || data.siteScan.excludedTruncated));
+  const coverage = coverageValues.includes('insufficient') ? 'insufficient' : siteIncomplete || coverageValues.includes('partial') ? 'partial' : 'observed';
   const actionable = findings.filter((finding) => finding.actionable).length;
   return { format: 'ui-sheet/check-v1', result: actionable ? 'findings' : coverage !== 'observed' ? 'insufficient-evidence' : 'no-findings', coverage, scanStatus, ...(pageProgress ? { pageProgress } : {}), actionable, totalFindings: findings.length, sourceWarnings, sourceRevision: data.sourceRevision || null, ...(data.baselineSummary ? { baselines: data.baselineSummary } : {}), ...(data.elementBaselineSummary ? { elementBaselines: data.elementBaselineSummary } : {}), ...(data.decisionSummary ? { decisions: data.decisionSummary } : {}), ...(cross ? { crossPage: { findingIdentity: cross.findingIdentity, coverage: crossCoverage, counts: cross.counts } } : {}), ...(elements.pages.length ? { elementPages: elements.pages } : {}), pages: summaries, findings };
 }

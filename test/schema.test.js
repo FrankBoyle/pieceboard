@@ -308,7 +308,7 @@ test('schemas reject incompatible measurements and versions and malformed eviden
   reject('scan-status-v1', { format: 'ui-sheet/scan-status-v1', status: 'complete', runId: 'a'.repeat(36) });
   const completedMarker = { format: 'ui-sheet/scan-status-v1', status: 'completed', runId: 'a'.repeat(36), pageProgress: { requested: 1, observed: [], captured: [1], active: null, failed: null } };
   validate('scan-status-v1', completedMarker);
-  reject('scan-status-v1', { ...completedMarker, pageProgress: { ...completedMarker.pageProgress, requested: 21 } });
+  reject('scan-status-v1', { ...completedMarker, pageProgress: { ...completedMarker.pageProgress, requested: 501 } });
   reject('scan-status-v1', { ...completedMarker, pageProgress: { ...completedMarker.pageProgress, captured: [1, 1] } });
   reject('scan-status-v1', { ...completedMarker, pageProgress: { ...completedMarker.pageProgress, active: { index: 1, phase: 'capture' } } });
   reject('scan-status-v1', { ...completedMarker, status: 'in-progress', pageProgress: { ...completedMarker.pageProgress, failed: { index: 1, phase: 'observe' } } });

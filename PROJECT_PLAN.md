@@ -27,6 +27,8 @@ The alpha.6 release includes a local start page for selecting repositories, limi
 
 Guided reviews lead with selectable A/B choices for findings with two captured examples. A separate portable choice board can be assembled from deliberately paired, authorized screenshots or clearly described options. Source-only inventories cannot automatically show rendered differences; capturing and matching broader workflows still needs human or agent work.
 
+Linked-site review discovers same-origin links and embedded page URLs, checks each reachable page at responsive widths, and lists all supported findings and coverage. It blocks non-read requests and known action links, so applications depending on those requests may be incomplete. It does not click through workflows, switch roles, or guarantee coverage of unlinked states; coverage is explicitly reported.
+
 ## Milestone 1: protect the prototype and establish the baseline
 
 - [x] Review and preserve the existing prototype and its tests; keep local reports and screenshots out of the public repository.

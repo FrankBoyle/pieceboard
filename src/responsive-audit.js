@@ -248,11 +248,12 @@ export async function auditResponsive(browser, data, inputUrl, options) {
     options.throwIfExpired();
     let context;
     try {
-      context = await browser.newContext({ viewport, colorScheme: options.colorScheme, deviceScaleFactor: options.pixelRatio, ...(options.storageState ? { storageState: options.storageState } : {}) });
+      context = await browser.newContext({ viewport, colorScheme: options.colorScheme, deviceScaleFactor: options.pixelRatio, ...(options.storageState ? { storageState: options.storageState } : {}), ...(options.siteGuard ? { serviceWorkers: 'block' } : {}) });
+      if (options.siteGuard) await guardSiteContext(context, options.siteGuard.origin, options.siteGuard.counts);
       const page = await context.newPage();
       const response = await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 30000 });
       if (!response?.ok()) throw new Error('Page did not load successfully.');
-      const sameRoute = () => { const actual = new URL(page.url()); return actual.origin === url.origin && normalizedPath(actual.pathname) === normalizedPath(url.pathname) && hashRoute(actual) === hashRoute(url); };
+      const sameRoute = () => { const actual = new URL(page.url()); return actual.origin === url.origin && normalizedPath(actual.pathname) === normalizedPath(url.pathname) && hashRoute(actual) === hashRoute(url) && (!options.siteGuard || !url.hash || actual.hash === url.hash); };
       if (!sameRoute()) throw new Error('Page navigated away from the requested route.');
       await page.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => {});
       await page.evaluate(async () => { if (document.fonts) await Promise.race([document.fonts.ready, new Promise((resolve) => setTimeout(resolve, 3000))]); });
@@ -274,10 +275,17 @@ export async function auditResponsive(browser, data, inputUrl, options) {
         return { ...result, viewportWidth: viewport.width, ...(source ? { source } : {}) };
       });
       const previews = [];
+      let previewOmissionRecorded = false;
+      const recordPreviewOmission = () => {
+        if (options.siteGuard?.previewBudget && !previewOmissionRecorded) {
+          options.siteGuard.previewBudget.omitted++;
+          previewOmissionRecorded = true;
+        }
+      };
       const savePreview = async () => {
-        if (previewBudgetChars < 1024) return;
+        if (previewBudgetChars < 1024) { recordPreviewOmission(); return; }
         const image = await screenshot(page, viewport, options.maskSelectors);
-        if (!image || image.image.length > previewBudgetChars || previews.reduce((total, entry) => total + entry.image.length, 0) + image.image.length > 4 * 1024 * 1024) return;
+        if (!image || image.image.length > previewBudgetChars || previews.reduce((total, entry) => total + entry.image.length, 0) + image.image.length > 4 * 1024 * 1024) { recordPreviewOmission(); return; }
         const scroll = await page.evaluate(() => ({ x: window.scrollX, y: window.scrollY }));
         previews.push({ ...image, scroll });
         previewBudgetChars -= image.image.length;
@@ -328,3 +336,4 @@ export async function auditResponsive(browser, data, inputUrl, options) {
   }
   return { url: displayResponsiveRoute(url), colorScheme: options.colorScheme, pixelRatio: options.pixelRatio, browser: { engine: 'chromium', version: options.browserVersion }, actions: options.actions, maskSelectorsConfigured: options.maskSelectors.length, viewports: results };
 }
+import { guardSiteContext } from './site-discovery.js';

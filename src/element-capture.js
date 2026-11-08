@@ -1,4 +1,5 @@
 import { BUTTON_STYLE_FIELDS, FILTER_PATTERN, GRADIENT_PATTERN, isSameButtonStyle, MAX_BACKGROUND_IMAGE_LENGTH, MAX_FILTER_LENGTH, UNSAFE_IMAGE_PATTERN } from './consistency.js';
+import { reserveSitePreview } from './site-discovery.js';
 
 const policy = { gradient: GRADIENT_PATTERN, filter: FILTER_PATTERN, unsafe: UNSAFE_IMAGE_PATTERN, maxLength: MAX_BACKGROUND_IMAGE_LENGTH, maxFilterLength: MAX_FILTER_LENGTH };
 
@@ -75,7 +76,7 @@ export function snapshotElementGroups(page, rules, { instrumentedSources = false
   return page.evaluate(measureInPage, { rules, properties: BUTTON_STYLE_FIELDS.map(([key]) => key), policy, instrumentedSources, limit: 500 });
 }
 
-export async function captureElementPreviews(page, rules, snapshot, analysis, { pixelRatio = 2, maskOptions = {}, instrumentedSources = false, throwIfExpired = () => {}, expectedUrl } = {}) {
+export async function captureElementPreviews(page, rules, snapshot, analysis, { pixelRatio = 2, maskOptions = {}, instrumentedSources = false, throwIfExpired = () => {}, expectedUrl, sitePreviewBudget } = {}) {
   const examples = [...new Set([...analysis.findings.flatMap((finding) => [finding.common.example, finding.outlier.example]), ...analysis.appearances.map((appearance) => appearance.example)].filter(Boolean))];
   const snapshots = new Map(snapshot.elements.map((element) => [`${element.tag}:${element.index}`, element]));
   const observations = new Map(analysis.observations.map((element) => [element.id, element]));
@@ -96,7 +97,7 @@ export async function captureElementPreviews(page, rules, snapshot, analysis, { 
       let ratio = pixelRatio;
       let image = await locator.screenshot({ type: 'png', scale: 'device', animations: 'disabled', timeout: 4000, ...maskOptions });
       if (image.length > 1024 * 1024) { image = await locator.screenshot({ type: 'png', scale: 'css', animations: 'disabled', timeout: 4000, ...maskOptions }); ratio = 1; }
-      if (image.length > 1024 * 1024) continue;
+      if (image.length > 1024 * 1024 || !reserveSitePreview(sitePreviewBudget, image.length)) continue;
       throwIfExpired();
       const dimensions = image.length >= 24 && image.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])) ? { width: image.readUInt32BE(16), height: image.readUInt32BE(20) } : {};
       analysis.previews[id] = { image: `data:image/png;base64,${image.toString('base64')}`, pixelRatio: ratio, ...dimensions };

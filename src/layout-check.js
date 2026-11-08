@@ -116,7 +116,7 @@ export async function checkLayout(reportDir) {
   const { data, scanStatus } = await readCheckedReport(reportDir);
   const audit = data.layoutAudit;
   if (data.format !== 'ui-sheet/v1' || audit?.format !== 'ui-sheet/layout-pages-v1'
-    || !Array.isArray(audit.pages) || !audit.pages.length || audit.pages.length > 20) {
+    || !Array.isArray(audit.pages) || !audit.pages.length || audit.pages.length > 500) {
     throw new Error('The report has no supported layout audit. Configure layoutChecks and run a captured scan.');
   }
   const counts = { rules: 0, passed: 0, findings: 0, incomplete: 0 };

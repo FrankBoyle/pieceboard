@@ -9,6 +9,7 @@ import { elementBaselineTemplate } from './element-baselines.js';
 import { auditLayout, validateLayoutChecks } from './layout-audit.js';
 import { auditResponsive, validateResponsiveViewports } from './responsive-audit.js';
 import { DEFAULT_PIXEL_RATIO, DEFAULT_VIEWPORT, validateButtonGroups, validateCaptureActions, validateCaptureResolution, validateColorScheme, validateElementGroups, validateMaskSelectors, validatePixelRatio, validateSourceLinks, validateViewport } from './context.js';
+import { guardSiteContext, reserveSitePreview } from './site-discovery.js';
 
 const MAX_CAPTURES = 80;
 const MAX_PER_ITEM = 4;
@@ -237,11 +238,12 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
     // comparison context, even though the CSS viewport dimensions are unchanged.
     let context;
     try {
-      context = await browser.newContext({ viewport, colorScheme, deviceScaleFactor: capturePixelRatio, ...(options.storageState ? { storageState: options.storageState } : {}) });
+      context = await browser.newContext({ viewport, colorScheme, deviceScaleFactor: capturePixelRatio, ...(options.storageState ? { storageState: options.storageState } : {}), ...(options.siteGuard ? { serviceWorkers: 'block' } : {}) });
     } catch (error) {
       if (options.storageState) throw new Error('Could not initialize the supplied browser state. Verify the state file and try again.');
       throw error;
     }
+    if (options.siteGuard) await guardSiteContext(context, options.siteGuard.origin, options.siteGuard.counts);
     const page = await context.newPage();
     const response = await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 30000 });
     if (!response?.ok()) throw new Error(`Capture page failed with HTTP ${response?.status() || 'unknown'}.`);
@@ -276,7 +278,9 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
     const elementSnapshot = elementGroups.length ? await snapshotElementGroups(page, elementGroups, { instrumentedSources: options.instrumentedSources === true }) : null;
     deadline.throwIfExpired();
     const normalizedPath = (pathname) => pathname.replace(/\/+$/, '') || '/';
+    const sameSiteState = (actual) => !options.siteGuard || !url.hash || actual.hash === url.hash;
     if (normalizedPath(new URL(page.url()).pathname) !== normalizedPath(url.pathname)) throw new Error('Capture page navigated to a different route; provide the final URL explicitly.');
+    if (options.siteGuard && url.hash && new URL(page.url()).hash !== url.hash) throw new Error('Capture page navigated to a different application state.');
     const tags = [...new Set(['button', ...data.items.flatMap((item) => item.kind === 'components' ? item.usages.map((usage) => usage.element?.tag).filter(Boolean) : [])])]
       .filter((tag) => /^[a-z][a-z0-9-]*$/.test(tag));
     const styleProperties = BUTTON_STYLE_FIELDS.map(([property]) => property);
@@ -425,7 +429,7 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
       const observation = observations.get(example);
       if (!snapshot || !observation) continue;
       const currentUrl = new URL(page.url());
-      if (currentUrl.origin !== url.origin || normalizedPath(currentUrl.pathname) !== normalizedPath(url.pathname)) throw new Error('Capture page navigated away; provide the final URL explicitly.');
+      if (currentUrl.origin !== url.origin || normalizedPath(currentUrl.pathname) !== normalizedPath(url.pathname) || !sameSiteState(currentUrl)) throw new Error('Capture page navigated away; provide the final URL explicitly.');
       try {
         // The snapshot uses document.querySelectorAll, which excludes shadow DOM.
         // Playwright's ordinary CSS locators pierce open shadow roots by default.
@@ -459,7 +463,7 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
           image = await locator.screenshot({ type: 'png', scale: 'css', animations: 'disabled', timeout: 4000, ...maskOptions });
           pixelRatio = 1;
         }
-        if (image.length <= MAX_IMAGE_BYTES) {
+        if (image.length <= MAX_IMAGE_BYTES && reserveSitePreview(options.siteGuard?.previewBudget, image.length)) {
           const dimensions = image.length >= 24 && image.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))
             ? { width: image.readUInt32BE(16), height: image.readUInt32BE(20) } : {};
           pageConsistency.previews[example] = { image: `data:image/png;base64,${image.toString('base64')}`, pixelRatio, ...dimensions };
@@ -491,7 +495,7 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
       if (capturedKeys.has(key)) continue;
       const locator = page.locator(`css:light=${tag}`).nth(index);
       const currentUrl = new URL(page.url());
-      if (currentUrl.origin !== url.origin || normalizedPath(currentUrl.pathname) !== normalizedPath(url.pathname)) throw new Error('Capture page navigated away; provide the final URL explicitly.');
+      if (currentUrl.origin !== url.origin || normalizedPath(currentUrl.pathname) !== normalizedPath(url.pathname) || !sameSiteState(currentUrl)) throw new Error('Capture page navigated away; provide the final URL explicitly.');
       try {
         const current = await locator.evaluate((element, selector) => ({ tag: element.localName, id: element.id || '', role: element.getAttribute('role') || '', type: element.getAttribute('type') || '', placeholder: element.getAttribute('placeholder') || '', ariaLabel: element.getAttribute('aria-label') || '', src: element.localName === 'img' ? (element.getAttribute('src') || '') : '', classes: [...element.classList].sort(), sourceMarker: element.getAttribute('data-ui-sheet-source'), text: (element.innerText || '').replace(/\s+/g, ' ').trim(), selectorMatches: !selector || element.matches(selector) }), match.manualSelector, { timeout: 3000 });
         if (current.tag !== tag || (id && current.id !== id) || (match.manualSelector && !current.selectorMatches) || (match.instrumentedHash && current.sourceMarker !== match.rendered.sourceMarker) || (match.method === 'unique placeholder and tag' && attributeKey(current, 'placeholder') !== attributeKey(match.usage.element, 'placeholder')) || (match.method === 'unique accessible label and tag' && attributeKey(current, 'ariaLabel') !== attributeKey(match.usage.element, 'ariaLabel')) || ((match.method === 'unique text and tag' || match.method.startsWith('matching text and classes')) && normalize(current.text) !== normalize(match.usage.element.text)) || (match.method.startsWith('matching text and classes') && classesKey(current) !== classesKey(match.usage.element)) || (match.method === 'unique image source' && imageKey(current, page.url()) !== imageKey(match.usage.element, page.url()))) continue;
@@ -523,7 +527,7 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
           image = await locator.screenshot({ type: 'png', scale: 'css', animations: 'disabled', timeout: 4000, ...maskOptions });
           pixelRatio = 1;
         }
-        if (image.length > MAX_IMAGE_BYTES) continue;
+        if (image.length > MAX_IMAGE_BYTES || !reserveSitePreview(options.siteGuard?.previewBudget, image.length)) continue;
         if (!match.item.captures) match.item.captures = [];
         const label = normalize(match.usage.element.text || match.usage.element.placeholder || match.usage.element.ariaLabel).slice(0, 100);
         const element = { tag, ...(current.role ? { role: current.role } : {}), ...(current.type ? { type: current.type } : {}), ...(current.classes?.length ? { classes: current.classes } : {}) };
@@ -545,7 +549,7 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
         try { appearance.approval = { page: elementBaselineTemplate(pageElements, observation) }; } catch { continue; }
         try { appearance.approval.crossPage = elementBaselineTemplate(pageElements, observation, { crossPage: true }); } catch { /* Requires an explicit variant. */ }
       }
-      await captureElementPreviews(page, elementGroups, elementSnapshot, pageElements, { pixelRatio: capturePixelRatio, maskOptions, instrumentedSources: options.instrumentedSources === true, throwIfExpired: deadline.throwIfExpired, expectedUrl: url.href });
+      await captureElementPreviews(page, elementGroups, elementSnapshot, pageElements, { pixelRatio: capturePixelRatio, maskOptions, instrumentedSources: options.instrumentedSources === true, throwIfExpired: deadline.throwIfExpired, expectedUrl: url.href, sitePreviewBudget: options.siteGuard?.previewBudget });
       pageElements.scope.maskSelectorsConfigured = maskSelectors.length;
       pageElements.scope.elementGroups = elementGroups;
       if (actions.length) pageElements.scope.actions = actions;
@@ -560,7 +564,7 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
     if (layoutChecks.length) {
       deadline.throwIfExpired();
       const layoutUrl = new URL(page.url());
-      if (layoutUrl.origin !== url.origin || normalizedPath(layoutUrl.pathname) !== normalizedPath(url.pathname)) throw new Error('Layout capture page navigated away; provide the final URL explicitly.');
+      if (layoutUrl.origin !== url.origin || normalizedPath(layoutUrl.pathname) !== normalizedPath(url.pathname) || !sameSiteState(layoutUrl)) throw new Error('Layout capture page navigated away; provide the final URL explicitly.');
       if (layoutMedia === 'print') await page.emulateMedia({ media: 'print' });
       let layoutResult;
       try {
@@ -572,8 +576,11 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
         if (layoutMedia === 'print') await page.emulateMedia({ media: 'screen' });
       }
       deadline.throwIfExpired();
+      if (options.siteGuard?.previewBudget) for (const result of layoutResult.results || []) {
+        if (result.preview?.image && !reserveSitePreview(options.siteGuard.previewBudget, Math.ceil(result.preview.image.length * 3 / 4))) delete result.preview;
+      }
       const currentUrl = new URL(page.url());
-      if (currentUrl.origin !== url.origin || normalizedPath(currentUrl.pathname) !== normalizedPath(url.pathname)) throw new Error('Layout capture page navigated away; provide the final URL explicitly.');
+      if (currentUrl.origin !== url.origin || normalizedPath(currentUrl.pathname) !== normalizedPath(url.pathname) || !sameSiteState(currentUrl)) throw new Error('Layout capture page navigated away; provide the final URL explicitly.');
       data.layoutAudit = { format: 'ui-sheet/layout-pages-v1', pages: [...previousLayoutPages, layoutResult] };
     }
     if (responsiveViewports) {
@@ -581,7 +588,7 @@ async function captureWithinDeadline(data, inputUrl, options, deadline) {
       const previousPreviewChars = previousResponsivePages.reduce((total, page) => total + (page.viewports || []).reduce((sum, entry) => sum + (entry.previews || []).reduce((size, preview) => size + (preview.image?.length || 0), 0), 0), 0);
       const responsivePage = await auditResponsive(browser, data, url.href, {
         viewports: responsiveViewports, colorScheme, pixelRatio: capturePixelRatio,
-        storageState: options.storageState, maskSelectors, actions, browserVersion: version,
+        storageState: options.storageState, maskSelectors, actions, browserVersion: version, siteGuard: options.siteGuard,
         previewBudgetChars: Math.max(0, 24 * 1024 * 1024 - previousPreviewChars),
         throwIfExpired: deadline.throwIfExpired,
       });

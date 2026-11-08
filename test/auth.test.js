@@ -13,6 +13,7 @@ test('saves only state for the requested site after user-led sign-in', async (t)
   let waited = false;
   let closed = false;
   let launchOptions;
+  let contextOptions;
   const state = { cookies: [
     { name: 'session', value: 'synthetic-session', domain: '.example.test', path: '/' },
     { name: 'unrelated', value: 'synthetic-other', domain: 'other.test', path: '/' },
@@ -21,12 +22,16 @@ test('saves only state for the requested site after user-led sign-in', async (t)
     { origin: 'https://other.test', localStorage: [] },
   ] };
   const browserType = { async launch(options) { launchOptions = options; return {
-    async newContext() { return { async newPage() { return { async goto() {}, url: () => 'https://app.example.test/dashboard' }; }, async storageState() { return state; } }; },
+    async newContext(options) { contextOptions = options; return { async newPage() { return { async goto() {}, url: () => 'https://app.example.test/dashboard' }; }, async storageState() { return state; } }; },
     async close() { closed = true; },
   }; } };
-  await saveBrowserState('https://app.example.test/dashboard', file, { browserType, waitForUser: async () => { waited = true; } });
+  const initialState = { cookies: [{ name: 'demo', value: 'allowed', domain: 'app.example.test', path: '/' }, { name: 'unrelated', value: 'not-shared', domain: 'other.test', path: '/' }], origins: [{ origin: 'https://other.test', localStorage: [] }] };
+  await saveBrowserState('https://app.example.test/dashboard', file, { browserType, storageState: initialState, waitForUser: async () => { waited = true; } });
   const saved = await readStorageState(file);
   assert.equal(launchOptions.headless, false);
+  assert.equal(contextOptions.storageState.cookies.length, 1);
+  assert.equal(contextOptions.storageState.origins.length, 0);
+  assert.equal(JSON.stringify(contextOptions.storageState).includes('not-shared'), false);
   assert.equal(waited, true);
   assert.equal(closed, true);
   assert.equal(saved.cookies.length, 1);

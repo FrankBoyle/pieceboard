@@ -4,7 +4,7 @@ This guide is for someone who wants an agent to install Pieceboard and run a UI 
 
 Tell the agent which project or projects to inspect and the UI journey that matters. For example:
 
-> Install Pieceboard in a separate tools folder. Review the projects I identify and walk me through actual A/B choices for matching UI elements. Use authorized test screens and a separate test account; let me sign in myself. If the automatic report has no useful pairs, help me identify comparable examples and build a choice board. Do not stop at a list of UI elements, and do not change my application code unless I ask.
+> Install Pieceboard in a separate tools folder. Scan the projects I identify and discover the linked pages on my authorized test site. Let me sign in myself with a synthetic test account. Show all detected UI findings and the pages covered, with A/B choices where comparable examples are available. Do not replace the results with a hand-picked issue list or change my application code unless I ask.
 
 The agent should inspect project instructions and reuse existing checkouts when available. If a needed path, test URL, or test-account access cannot be determined, it should ask for that detail. It should not assume that a public website or its signed-in data is available for capture.
 
@@ -31,7 +31,7 @@ npm start
 
 Pieceboard opens a browser page on `127.0.0.1` and prints its local address in the terminal. Keep that process running while the person uses the page. If the browser does not open, open the printed address manually. With the npm installation, use `npx pieceboard start --workspace "/path/to/projects"` to start in a particular folder, or add `--no-open` to print the address without opening a browser. A compatible installed browser can be selected for sign-in and captures with `--browser "/path/to/browser"`. From a checkout, pass the same options after `npm start --`. Press Ctrl+C after the review; completed reports remain in `.ui-sheet/launcher-runs/` inside the folder where the command ran.
 
-On the page, find the folder containing the projects, select the repositories, and optionally enter existing source paths within each one. The list shows Git repositories directly inside the chosen folder, plus the folder itself. Add an authorized test-page URL for screenshots, or create a source-only inventory. To sign in, select **Open test sign-in**, sign in yourself in the separate browser, return to the test site, and choose **I’m signed in** in the launcher. If bundled Chromium cannot open, Pieceboard tries a compatible installed browser in a fresh profile and identifies it on the page. Browser state is stored in `.ui-sheet-auth/`; protect it like a credential. If a sign-in flow cannot be restored or the page redirects, inspect the warning and use the manual screenshot workflow described below. The launcher does not automatically inspect embedded frames or navigate through an entire workflow.
+On the page, find the folder containing the projects, select the repositories, and choose **Inspect a test site**. Enter an authorized test-page URL and keep **Find and inspect linked pages** selected. To sign in, select **Open test sign-in**, sign in yourself in the separate browser, return to the test site, and choose **I’m signed in**. Browser state is stored in `.ui-sheet-auth/`; protect it like a credential. Site review follows same-origin links and embedded page URLs, checks supported UI and responsive findings, and shows page coverage. It does not click buttons, submit forms, switch roles, or cover hidden routes; repeat with authorized test roles or add start pages as needed.
 
 If the browser cannot be installed, the start page can still create a source-only inventory. The synthetic button demo is also available with `npm run demo:consistency`; open `.ui-sheet-demo-consistency/index.html`. See the [README](../README.md#try-the-example) for other demos and an installed-browser option.
 
@@ -56,6 +56,8 @@ node bin/ui-sheet.js scan /path/to/workspace --include project-one/src --include
 Replace the example paths with the actual relative paths. You can instead run a separate scan for each repository. A combined report does not record a separate Git revision for each nested repository: record each checkout's commit and working-tree status separately, and do not treat either commit as proof of the deployed website revision.
 
 ## 3. Capture an authorized test page
+
+For a linked-page site review, use `pieceboard scan /path/to/project --site https://demo.example.com/ --out /path/to/private-report`. Add `--storage-state /path/to/private-state.json` after the user signs in, and repeat `--page URL` for other same-origin start pages. The default limit is 500 pages. Inspect the full findings and coverage at the top of the report, including inaccessible and partial pages; do not describe a source-only inventory or a manually curated board as a completed site scan. Test-site JavaScript runs, while non-read requests and known action links are blocked; screens that depend on blocked requests may be incomplete.
 
 Capture renders the selected page, runs its JavaScript, and makes its normal network requests. Use a development or demo environment and synthetic data. For a page accessible without sign-in, add `--page` and `--capture` to a scan, keeping the same source scope:
 

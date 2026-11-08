@@ -840,6 +840,9 @@
     "scanProgress": {
       "$ref": "common-v1.schema.json#/$defs/pageProgress"
     },
+    "siteScan": {
+      "$ref": "site-scan-v1.schema.json"
+    },
     "tokenSource": {
       "$ref": "token-source-v1.schema.json"
     },

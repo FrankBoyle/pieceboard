@@ -252,6 +252,8 @@ export async function startLauncher(options = {}) {
         const body = await bodyJson(request);
         if (currentJob?.status === 'running') throw new RequestError(409, 'Wait for the current scan to finish.');
         if (typeof body.capture !== 'boolean' || typeof body.useAuth !== 'boolean') throw new RequestError(400, 'Check the capture options.');
+        if (body.site !== undefined && typeof body.site !== 'boolean') throw new RequestError(400, 'Check the site review option.');
+        if (body.site && (!body.capture || !Number.isInteger(body.siteLimit) || body.siteLimit < 1 || body.siteLimit > 500)) throw new RequestError(400, 'Choose a site page limit from 1 to 500.');
         const selectedWorkspace = workspace;
         const includes = await selectedPaths(selectedWorkspace, body.projects);
         if (workspace !== selectedWorkspace) throw new RequestError(409, 'The project list changed. Select the projects again.');
@@ -261,7 +263,8 @@ export async function startLauncher(options = {}) {
         const id = randomUUID();
         const output = path.join(reportRoot, id);
         const args = [cli, 'scan', selectedWorkspace.root, ...includes.flatMap((item) => ['--include', item]), '--out', output];
-        if (page) args.push('--page', page.href, '--capture');
+        if (page && body.site) args.push('--site', page.href, '--site-limit', String(body.siteLimit));
+        else if (page) args.push('--page', page.href, '--capture');
         if (body.useAuth) args.push('--storage-state', auth.path);
         const browserPath = options.browserPath || (body.useAuth ? auth.browserPath : undefined);
         if (page && browserPath) args.push('--browser', browserPath);
@@ -270,7 +273,12 @@ export async function startLauncher(options = {}) {
         currentJob = job;
         jobs.set(id, job);
         let diagnostic = '';
-        child.stdout.on('data', (chunk) => { diagnostic = (diagnostic + chunk.toString()).slice(-6000); });
+        child.stdout.on('data', (chunk) => {
+          const output = chunk.toString();
+          diagnostic = (diagnostic + output).slice(-6000);
+          const progress = [...output.matchAll(/(?:Discovering page \d+ \(limit \d+\)|Inspecting page \d+ of \d+)/g)].at(-1);
+          if (progress) job.message = progress[0] + '.';
+        });
         child.stderr.on('data', (chunk) => { diagnostic = (diagnostic + chunk.toString()).slice(-6000); });
         job.done = new Promise((resolve) => {
           child.on('error', (error) => { job.status = 'error'; job.message = `Could not start the scan: ${error.message}`; resolve(); });
@@ -288,13 +296,14 @@ export async function startLauncher(options = {}) {
       if (request.method === 'GET' && route === '/api/job') {
         if (!currentJob) return json(response, 200, { status: 'none' });
         const job = currentJob;
-        return json(response, 200, { status: job.status, message: job.message, ...(job.status === 'complete' ? { report: `reports/${job.id}`, output: job.output } : {}) });
+        const partial = job.status !== 'complete' && await fs.stat(path.join(job.output, 'index.html')).then((stat) => stat.isFile(), () => false);
+        return json(response, 200, { status: job.status, message: job.message, ...(job.status === 'complete' ? { report: `reports/${job.id}`, output: job.output } : {}), ...(partial ? { partialReport: `reports/${job.id}` } : {}) });
       }
       const reportMatch = /^\/reports\/([0-9a-f-]{36})$/.exec(route);
       if (request.method === 'GET' && reportMatch) {
         const job = jobs.get(reportMatch[1]);
-        if (!job || job.status !== 'complete') throw new RequestError(404, 'Report not found.');
-        const html = await fs.readFile(path.join(job.output, 'index.html'));
+        if (!job || !['running', 'complete', 'error'].includes(job.status)) throw new RequestError(404, 'Report not found.');
+        const html = await fs.readFile(path.join(job.output, 'index.html')).catch(() => { throw new RequestError(404, 'Report not ready yet.'); });
         response.setHeader('content-security-policy', "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'");
         response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
         response.end(html);

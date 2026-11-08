@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FrankBoyle/pieceboard/main/schemas/site-scan-v1.schema.json",
+  "title": "Pieceboard linked site review coverage",
+  "type": "object",
+  "required": ["format", "start", "limit", "discovered", "truncated", "timeLimited", "remaining", "ignoredLinks", "excluded", "excludedTruncated", "blockedWrites", "blockedNavigation", "pages", "discoveryFailures", "captured", "incomplete", "partial", "previewsOmitted"],
+  "properties": {
+    "format": { "const": "pieceboard/site-scan-v1" },
+    "start": { "type": "string", "minLength": 1, "maxLength": 4096 },
+    "limit": { "type": "integer", "minimum": 1, "maximum": 500 },
+    "discovered": { "type": "integer", "minimum": 0, "maximum": 500 },
+    "truncated": { "type": "boolean" },
+    "timeLimited": { "type": "boolean" },
+    "remaining": { "type": "integer", "minimum": 0, "maximum": 5000 },
+    "ignoredLinks": { "type": "integer", "minimum": 0 },
+    "excludedTruncated": { "type": "boolean" },
+    "blockedWrites": { "type": "integer", "minimum": 0 },
+    "blockedNavigation": { "type": "integer", "minimum": 0 },
+    "captured": { "type": "integer", "minimum": 0, "maximum": 500 },
+    "incomplete": { "type": "integer", "minimum": 0, "maximum": 500 },
+    "partial": { "type": "integer", "minimum": 0, "maximum": 500 },
+    "previewsOmitted": { "type": "integer", "minimum": 0 },
+    "inProgress": { "type": "boolean" },
+    "captureRemaining": { "type": "integer", "minimum": 0, "maximum": 500 },
+    "crossPageSkipped": { "type": "integer", "minimum": 0, "maximum": 500 },
+    "excluded": { "type": "array", "maxItems": 500, "items": { "type": "object", "required": ["url", "reason"], "properties": { "url": { "type": "string", "maxLength": 4096 }, "reason": { "type": "string", "maxLength": 500 } }, "additionalProperties": false } },
+    "pages": { "type": "array", "maxItems": 500, "items": { "type": "object", "required": ["url", "status"], "properties": { "url": { "type": "string", "maxLength": 4096 }, "status": { "enum": ["captured", "incomplete"] }, "reportPage": { "type": "integer", "minimum": 1, "maximum": 500 }, "partial": { "type": "boolean" }, "reason": { "type": "string", "maxLength": 500 } }, "additionalProperties": false } },
+    "discoveryFailures": { "type": "array", "maxItems": 500, "items": { "type": "object", "required": ["url", "reason"], "properties": { "url": { "type": "string", "maxLength": 4096 }, "reason": { "type": "string", "maxLength": 500 } }, "additionalProperties": false } }
+  },
+  "additionalProperties": false
+}

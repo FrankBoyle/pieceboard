@@ -190,7 +190,7 @@ test('requires valid plans and matching sequential page transitions', async (t) 
   const root = await tempDir(t);
   const run = await beginReportScan(root);
   await assert.rejects(run.startPage(1, 'capture'), /Plan the scan pages/);
-  for (const count of [-1, 21, 1.5, '2']) await assert.rejects(run.planPages(count), /Page count/);
+  for (const count of [-1, 501, 1.5, '2']) await assert.rejects(run.planPages(count), /Page count/);
   await run.planPages(2);
   await assert.rejects(run.planPages(2), /already been planned/);
   for (const [index, phase] of [[0, 'capture'], [3, 'capture'], [1, 'submit'], [1.5, 'capture']]) await assert.rejects(run.startPage(index, phase), /planned page index/);
@@ -218,7 +218,7 @@ test('requires valid plans and matching sequential page transitions', async (t) 
 test('rejects malformed persisted page metadata without replacing it', async (t) => {
   const valid = { requested: 2, observed: [1], captured: [], active: null, failed: null };
   const invalid = [
-    { ...valid, requested: 21 },
+    { ...valid, requested: 501 },
     { ...valid, observed: [1, 1] },
     { ...valid, captured: [3] },
     { ...valid, active: { index: 2, phase: 'submit' } },
@@ -234,6 +234,21 @@ test('rejects malformed persisted page metadata without replacing it', async (t)
     await assert.rejects(beginReportScan(root), /invalid page progress/);
     assert.equal(await fs.readFile(file, 'utf8'), original);
   }
+});
+
+test('records skipped site pages without claiming they were captured', async (t) => {
+  const root = await tempDir(t);
+  const run = await beginReportScan(root);
+  await run.planPages(2);
+  await run.startPage(1, 'capture');
+  await run.skipPage(1, 'capture');
+  await run.startPage(2, 'capture');
+  await run.completePage(2, 'capture');
+  await fs.writeFile(path.join(root, 'ui-sheet.json'), JSON.stringify({ scanRunId: run.runId }));
+  await run.finish('completed');
+  const checked = await readCheckedReport(root);
+  assert.deepEqual(checked.pageProgress.captured, [2]);
+  assert.deepEqual(checked.pageProgress.skipped, [1]);
 });
 
 test('refuses changed page progress and changed locks before writing a status update', async (t) => {

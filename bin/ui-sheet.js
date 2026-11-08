@@ -2,6 +2,7 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { createInterface } from 'node:readline/promises';
+import { createHash } from 'node:crypto';
 import { scanProject } from '../src/scan.js';
 import { writeReport } from '../src/report.js';
 import { beginReportScan } from '../src/scan-status.js';
@@ -28,6 +29,8 @@ import { checkLayout } from '../src/layout-check.js';
 import { DEFAULT_RESPONSIVE_VIEWPORTS, validateResponsiveViewports } from '../src/responsive-audit.js';
 import { startLauncher, openLauncher } from '../src/launcher.js';
 import { writeChoiceBoard } from '../src/choice-board.js';
+import { discoverSite, displaySiteUrl, MAX_SITE_PAGES, MAX_SITE_PREVIEW_BYTES } from '../src/site-discovery.js';
+import { scopeIdentity } from '../src/consistency.js';
 
 async function configuredProjectFile(root, input, label) {
   const realRoot = await fs.realpath(root);
@@ -43,8 +46,9 @@ Usage:
   pieceboard start [--workspace directory] [--browser path] [--no-open]
   pieceboard choices --manifest choices.json --out review.html
   pieceboard scan [project-directory] [--out output-directory] [--include path ...] [--exclude path ...] [--page URL ...] [--capture] [--responsive] [--responsive-viewport WIDTHxHEIGHT ...] [--cross-page] [--viewport WIDTHxHEIGHT] [--color-scheme light|dark] [--pixel-ratio 1|2|3|4] [--mask-selector CSS ...] [--browser path] [--storage-state file] [--baseline file] [--decisions file]
+  pieceboard scan [project-directory] --site URL [--site-limit N] [--page URL ...] [--out output-directory] [--browser path] [--storage-state file]
   pieceboard init [project-directory]
-  pieceboard auth --url URL --out state.json [--browser path]
+  pieceboard auth --url URL --out state.json [--browser path] [--storage-state previous-state.json]
   pieceboard add-previews report-directory --manifest previews.json
   pieceboard decision report-directory --file decisions.json --finding ID --status STATUS --reason TEXT
   pieceboard baseline report-directory --file baselines.json (--finding ID --example common|outlier | --observation ID [--page N] [--cross-page]) --reason TEXT
@@ -71,6 +75,8 @@ The default project is the current directory; the default output is .ui-sheet.
 Repeat --include to scan only specific files or directories within the project.
 Repeat --exclude to omit additional project-relative files or directories.
 Repeat --page to compare static element IDs with selected public HTML pages.
+--site discovers same-origin links and frames, captures reachable pages, and checks responsive layout. It does not click buttons or submit forms.
+--site-limit bounds discovery to 1–500 pages; the report states when links or pages were not inspected.
 --capture takes real screenshots from the page using an isolated browser session.
 --responsive inspects each selected page at multiple widths for possible overflow, clipped text, and overlapping text.
 Repeat --responsive-viewport WIDTHxHEIGHT to choose sizes for the responsive audit.
@@ -419,7 +425,7 @@ async function main(args) {
   }
   if (args[0] === 'auth') {
     const values = {};
-    const options = { '--url': 'url', '--out': 'out', '--browser': 'browserPath' };
+    const options = { '--url': 'url', '--out': 'out', '--browser': 'browserPath', '--storage-state': 'storageState' };
     for (let i = 1; i < args.length; i++) {
       if (!Object.hasOwn(options, args[i])) throw new Error(`Unknown option: ${args[i]}`);
       const key = options[args[i]];
@@ -430,6 +436,7 @@ async function main(args) {
     if (!process.stdin.isTTY) throw new Error('auth requires an interactive terminal so you can sign in yourself.');
     const result = await saveBrowserState(values.url, values.out, {
       browserPath: values.browserPath ? path.resolve(values.browserPath) : undefined,
+      ...(values.storageState ? { storageState: await readStorageState(values.storageState) } : {}),
       waitForUser: async () => {
         const prompt = createInterface({ input: process.stdin, output: process.stdout });
         try { await prompt.question('Sign in in the opened browser, return to the requested site, then press Enter here. '); }
@@ -449,6 +456,9 @@ async function main(args) {
   let project;
   let output;
   const pages = [];
+  let siteSeed;
+  let siteLimit = MAX_SITE_PAGES;
+  let siteLimitProvided = false;
   let capture = false;
   let responsive = false;
   const responsiveViewports = [];
@@ -480,6 +490,14 @@ async function main(args) {
       const page = args[++i];
       if (pages.includes(page)) throw new Error('The same --page cannot be supplied twice.');
       pages.push(page);
+    } else if (args[i] === '--site') {
+      if (!args[i + 1] || args[i + 1].startsWith('-') || siteSeed) throw new Error('--site requires one HTTP(S) start page.');
+      siteSeed = args[++i];
+    } else if (args[i] === '--site-limit') {
+      if (!args[i + 1] || !/^\d+$/.test(args[i + 1]) || siteLimitProvided) throw new Error('--site-limit requires one page count.');
+      siteLimit = Number(args[++i]);
+      if (siteLimit < 1 || siteLimit > MAX_SITE_PAGES) throw new Error(`--site-limit must be from 1 to ${MAX_SITE_PAGES}.`);
+      siteLimitProvided = true;
     } else if (args[i] === '--capture') {
       capture = true;
     } else if (args[i] === '--responsive') {
@@ -528,6 +546,8 @@ async function main(args) {
       throw new Error(`Unexpected argument: ${args[i]}`);
     } else project = args[i];
   }
+  if (siteLimitProvided && !siteSeed) throw new Error('--site-limit requires --site.');
+  if (siteSeed) { capture = true; responsive = true; }
   const root = path.resolve(project || '.');
   const rootStat = await fs.stat(root);
   if (!rootStat.isDirectory()) throw new Error('The project path must be a directory.');
@@ -536,14 +556,14 @@ async function main(args) {
   let data;
   try {
     const config = await readProjectConfig(root);
-    if (capture && !pages.length) pages.push(...(config.pages || []));
+    if (capture && !pages.length && !siteSeed) pages.push(...(config.pages || []));
     if (new Set(pages).size !== pages.length) throw new Error('The same page cannot be supplied twice.');
-    if (pages.length > 20) throw new Error('Select at most 20 pages per scan.');
-    if (capture && !pages.length) throw new Error('--capture requires --page or configured pages.');
+    if (pages.length > (siteSeed ? MAX_SITE_PAGES : 20)) throw new Error(`Select at most ${siteSeed ? MAX_SITE_PAGES : 20} pages per scan.`);
+    if (capture && !pages.length && !siteSeed) throw new Error('--capture requires --page or configured pages.');
     if (responsive && !capture) throw new Error('--responsive requires --capture.');
     if (responsiveViewports.length && !responsive) throw new Error('--responsive-viewport requires --responsive.');
     const selectedResponsiveViewports = responsive ? validateResponsiveViewports(responsiveViewports.length ? responsiveViewports : config.responsiveViewports || DEFAULT_RESPONSIVE_VIEWPORTS, pixelRatio ?? config.pixelRatio ?? 2) : null;
-    if (crossPage && (!capture || pages.length < 2)) throw new Error('--cross-page requires --capture and at least two selected pages.');
+    if (crossPage && (!capture || (!siteSeed && pages.length < 2))) throw new Error('--cross-page requires --capture and at least two selected pages.');
     if (browserPath && !capture) throw new Error('--browser requires --capture.');
     if (decisionFile && !capture) throw new Error('--decisions requires --capture.');
     if (storageStateFile && !capture) throw new Error('--storage-state requires --capture.');
@@ -556,25 +576,91 @@ async function main(args) {
     if (capture && !decisionFile && config.decisions) decisionFile = await configuredProjectFile(root, config.decisions, 'decisions');
     if (capture && !baselineFile && config.baseline) baselineFile = await configuredProjectFile(root, config.baseline, 'baseline');
     if (capture && !elementBaselineFile && config.elementBaseline) elementBaselineFile = await configuredProjectFile(root, config.elementBaseline, 'element baseline');
-    await run.planPages(pages.length);
     const scannedSourcePaths = [];
     data = await scanProject(root, { outputDir: out, includePaths: includes, excludePaths: excludes, onScannedFile: (file) => scannedSourcePaths.push(file) });
     data.sourceRevision = await inspectSourceRevision(root, { sourcePaths: scannedSourcePaths });
     const storageState = storageStateFile ? await readStorageState(storageStateFile) : undefined;
     const baseline = baselineFile ? await readBaselines(baselineFile) : null;
     const elementBaseline = elementBaselineFile ? await readElementBaselines(elementBaselineFile) : null;
-    if (!storageStateFile) for (const [index, page] of pages.entries()) {
+    let site;
+    let siteGuard;
+    if (siteSeed) {
+      console.log('Discovering linked pages on the selected site…');
+      const discovered = await discoverSite(siteSeed, { seeds: pages, browserPath, storageState, maxPages: siteLimit, onProgress: (count) => console.log(`Discovering page ${count} (limit ${siteLimit}).`) });
+      pages.splice(0, pages.length, ...discovered.pages);
+      siteGuard = { origin: new URL(siteSeed).origin, counts: { blockedWrites: 0, blockedNavigation: 0 }, previewBudget: { remaining: MAX_SITE_PREVIEW_BYTES, omitted: 0 } };
+      site = { format: 'pieceboard/site-scan-v1', start: displaySiteUrl(siteSeed), limit: siteLimit, discovered: pages.length + discovered.failed.length, truncated: discovered.truncated, timeLimited: discovered.timeLimited, remaining: discovered.remaining, ignoredLinks: discovered.ignoredLinks, excluded: discovered.excluded, excludedTruncated: discovered.excludedTruncated, blockedWrites: discovered.blockedWrites, blockedNavigation: discovered.blockedNavigation, pages: [], discoveryFailures: discovered.failed };
+    }
+    await run.planPages(pages.length);
+    if (!storageStateFile && !siteSeed) for (const [index, page] of pages.entries()) {
       await run.startPage(index + 1, 'observe');
       await observePage(data, page, undefined, { append: index > 0 });
       await run.completePage(index + 1, 'observe');
     }
+    let successfulCaptures = 0;
+    const sitePageKeys = [];
+    const discoveryWrites = site?.blockedWrites || 0;
+    const discoveryNavigation = site?.blockedNavigation || 0;
+    function syncSite(inProgress, captureRemaining) {
+      if (!site) return;
+      site.blockedWrites = discoveryWrites + siteGuard.counts.blockedWrites;
+      site.blockedNavigation = discoveryNavigation + siteGuard.counts.blockedNavigation;
+      site.captured = successfulCaptures;
+      site.incomplete = site.discoveryFailures.length + site.pages.filter((entry) => entry.status !== 'captured').length;
+      site.partial = site.pages.filter((entry) => entry.partial).length;
+      site.previewsOmitted = siteGuard.previewBudget.omitted;
+      site.inProgress = inProgress;
+      site.captureRemaining = captureRemaining;
+      data.siteScan = site;
+    }
     if (capture) for (const [index, page] of pages.entries()) {
       await run.startPage(index + 1, 'capture');
-      await capturePage(data, page, { browserPath, storageState, viewport: viewport || config.viewport, colorScheme: colorScheme || config.colorScheme, pixelRatio: pixelRatio ?? config.pixelRatio, maskSelectors: maskSelectors.length ? maskSelectors : config.maskSelectors, buttonGroups: config.buttonGroups, elementGroups: config.elementGroups, layoutChecks: config.layoutChecks, layoutMedia: config.layoutMedia, responsiveViewports: selectedResponsiveViewports, sourceLinks: config.sourceLinks, instrumentedSources: config.instrumentedSources, captureTimeoutMs: config.captureTimeoutMs, actions: config.pageActions?.find((entry) => entry.page === page)?.actions, baselines: baseline?.rules, elementBaselines: elementBaseline?.rules, append: index > 0 });
-      await run.completePage(index + 1, 'capture');
+      if (site) console.log(`Inspecting page ${index + 1} of ${pages.length}.`);
+      const beforeWrites = siteGuard?.counts.blockedWrites || 0;
+      const beforeNavigation = siteGuard?.counts.blockedNavigation || 0;
+      const beforePreviews = siteGuard?.previewBudget.omitted || 0;
+      const beforeBudget = siteGuard?.previewBudget.remaining;
+      try {
+        await capturePage(data, page, { browserPath, storageState, viewport: viewport || config.viewport, colorScheme: colorScheme || config.colorScheme, pixelRatio: pixelRatio ?? config.pixelRatio, maskSelectors: maskSelectors.length ? maskSelectors : config.maskSelectors, buttonGroups: config.buttonGroups, elementGroups: config.elementGroups, layoutChecks: config.layoutChecks, layoutMedia: config.layoutMedia, responsiveViewports: selectedResponsiveViewports, sourceLinks: config.sourceLinks, instrumentedSources: config.instrumentedSources, captureTimeoutMs: config.captureTimeoutMs, actions: config.pageActions?.find((entry) => entry.page === page)?.actions, baselines: baseline?.rules, elementBaselines: elementBaseline?.rules, append: successfulCaptures > 0, siteGuard });
+        successfulCaptures++;
+        if (site) {
+          sitePageKeys.push(createHash('sha256').update(page).digest('hex'));
+          const responsivePage = data.responsiveAudit?.pages?.at(-1);
+          const partial = !responsivePage || responsivePage.viewports.some((entry) => entry.coverage !== 'observed') || siteGuard.counts.blockedWrites > beforeWrites || siteGuard.counts.blockedNavigation > beforeNavigation || siteGuard.previewBudget.omitted > beforePreviews;
+          site.pages.push({ url: displaySiteUrl(page), status: 'captured', reportPage: successfulCaptures, partial });
+        }
+        await run.completePage(index + 1, 'capture');
+      } catch (error) {
+        if (!site || error instanceof AggregateError || error.code === 'UI_SHEET_BROWSER_CLOSE_TIMEOUT') throw error;
+        siteGuard.previewBudget.remaining = beforeBudget;
+        siteGuard.previewBudget.omitted = beforePreviews;
+        site.pages.push({ url: displaySiteUrl(page), status: 'incomplete', reason: 'The page could not be captured. Check its access, redirect, or browser state.' });
+        await run.skipPage(index + 1, 'capture');
+      }
+      if (site && (index + 1) % 10 === 0 && index + 1 < pages.length) {
+        syncSite(true, pages.length - index - 1);
+        data.scanRunId = run.runId;
+        data.scanProgress = run.getPageProgress();
+        await writeReport(data, out);
+      }
     }
-    if (crossPage) data.crossPageConsistency = analyzeAcrossPages(data.consistency.pages || [data.consistency], { baselines: baseline?.rules || [] });
-    if (baseline) {
+    syncSite(false, 0);
+    if ((crossPage || site) && data.consistency) {
+      const analyses = data.consistency.pages || [data.consistency];
+      const selected = [], indexes = [], usedScopes = new Set();
+      for (const [index, analysis] of analyses.entries()) {
+        const key = site ? sitePageKeys[index] : scopeIdentity(analysis.scope?.url);
+        if (usedScopes.has(key)) continue;
+        usedScopes.add(key); selected.push(analysis); indexes.push(index);
+      }
+      if (selected.length >= 2) {
+        const result = analyzeAcrossPages(selected, { baselines: baseline?.rules || [], ...(site ? { pageKeys: indexes.map((index) => sitePageKeys[index]), includeInferredClasses: true } : {}) });
+        for (const finding of result.findings) for (const example of [finding.common?.example, finding.outlier?.example]) if (example?.page) example.page = indexes[example.page - 1] + 1;
+        data.crossPageConsistency = result;
+      } else if (crossPage && !site) throw new Error('Cross-page comparison requires at least two distinct page scopes.');
+      if (site) site.crossPageSkipped = analyses.length - selected.length;
+    }
+    if (baseline && data.consistency) {
       const analyses = data.consistency.pages || [data.consistency];
       ensureDistinctBaselineScopes(analyses);
       const used = new Set([...analyses.flatMap((page) => page.baselinesUsed || []), ...(data.crossPageConsistency?.baselinesUsed || [])]);
@@ -609,6 +695,7 @@ async function main(args) {
     const widths = data.responsiveAudit.pages.flatMap((page) => page.viewports);
     console.log(`Inspected ${widths.length} page/viewport combination(s); found ${widths.reduce((total, entry) => total + entry.findings.length, 0)} possible responsive issue(s); ${widths.filter((entry) => entry.coverage !== 'observed').length} inspection(s) incomplete or partial.`);
   }
+  if (data.siteScan) console.log(`Site review: ${data.siteScan.captured} page(s) captured, ${data.siteScan.incomplete} incomplete${data.siteScan.truncated ? '; discovery limit reached' : ''}.`);
   if (data.crossPageConsistency) console.log(`Compared ${data.crossPageConsistency.counts.comparableGroups} explicit group(s) across pages; found ${data.crossPageConsistency.findings.length} possible cross-page difference(s). Coverage: ${data.crossPageConsistency.coverage}.`);
   if (data.baselineSummary) console.log(`Applied ${data.baselineSummary.applied} approved baseline(s); ${data.baselineSummary.unmatched} were not matched in this scan.`);
   if (data.captureSummary && data.captureSummary.captured === 0) console.warn('No inventory previews matched the selected source. Button comparison previews may still be available.');

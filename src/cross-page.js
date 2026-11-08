@@ -2,10 +2,12 @@ import { createHash } from 'node:crypto';
 import { baselineRuleId, BUTTON_STYLE_FIELDS, decisionAnchorFor, decisionAnchorIdentity, normalizeButtonStyle, scopeIdentity } from './consistency.js';
 
 /** Compare explicitly named button groups by the number of pages showing each style. */
-export function analyzeAcrossPages(pages, { baselines = [] } = {}) {
+export function analyzeAcrossPages(pages, { baselines = [], pageKeys, includeInferredClasses = false } = {}) {
   if (!Array.isArray(pages) || pages.length < 2) throw new Error('Cross-page comparison requires at least two captured pages.');
+  if (pageKeys !== undefined && (!Array.isArray(pageKeys) || pageKeys.length !== pages.length || pageKeys.some((key) => typeof key !== 'string' || !/^[a-f0-9]{64}$/.test(key)))) throw new Error('Cross-page site identities must be one SHA-256 value per page.');
   const scopes = new Set();
   const buckets = new Map();
+  const visualVariants = new Set(['primary', 'secondary', 'tertiary', 'danger', 'warning', 'success', 'info', 'outline', 'ghost', 'subtle', 'link', 'light', 'dark']);
   let skippedObservations = 0;
   for (const [index, page] of pages.entries()) {
     const scope = page.scope;
@@ -16,16 +18,18 @@ export function analyzeAcrossPages(pages, { baselines = [] } = {}) {
     if (scope.actions?.length) contextParts.push(['actions', scope.actions]);
     if (pixelRatio !== 2) contextParts.push(['pixelRatio', pixelRatio]);
     const contextKey = JSON.stringify(contextParts);
-    const pageKey = scopeIdentity(scope.url);
+    const pageKey = pageKeys ? pageKeys[index] : scopeIdentity(scope.url);
     const scopeKey = JSON.stringify([pageKey, contextKey]);
     if (scopes.has(scopeKey)) throw new Error('Cross-page comparison cannot distinguish duplicate route, viewport, and theme scopes.');
     scopes.add(scopeKey);
     for (const observation of page.observations) {
       const group = observation.group;
       const style = normalizeButtonStyle(observation.style);
-      if (!style || !['page-provided group', 'configured group'].includes(group?.familyEvidence) || !['page-provided variant', 'configured variant'].includes(group?.variantEvidence)) { skippedObservations++; continue; }
-      const groupKey = JSON.stringify([contextKey, group.family, group.variant, group.type]);
-      if (!buckets.has(groupKey)) buckets.set(groupKey, { group, context, pages: new Set(), styles: new Map() });
+      const explicit = ['page-provided group', 'configured group'].includes(group?.familyEvidence) && ['page-provided variant', 'configured variant'].includes(group?.variantEvidence);
+      const inferred = includeInferredClasses && group?.familyEvidence === 'component class' && group?.variantEvidence === 'class name' && group.variant.split(' + ').some((part) => visualVariants.has(part));
+      if (!style || (!explicit && !inferred)) { skippedObservations++; continue; }
+      const groupKey = JSON.stringify([contextKey, group.family, group.variant, group.type, ...(!explicit ? ['inferred-class'] : [])]);
+      if (!buckets.has(groupKey)) buckets.set(groupKey, { group, context, inferred: !explicit, pages: new Set(), styles: new Map() });
       const bucket = buckets.get(groupKey);
       bucket.pages.add(pageKey);
       const styleKey = JSON.stringify(style);
@@ -37,14 +41,15 @@ export function analyzeAcrossPages(pages, { baselines = [] } = {}) {
   }
   const visibilityIncompletePages = pages.filter((page) => !Number.isInteger(page.counts?.possiblyBlocked) || page.counts.possiblyBlocked < 0 || !Number.isInteger(page.counts?.visibilityUnverified) || page.counts.visibilityUnverified < 0 || page.counts.possiblyBlocked > 0 || page.counts.visibilityUnverified > 0).length;
   const styleIncompletePages = pages.filter((page) => !Number.isInteger(page.counts?.missingStyle) || page.counts.missingStyle < 0 || page.counts.missingStyle > 0).length;
-  const counts = { multiPageGroups: 0, comparableGroups: 0, undersampledGroups: 0, tiedGroups: 0, ambiguousGroups: 0, repeatedMinorityGroups: 0, skippedObservations, visibilityIncompletePages, styleIncompletePages };
+  const counts = { multiPageGroups: 0, comparableGroups: 0, undersampledGroups: 0, tiedGroups: 0, ambiguousGroups: 0, repeatedMinorityGroups: 0, skippedObservations, visibilityIncompletePages, styleIncompletePages, ...(includeInferredClasses ? { inferredGroups: 0 } : {}) };
   const findings = [];
   const baselinesUsed = [];
   for (const [groupKey, bucket] of buckets) {
     if (bucket.pages.size < 2) continue;
     counts.multiPageGroups++;
+    if (bucket.inferred) counts.inferredGroups++;
     const styles = [...bucket.styles.values()].sort((a, b) => b.pages.size - a.pages.size);
-    const approved = baselines.find((entry) => entry.id === baselineRuleId({ url: '*', viewport: bucket.context.viewport, theme: bucket.context.theme, pixelRatio: bucket.context.pixelRatio }, bucket.group));
+    const approved = bucket.inferred ? null : baselines.find((entry) => entry.id === baselineRuleId({ url: '*', viewport: bucket.context.viewport, theme: bucket.context.theme, pixelRatio: bucket.context.pixelRatio }, bucket.group));
     let reference;
     let candidates;
     if (approved) {
@@ -69,9 +74,9 @@ export function analyzeAcrossPages(pages, { baselines = [] } = {}) {
       const source = selected.source;
       const anchor = decisionAnchorFor(source, candidate.observations.length);
       const id = createHash('sha256').update(JSON.stringify(['cross-page-v1', groupKey, [...bucket.pages].sort(), reference.style, candidate.style, decisionAnchorIdentity(anchor) || [scopeIdentity(selected.url), selected.observation]])).digest('hex').slice(0, 16);
-      findings.push({ id, kind: 'cross-page-button-style-outlier', evidence: approved ? 'approved cross-page baseline' : bucket.pages.size < 5 ? 'small cross-page sample' : 'cross-page frequency', reference: approved ? 'approved' : 'inferred', group: bucket.group, context: bucket.context, common: { pageCount: reference.pages.size, count: reference.observations.length, example: reference.observations[0] || null }, outlier: { pageCount: candidate.pages.size, count: candidate.observations.length, example: selected }, differences, ...(anchor ? { decisionAnchor: anchor } : {}) });
+      findings.push({ id, kind: 'cross-page-button-style-outlier', evidence: bucket.inferred ? 'inferred component class and variant' : approved ? 'approved cross-page baseline' : bucket.pages.size < 5 ? 'small cross-page sample' : 'cross-page frequency', reference: approved ? 'approved' : 'inferred', group: bucket.group, context: bucket.context, common: { pageCount: reference.pages.size, count: reference.observations.length, example: reference.observations[0] || null }, outlier: { pageCount: candidate.pages.size, count: candidate.observations.length, example: selected }, differences, ...(anchor ? { decisionAnchor: anchor } : {}) });
     }
   }
-  const coverage = counts.comparableGroups === 0 ? 'insufficient' : counts.undersampledGroups || counts.tiedGroups || counts.ambiguousGroups || counts.visibilityIncompletePages || counts.styleIncompletePages ? 'partial' : 'observed';
-  return { format: 'ui-sheet/cross-page-v1', findingIdentity: 'ui-sheet/cross-page-finding-v5', coverage, counts, findings, baselinesUsed };
+  const coverage = counts.comparableGroups === 0 ? 'insufficient' : counts.undersampledGroups || counts.tiedGroups || counts.ambiguousGroups || counts.visibilityIncompletePages || counts.styleIncompletePages || counts.inferredGroups ? 'partial' : 'observed';
+  return { format: 'ui-sheet/cross-page-v1', findingIdentity: 'ui-sheet/cross-page-finding-v5', coverage, counts, findings, baselinesUsed, ...(includeInferredClasses ? { inferredClassesIncluded: true } : {}) };
 }

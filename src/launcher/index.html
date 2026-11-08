@@ -41,15 +41,17 @@
         <section class="step" aria-labelledby="page-title">
           <div class="step-number">02</div>
           <div class="step-content">
-            <div class="section-heading"><div><p class="kicker">OPTIONAL VISUAL CAPTURE</p><h2 id="page-title">Add a page you want to see</h2></div><span class="tag muted">Optional</span></div>
-            <p class="section-copy">Visual A/B choices need two captured examples. Without a test page, the result is a source inventory and contains no visual choices. Add an authorized test page to look for comparable differences.</p>
-            <label class="capture-toggle"><input type="checkbox" id="capture"><span><strong>Capture a test page</strong><small>The page’s JavaScript and normal network requests will run.</small></span></label>
+            <div class="section-heading"><div><p class="kicker">VISUAL SITE REVIEW</p><h2 id="page-title">Choose the site to inspect</h2></div><span class="tag muted">Recommended</span></div>
+            <p class="section-copy">Add an authorized test site to find linked pages and inspect their UI. Without a site, the result is a source inventory and contains no visual findings.</p>
+            <label class="capture-toggle"><input type="checkbox" id="capture"><span><strong>Inspect a test site</strong><small>The pages’ JavaScript and normal read requests will run.</small></span></label>
             <div id="capture-fields" class="capture-fields" hidden>
               <label class="field-label" for="page-url">Test page URL</label>
               <input id="page-url" type="url" placeholder="http://localhost:3000/" autocomplete="off" spellcheck="false">
-              <p class="help">Use an authorized development or demo page with synthetic data. Pieceboard checks this page and its current state; it doesn’t click through the whole app or inspect embedded frames.</p>
+              <label class="capture-toggle"><input type="checkbox" id="site-scan" checked><span><strong>Find and inspect linked pages</strong><small>Checks reachable pages at desktop and phone widths and lists every detected finding.</small></span></label>
+              <div id="site-options"><label class="field-label" for="site-limit">Maximum pages</label><input id="site-limit" type="number" min="1" max="500" value="500"><p class="help">Up to 500 pages per review. The report shows if the limit is reached, pages fail, or requests are blocked.</p></div>
+              <p class="help">Use an authorized development or demo site with synthetic data. Pieceboard follows same-site links and embedded page URLs without clicking buttons or submitting forms. Other roles and states may need separate reviews.</p>
               <div class="signin-card">
-                <div><strong>Does this page require sign-in?</strong><p>Open a separate browser and sign in yourself with a test account. Your regular browser profile stays separate. The reusable test sign-in is stored locally in <code>.ui-sheet-auth/</code>; keep it private.</p></div>
+                <div><strong>Does this page require sign-in?</strong><p>Open a separate browser and sign in yourself with a test account. Visit the workspaces you want to inspect so any separate sign-ins complete, then return to this site. Your regular browser profile stays separate. The reusable test sign-in is stored locally in <code>.ui-sheet-auth/</code>; keep it private.</p></div>
                 <div class="signin-actions"><button id="signin" type="button" class="button secondary">Open test sign-in</button><button id="signin-finish" type="button" class="button secondary" hidden>I’m signed in</button><button id="signin-cancel" type="button" class="button quiet" hidden>Cancel</button></div>
                 <p id="auth-status" class="inline-status" role="status" aria-live="polite"></p>
                 <label id="use-auth-label" class="use-auth" hidden><input id="use-auth" type="checkbox"> Use this test sign-in for the capture</label>
@@ -64,7 +66,8 @@
             <div class="section-heading"><div><p class="kicker">READY WHEN YOU ARE</p><h2 id="review-title">Create your sheet</h2></div></div>
             <p class="section-copy">Your report stays on this computer. Review its warnings and context before sharing it.</p>
             <div class="action-row"><button id="scan" type="button" class="button primary">Create my sheet <span aria-hidden="true">→</span></button><span id="scan-status" class="inline-status" role="status" aria-live="polite"></span></div>
-            <div id="result" class="result" hidden><div><strong>Your sheet is ready.</strong><p>Open it to review A/B choices when two captured examples are available. Check the screen and role; a source-only inventory has no visual choices.</p></div><a id="report-link" class="button primary" target="_blank" rel="noopener noreferrer">Open my sheet ↗</a><p id="report-path" class="help"></p></div>
+            <div id="partial-result" class="result" hidden><div><strong>Some results are ready.</strong><p>This is a partial report. Refresh it for later progress; cross-page comparisons are added after the last page.</p></div><a id="partial-link" class="button secondary" target="_blank" rel="noopener noreferrer">Open findings so far ↗</a></div>
+            <div id="result" class="result" hidden><div><strong>Your sheet is ready.</strong><p>Open it to see all detected findings and page coverage, then make A/B choices where two examples are available.</p></div><a id="report-link" class="button primary" target="_blank" rel="noopener noreferrer">Open my sheet ↗</a><p id="report-path" class="help"></p></div>
             <pre id="scan-error" class="error-detail" hidden></pre>
           </div>
         </section>

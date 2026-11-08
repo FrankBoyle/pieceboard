@@ -90,6 +90,7 @@
   });
   $('parent').addEventListener('click', () => { if (state.workspace) findProjects(state.workspace.parent); });
   $('capture').addEventListener('change', () => { $('capture-fields').hidden = !$('capture').checked; });
+  $('site-scan').addEventListener('change', () => { $('site-options').hidden = !$('site-scan').checked; });
 
   function renderAuth(result) {
     state.auth = result.status;
@@ -128,10 +129,12 @@
     try {
       const result = await api('job');
       $('scan-status').textContent = result.message || '';
+      if (result.partialReport) { $('partial-link').href = result.partialReport; $('partial-result').hidden = false; }
       if (result.status === 'running') { state.jobTimer = setTimeout(pollJob, 900); return; }
       state.scanning = false;
       $('scan').disabled = false;
       if (result.status === 'complete') {
+        $('partial-result').hidden = true;
         $('report-link').href = result.report;
         $('report-path').textContent = `Saved locally in ${result.output}`;
         $('result').hidden = false;
@@ -147,11 +150,12 @@
       id: entry.project.id, paths: entry.paths.value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean),
     }));
     $('result').hidden = true;
+    $('partial-result').hidden = true;
     $('scan-error').hidden = true;
     $('scan').disabled = true;
     $('scan-status').textContent = 'Starting your review…';
     try {
-      await api('scan', { projects, capture: $('capture').checked, page: $('page-url').value.trim(), useAuth: $('capture').checked && $('use-auth').checked });
+      await api('scan', { projects, capture: $('capture').checked, page: $('page-url').value.trim(), site: $('capture').checked && $('site-scan').checked, siteLimit: Number($('site-limit').value), useAuth: $('capture').checked && $('use-auth').checked });
       state.scanning = true;
       pollJob();
     } catch (error) { $('scan').disabled = false; $('scan-status').textContent = error.message; }

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-alpha.8 — 2026-11-07
+
+- Discover linked same-origin pages and embedded screens in an authorized test site, then inspect reachable pages at multiple widths.
+- Show all supported findings alongside real A/B comparisons, with page coverage, blocked requests, and clearly labeled partial reports during long scans.
+- Resume an isolated test sign-in and make incomplete or excluded pages visible so a completed scan is not mistaken for complete coverage.
+
 ## 0.1.0-alpha.7 — 2026-11-07
 
 - Lead captured reports with selectable A/B choices and a downloadable answer file when both examples are available.

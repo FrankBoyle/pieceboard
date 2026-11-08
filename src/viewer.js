@@ -176,7 +176,7 @@
     for (const [pageIndex, page] of audit.pages.entries()) {
       const pageSection = el('section', 'consistency-page');
       pageSection.append(el('h3', '', `Page ${pageIndex + 1}`), el('p', 'consistency-scope', `${page.url || 'Unknown route'} · ${page.colorScheme || 'unknown'} color preference · ${page.pixelRatio || '?'}× device scale · Chromium ${page.browser?.version || 'unknown'}`));
-      for (const entry of page.viewports || []) {
+      for (const [widthIndex, entry] of (page.viewports || []).entries()) {
         const section = el('section', 'responsive-viewport');
         const size = `${entry.viewport?.width || '?'} × ${entry.viewport?.height || '?'}`;
         section.append(el('h4', '', `${size} CSS px · ${entry.coverage || 'unknown'} coverage`));
@@ -191,8 +191,9 @@
           section.append(preview, captureDetails(firstPreview, 'comparison-full', 'View viewport capture', `Page ${pageIndex + 1} at ${size}`));
         } else section.append(el('p', 'consistency-note', 'Viewport screenshot unavailable or too large.'));
         if (entry.coverage !== 'incomplete' && !entry.findings?.length) section.append(el('p', 'consistency-empty', 'No issues found by the supported checks at this width.'));
-        for (const finding of entry.findings || []) {
+        for (const [findingIndex, finding] of (entry.findings || []).entries()) {
           const card = el('details', 'layout-result');
+          card.id = `site-responsive-${pageIndex}-${widthIndex}-${findingIndex}`;
           card.open = true;
           const summary = el('summary', 'finding-heading');
           summary.append(el('strong', '', labels[finding.kind] || 'Possible layout issue'), el('span', 'finding-badge layout-status-finding', 'Review'));
@@ -267,8 +268,9 @@
       section.append(el('h3', '', `Page ${index + 1} · ${page.scope?.media || 'unknown'} media`),
         el('p', 'consistency-scope', `${page.scope?.url || 'Unknown route'} · ${page.scope?.viewport?.width || '?'} × ${page.scope?.viewport?.height || '?'} CSS px · ${page.coverage || 'unknown'} coverage`));
       if (!page.results?.length) section.append(el('p', 'consistency-empty', 'No layout rules were checked.'));
-      for (const result of [...(page.results || [])].sort((a, b) => (a.status === 'passed') - (b.status === 'passed'))) {
+      for (const [resultIndex, result] of [...(page.results || [])].sort((a, b) => (a.status === 'passed') - (b.status === 'passed')).entries()) {
         const card = el('details', 'layout-result');
+        card.id = `site-layout-${index}-${resultIndex}`;
         card.open = result.status !== 'passed';
         const summary = el('summary', 'finding-heading');
         summary.append(el('strong', '', `${labels[result.kind] || 'Layout check'} · ${result.id}`), el('span', `finding-badge layout-status-${result.status}`, result.status));
@@ -296,6 +298,82 @@
       }
       review.append(section);
     }
+  }
+
+  function renderSiteReview() {
+    const area = byId('site-review');
+    const site = data.siteScan;
+    if (!area || site?.format !== 'pieceboard/site-scan-v1') return;
+    area.hidden = false;
+    const results = [];
+    const add = (category, title, detail, target) => results.push({ category, title, detail, target });
+    const buttonPages = data.consistency ? (data.consistency.pages || [data.consistency]) : [];
+    for (const [pageIndex, page] of buttonPages.entries()) for (const [index, finding] of (page.findings || []).entries()) {
+      add('Button', [finding.group?.family, finding.group?.variant].filter(Boolean).join(' · ') || 'Button appearance', `Page ${pageIndex + 1} · ${page.scope?.url || 'Unknown page'}`, `site-button-${pageIndex}-${index}`);
+    }
+    for (const [pageIndex, page] of (data.elementConsistency?.pages || []).entries()) for (const [index, finding] of (page.findings || []).entries()) {
+      add('UI group', [finding.group?.family, finding.group?.variant].filter(Boolean).join(' · ') || 'Component appearance', `Page ${pageIndex + 1} · ${page.scope?.url || 'Unknown page'}`, `site-element-${pageIndex}-${index}`);
+    }
+    for (const [index, finding] of (data.crossPageConsistency?.findings || []).entries()) {
+      add('Across pages', [finding.group?.family, finding.group?.variant].filter(Boolean).join(' · ') || 'Button appearance', `Pages ${finding.common?.example?.page || '?'} and ${finding.outlier?.example?.page || '?'}`, `site-cross-${index}`);
+    }
+    const labels = { 'horizontal-overflow': 'Horizontal overflow', 'clipped-text': 'Clipped text', 'overlapping-text': 'Overlapping text' };
+    for (const [pageIndex, page] of (data.responsiveAudit?.pages || []).entries()) for (const [widthIndex, width] of (page.viewports || []).entries()) for (const [index, finding] of (width.findings || []).entries()) {
+      add('Layout', labels[finding.kind] || 'Possible layout issue', `Page ${pageIndex + 1} · ${page.url || 'Unknown page'} · ${width.viewport?.width || '?'} px${finding.selector ? ` · ${finding.selector}` : ''}`, `site-responsive-${pageIndex}-${widthIndex}-${index}`);
+    }
+    for (const [pageIndex, page] of (data.layoutAudit?.pages || []).entries()) for (const [index, finding] of [...(page.results || [])].sort((a, b) => (a.status === 'passed') - (b.status === 'passed')).entries()) {
+      if (finding.status === 'finding') add('Project rule', finding.message || finding.id || 'Layout issue', `Page ${pageIndex + 1} · ${page.scope?.url || 'Unknown page'}`, `site-layout-${pageIndex}-${index}`);
+    }
+    area.append(el('div', 'section-kicker', 'SITE REVIEW · ALL DETECTED FINDINGS'), el('h2', '', `${plural(results.length, 'possible issue')} found${site.inProgress ? ' so far' : ''}`));
+    if (site.inProgress) area.append(el('p', 'site-note', `This is a partial report: ${site.captureRemaining || 0} discovered pages have not yet been inspected. Cross-page comparisons run after the last page.`));
+    area.append(el('p', 'site-overview', `${site.captured || 0} pages inspected · ${site.partial || 0} with partial checks · ${site.incomplete || 0} pages could not be inspected${site.truncated ? ` · ${site.timeLimited ? 'discovery time limit reached' : 'page or link limit reached'} (${site.remaining || 0} links still queued)` : ''}.`));
+    area.append(el('p', 'site-note', 'These are all findings from the supported checks on the inspected pages. Review each one; differences may be intentional. Unvisited roles, states, controls requiring clicks, and pages that could not be reached are not covered.'));
+    if (site.blockedWrites || site.blockedNavigation) area.append(el('p', 'site-note', `${site.blockedWrites || 0} non-read requests and ${site.blockedNavigation || 0} action or external navigations were blocked; some screens may be incomplete.`));
+    if (data.warnings?.length) area.append(el('p', 'site-note', `${plural(data.warnings.length, 'source file')} could not be fully read. Details appear in the inventory warnings below.`));
+    if (site.excluded?.length || site.excludedTruncated) area.append(el('p', 'site-note', `${plural(site.excluded?.length || 0, 'action or sensitive link')} not followed${site.excludedTruncated ? '; additional links were omitted' : ''}. See page coverage below.`));
+    if (site.previewsOmitted) area.append(el('p', 'site-note', `${plural(site.previewsOmitted, 'preview')} could not be included because of image limits or capture problems. Findings remain listed.`));
+    if (site.crossPageSkipped) area.append(el('p', 'site-note', `${plural(site.crossPageSkipped, 'page state')} shared a route with another page and could not be included in the cross-page comparison.`));
+    const choiceLink = el('a', 'site-choice-link', 'Jump to A/B choices ↓'); choiceLink.href = '#choice-review'; area.append(choiceLink);
+    if (results.length) {
+      const controls = el('div', 'site-filters');
+      const searchLabel = el('label', '', 'Search findings');
+      const search = el('input'); search.type = 'search'; search.placeholder = 'Page, element, or issue'; searchLabel.append(search);
+      const categoryLabel = el('label', '', 'Finding category');
+      const category = el('select');
+      const all = el('option', '', 'All categories'); all.value = ''; category.append(all);
+      for (const name of [...new Set(results.map((result) => result.category))]) { const option = el('option', '', name); option.value = name; category.append(option); }
+      categoryLabel.append(category);
+      const status = el('p', 'site-filter-status'); status.setAttribute('aria-live', 'polite');
+      controls.append(searchLabel, categoryLabel, status); area.append(controls);
+      const list = el('ol', 'site-findings');
+      const rows = [];
+      for (const result of results) {
+        const row = el('li'); const link = el('a'); link.href = `#${result.target}`;
+        link.append(el('span', 'site-category', result.category), el('strong', '', result.title), el('small', '', result.detail));
+        row.append(link); list.append(row); rows.push({ node: row, category: result.category, search: `${result.category} ${result.title} ${result.detail}`.toLowerCase() });
+      }
+      function filterFindings() {
+        const query = search.value.trim().toLowerCase(); let visible = 0;
+        for (const row of rows) { row.node.hidden = Boolean((category.value && row.category !== category.value) || (query && !row.search.includes(query))); if (!row.node.hidden) visible++; }
+        status.textContent = `Showing ${visible} of ${results.length} possible issues.`;
+      }
+      search.addEventListener('input', filterFindings); category.addEventListener('change', filterFindings); filterFindings();
+      area.append(list);
+    } else area.append(el('p', 'site-note', 'No issues were reported by the checks that completed. This is not proof that the site has no UI issues.'));
+    const coverage = el('details', 'site-coverage');
+    coverage.append(el('summary', '', 'See every inspected or incomplete page'));
+    const list = el('ul');
+    for (const page of site.pages || []) {
+      const row = el('li'); row.append(el('strong', '', page.status === 'captured' ? `${page.partial ? 'Partially inspected' : 'Inspected'} · page ${page.reportPage}` : 'Incomplete'), el('span', '', ` ${page.url}${page.reason ? ` · ${page.reason}` : ''}`)); list.append(row);
+    }
+    for (const page of site.discoveryFailures || []) {
+      const row = el('li'); row.append(el('strong', '', 'Not reached'), el('span', '', ` ${page.url} · ${page.reason}`)); list.append(row);
+    }
+    for (const page of site.excluded || []) {
+      const row = el('li'); row.append(el('strong', '', 'Not followed'), el('span', '', ` ${page.url} · ${page.reason}`)); list.append(row);
+    }
+    if (site.excludedTruncated) list.append(el('li', '', 'Additional action or sensitive links were omitted from this list.'));
+    coverage.append(list); area.append(coverage);
   }
 
   function renderChoices() {
@@ -794,12 +872,13 @@
     if (crossPage) {
       const section = el('section', 'cross-page-review');
       section.append(el('h3', '', 'Across selected pages'));
-      section.append(el('p', 'consistency-note', `${plural(crossPage.counts.comparableGroups, 'explicit group')} comparable across pages · ${plural(crossPage.counts.skippedObservations, 'observation')} without explicit grouping skipped · coverage ${crossPage.coverage}. Styles are counted by page, and only explicitly named groups and variants are compared.`));
+      section.append(el('p', 'consistency-note', `${plural(crossPage.counts.comparableGroups, 'group')} comparable across pages · ${plural(crossPage.counts.skippedObservations, 'observation')} without a comparable group skipped · coverage ${crossPage.coverage}. ${crossPage.inferredClassesIncluded ? 'Explicit groups and matching component classes with named variants are compared; class-based matches need human review.' : 'Only explicitly named groups and variants are compared.'}`));
       if (crossPage.counts.visibilityIncompletePages) section.append(el('p', 'consistency-note', `${plural(crossPage.counts.visibilityIncompletePages, 'page')} had blocked or unverified button visibility.`));
       if (crossPage.counts.styleIncompletePages) section.append(el('p', 'consistency-note', `${plural(crossPage.counts.styleIncompletePages, 'page')} had missing or unsupported button style evidence.`));
       if (!crossPage.findings.length) section.append(el('p', 'consistency-empty', 'No cross-page outlier was identified with the available evidence.'));
-      for (const finding of crossPage.findings) {
+      for (const [findingIndex, finding] of crossPage.findings.entries()) {
         const card = el('article', 'finding-card cross-page-finding');
+        card.id = `site-cross-${findingIndex}`;
         const head = el('div', 'finding-heading');
         head.append(el('h3', '', 'An appearance differs across pages'), el('span', 'finding-badge', finding.review?.status || finding.evidence));
         card.append(head, el('p', 'finding-context', `${finding.group.family} · ${finding.group.variant} · ${finding.reference === 'approved' ? 'approved appearance' : 'common appearance'} on ${plural(finding.common.pageCount, 'page')} · different on ${plural(finding.outlier.pageCount, 'page')}`));
@@ -827,8 +906,9 @@
       section.append(el('p', 'consistency-note', `${analysis.counts.eligible} of ${analysis.counts.seen} configured elements eligible · coverage ${analysis.coverage}. Groups are separated by native type and observed state. Only each element's own measured styles are compared.`));
       if (analysis.previewCoverage) section.append(el('p', 'consistency-note', `Component previews: ${analysis.previewCoverage.captured} of ${analysis.previewCoverage.requested} captured · ${analysis.previewCoverage.unavailable} unavailable · ${analysis.previewCoverage.omitted} beyond the capture limit.`));
       if (!analysis.findings.length) section.append(el('p', 'consistency-empty', 'No outlier was identified in the configured groups. Review the sample and coverage before drawing conclusions.'));
-      for (const finding of analysis.findings) {
+      for (const [findingIndex, finding] of analysis.findings.entries()) {
         const card = el('article', 'finding-card element-finding');
+        card.id = `site-element-${pageIndex}-${findingIndex}`;
         const head = el('div', 'finding-heading');
         head.append(el('h3', '', 'A component appearance differs'), el('span', 'finding-badge', finding.review?.status || finding.evidence));
         card.append(head, el('p', 'finding-context', `${finding.group.family} · ${finding.group.variant} · state: ${finding.group.state} · ${finding.total} comparable examples`));
@@ -877,8 +957,9 @@
           ? 'Not enough comparable buttons were observed for this check. Other states or controls may not have been checked.'
           : 'No rare appearance was identified in the observed groups. This does not establish that the whole UI is consistent.'));
       }
-      for (const finding of analysis.findings) {
+      for (const [findingIndex, finding] of analysis.findings.entries()) {
         const card = el('article', 'finding-card');
+        card.id = `site-button-${pageIndex}-${findingIndex}`;
         const head = el('div', 'finding-heading');
         head.append(el('h3', '', finding.outlier.count === 1 ? 'A button looks different' : 'Buttons look different'), el('span', 'finding-badge', finding.review?.status || finding.evidence));
         card.append(head, el('p', 'finding-context', `${finding.group.family} · ${finding.group.variant} · ${plural(finding.total, 'comparable button')}`));
@@ -1157,4 +1238,5 @@
   renderResponsive();
   renderLayout();
   renderConsistency();
+  renderSiteReview();
 })();

@@ -8,21 +8,23 @@ const LOCK = '.ui-sheet-scan.lock';
 const PHASES = ['observe', 'capture'];
 
 function validPageProgress(progress, status) {
-  if (!progress || Array.isArray(progress) || typeof progress !== 'object' || Object.keys(progress).sort().join(',') !== 'active,captured,failed,observed,requested') return false;
-  if (!Number.isSafeInteger(progress.requested) || progress.requested < 0 || progress.requested > 20) return false;
+  if (!progress || Array.isArray(progress) || typeof progress !== 'object' || !['active,captured,failed,observed,requested', 'active,captured,failed,observed,requested,skipped'].includes(Object.keys(progress).sort().join(','))) return false;
+  if (!Number.isSafeInteger(progress.requested) || progress.requested < 0 || progress.requested > 500) return false;
+  if (Object.hasOwn(progress, 'skipped') && !Array.isArray(progress.skipped)) return false;
   const validIndex = (index) => Number.isSafeInteger(index) && index >= 1 && index <= progress.requested;
-  for (const phase of ['observed', 'captured']) {
+  for (const phase of ['observed', 'captured', ...(progress.skipped ? ['skipped'] : [])]) {
     if (!Array.isArray(progress[phase]) || progress[phase].length > progress.requested || progress[phase].some((index, offset, indexes) => !validIndex(index) || (offset > 0 && indexes[offset - 1] >= index))) return false;
   }
+  if (progress.skipped?.some((index) => progress.captured.includes(index))) return false;
   for (const key of ['active', 'failed']) {
     const page = progress[key];
     if (page === null) continue;
     if (!page || Array.isArray(page) || typeof page !== 'object' || Object.keys(page).sort().join(',') !== 'index,phase' || !validIndex(page.index) || !PHASES.includes(page.phase)) return false;
-    if (progress[page.phase === 'observe' ? 'observed' : 'captured'].includes(page.index)) return false;
+    if (progress[page.phase === 'observe' ? 'observed' : 'captured'].includes(page.index) || progress.skipped?.includes(page.index)) return false;
   }
   if (progress.active && progress.failed) return false;
   if (status === 'completed' && (progress.active || progress.failed)) return false;
-  if (status === 'completed' && new Set([...progress.observed, ...progress.captured]).size !== progress.requested) return false;
+  if (status === 'completed' && new Set([...progress.observed, ...progress.captured, ...(progress.skipped || [])]).size !== progress.requested) return false;
   if (status === 'in-progress' && progress.failed) return false;
   if (status === 'failed' && progress.active) return false;
   return true;
@@ -32,7 +34,7 @@ async function readMarker(directory) {
   const file = path.join(directory, STATUS);
   let stat;
   try { stat = await fs.lstat(file); } catch (error) { if (error.code === 'ENOENT') return null; throw error; }
-  if (!stat.isFile() || stat.isSymbolicLink() || stat.size > 4096) throw new Error('The scan status file is invalid; it was not changed.');
+  if (!stat.isFile() || stat.isSymbolicLink() || stat.size > 16384) throw new Error('The scan status file is invalid; it was not changed.');
   let marker;
   try { marker = JSON.parse(await fs.readFile(file, 'utf8')); } catch { throw new Error('The scan status file is invalid; it was not changed.'); }
   if (marker?.format !== FORMAT || !['in-progress', 'failed', 'completed'].includes(marker.status) || typeof marker.runId !== 'string' || !/^[a-f0-9-]{36}$/.test(marker.runId)) throw new Error('The scan status file is invalid; it was not changed.');
@@ -52,7 +54,7 @@ async function markerBytes(file) {
   let stat;
   try { stat = await fs.lstat(file); }
   catch (error) { if (error.code === 'ENOENT') return null; throw error; }
-  if (!stat.isFile() || stat.isSymbolicLink() || stat.size > 4096) throw new Error('The scan status file is invalid; it was not changed.');
+  if (!stat.isFile() || stat.isSymbolicLink() || stat.size > 16384) throw new Error('The scan status file is invalid; it was not changed.');
   return fs.readFile(file, 'utf8');
 }
 
@@ -147,7 +149,7 @@ export async function beginReportScan(outputDir) {
     runId,
     async planPages(count) {
       await update((current) => {
-        if (!Number.isSafeInteger(count) || count < 0 || count > 20) throw new Error('Page count must be an integer from 0 to 20.');
+        if (!Number.isSafeInteger(count) || count < 0 || count > 500) throw new Error('Page count must be an integer from 0 to 500.');
         if (current.pageProgress) throw new Error('The scan pages have already been planned.');
         current.pageProgress = { requested: count, observed: [], captured: [], active: null, failed: null };
         return current;
@@ -158,7 +160,7 @@ export async function beginReportScan(outputDir) {
         const progress = current.pageProgress;
         const active = page(progress, index, phase);
         if (progress.active) throw new Error('Complete the active page phase before starting another.');
-        if (progress[phase === 'observe' ? 'observed' : 'captured'].includes(index)) throw new Error('This page phase has already completed.');
+        if (progress[phase === 'observe' ? 'observed' : 'captured'].includes(index) || progress.skipped?.includes(index)) throw new Error('This page phase has already completed.');
         progress.active = active;
         return current;
       });
@@ -174,6 +176,17 @@ export async function beginReportScan(outputDir) {
         return current;
       });
     },
+    async skipPage(index, phase) {
+      await update((current) => {
+        const progress = current.pageProgress;
+        page(progress, index, phase);
+        if (progress.active?.index !== index || progress.active?.phase !== phase) throw new Error('A skipped page must match the active page and phase.');
+        if (progress.captured.includes(index) || progress.skipped?.includes(index)) throw new Error('This page has already been captured or skipped.');
+        progress.skipped = [...(progress.skipped || []), index].sort((a, b) => a - b);
+        progress.active = null;
+        return current;
+      });
+    },
     getPageProgress() {
       return state.pageProgress ? structuredClone(state.pageProgress) : null;
     },
@@ -182,7 +195,7 @@ export async function beginReportScan(outputDir) {
       if (!['completed', 'failed'].includes(status)) throw new Error('Invalid scan completion status.');
       await update((current) => {
         if (status === 'completed' && current.pageProgress?.active) throw new Error('Complete the active page phase before completing the scan.');
-        if (status === 'completed' && current.pageProgress && new Set([...current.pageProgress.observed, ...current.pageProgress.captured]).size !== current.pageProgress.requested) throw new Error('The scan has unvisited pages. Complete at least one observe or capture phase for every planned page before completing the scan.');
+        if (status === 'completed' && current.pageProgress && new Set([...current.pageProgress.observed, ...current.pageProgress.captured, ...(current.pageProgress.skipped || [])]).size !== current.pageProgress.requested) throw new Error('The scan has unvisited pages. Complete at least one observe or capture phase for every planned page before completing the scan.');
         if (status === 'failed' && current.pageProgress) {
           current.pageProgress.failed = current.pageProgress.active;
           current.pageProgress.active = null;

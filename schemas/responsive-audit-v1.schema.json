@@ -6,7 +6,7 @@
   "required": ["format", "pages"],
   "properties": {
     "format": { "const": "ui-sheet/responsive-pages-v1" },
-    "pages": { "type": "array", "minItems": 1, "maxItems": 20, "items": { "$ref": "#/$defs/page" } }
+    "pages": { "type": "array", "minItems": 1, "maxItems": 500, "items": { "$ref": "#/$defs/page" } }
   },
   "$defs": {
     "viewport": {

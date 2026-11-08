@@ -1,8 +1,8 @@
 # Pieceboard
 
-<img src="https://raw.githubusercontent.com/FrankBoyle/pieceboard/v0.1.0-alpha.7/docs/images/pieceboard-logo.png" alt="Pieceboard: connected interface pieces with one amber choice" width="240">
+<img src="https://raw.githubusercontent.com/FrankBoyle/pieceboard/v0.1.0-alpha.8/docs/images/pieceboard-logo.png" alt="Pieceboard: connected interface pieces with one amber choice" width="240">
 
-**See the real choices. Pick the right piece.** Pieceboard scans a project and builds an offline visual inventory of its components, styles, and assets. When you capture pages, it puts observed differences next to each other so a person can make a clear this-or-that decision.
+**See the real choices. Pick the right piece.** Pieceboard can discover linked pages on an authorized test site, inspect them against selected project source, and show all findings from its supported UI checks. When two comparable appearances are captured, it puts them side by side for an A/B decision.
 
 The npm package and primary command are `pieceboard`. The older `ui-sheet` command, config filename, report directory, and JSON format IDs remain supported for compatibility. The package was previously called UI Sheet.
 
@@ -10,7 +10,7 @@ The npm package and primary command are `pieceboard`. The older `ui-sheet` comma
 
 You can ask your coding agent to install Pieceboard in a separate tools folder and start a local page where you choose the projects to review. For example:
 
-> Install `pieceboard@alpha` in a separate tools folder. Review the projects I identify and walk me through actual A/B choices for matching UI elements. Use authorized test screens and let me sign in myself with a test account. If the report has no useful pairs, help me prepare a choice board from real comparable examples. Do not stop at a list of UI elements.
+> Install `pieceboard@alpha` in a separate tools folder. Scan the projects I identify and discover the linked pages on my authorized test site. Let me sign in myself with a synthetic test account. Show me all detected UI findings and page coverage, with A/B choices when comparable screenshots are available. Do not replace the scan results with a hand-picked list.
 
 With Node.js 22 or newer, the agent can run these commands from an empty tools folder outside the projects being reviewed:
 
@@ -23,9 +23,9 @@ npx pieceboard start
 
 Alternatively, clone `https://github.com/FrankBoyle/pieceboard`, run `npm ci` and `npx playwright install chromium` in the checkout, then run `npm start`.
 
-The start command opens a local page and prints its address. Choose a folder, select one or more repositories, optionally add an authorized test page, and select **Create my sheet**. You can narrow each repository to specific source paths. For a signed-in test page, **Open test sign-in** opens a separate browser for you to sign in; return to the site, then choose **I’m signed in** on the start page. Keep the terminal running while you use Pieceboard, and press Ctrl+C when finished. The report remains on disk.
+The start command opens a local page and prints its address. Choose a folder and one or more repositories, select **Inspect a test site**, enter its start page, and keep **Find and inspect linked pages** selected. For a signed-in test page, **Open test sign-in** opens a separate browser for you to sign in; return to the site, then choose **I’m signed in** on the start page. The report starts with the full detected findings and page coverage; A/B comparisons follow where both images are available. Keep the terminal running while you use Pieceboard, and press Ctrl+C when finished.
 
-Without a test page, the report is a source inventory, not a rendering of your app. Captures cover the selected page and state, not every route or embedded frame. Test sign-in state in `.ui-sheet-auth/` and reports in `.ui-sheet/launcher-runs/` can contain private information; keep them out of version control and review reports before sharing. The [agent quick start](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.7/docs/agent-quickstart.md) explains the local page and the command-line alternative. The alpha package also includes the launcher; after installation, use `npx pieceboard start`.
+Without a test page, the report is a source inventory, not a rendering of your app. Site review follows discovered same-origin links and same-origin embedded page URLs, up to the displayed limit, without clicking buttons or submitting forms. It checks only supported visual patterns and responsive problems in reachable states; other roles, interactive states, hidden routes, and different origins need separate reviews. Non-read requests and known action links are blocked, which can leave some pages incomplete. Use a synthetic test environment, and review the page coverage and warnings. Test sign-in state and reports can contain private information; keep them out of version control and review them before sharing. The [agent quick start](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/docs/agent-quickstart.md) explains the workflow.
 
 ## Quick start
 
@@ -43,6 +43,14 @@ npx pieceboard scan . --page http://localhost:3000/ --capture
 ```
 
 Start your own app first and replace the example URL with its actual page. The capture uses an isolated browser session; a page requiring sign-in needs an explicitly provided local storage state, as described below. Do not put credentials, session files, or private screenshots in a public report or package. Inspect the generated report and its capture warnings before treating any difference as a design decision.
+
+To discover linked pages and inspect them at multiple widths, use a synthetic test site:
+
+```sh
+npx pieceboard scan /path/to/project --site http://localhost:3000/ --out /path/to/private-report
+```
+
+Site review follows same-origin links and embedded page URLs, defaults to at most 500 pages, and lists all findings from the supported button, configured UI-group, responsive, and configured layout checks. `--site-limit N` selects a limit from 1 to 500; repeated `--page` options add same-origin starting pages. Long scans publish a clearly labeled partial report every ten pages; cross-page comparisons appear after the final page. It records pages that cannot be reached or captured, a reached page or time limit, blocked action requests, and images omitted by the report size limit. Captures run page JavaScript, but site review blocks non-read requests and known action or download routes; some applications need those requests and may be only partially inspected. It does not click buttons, submit forms, switch roles, or enumerate routes requiring those actions. Use separate test-account sessions and review the coverage list; a completed scan is not proof that every UI state was examined. Cross-page comparisons include explicitly configured groups and conservative class-and-variant matches labeled as inferred.
 
 For this-or-that review, compare the **same control or workflow destination** at the same role and viewport, record which observed version to follow, and rerun the capture after the change. A source item, synthetic illustration, or old screenshot is not proof that a current release behaves that way.
 
@@ -102,13 +110,13 @@ npm view pieceboard@alpha version
 
 Complete the npm authentication or two-factor prompt locally; do not paste tokens or one-time codes into a chat, README, or shell history. The final command must print the exact version in `package.json`. If publishing fails, do not bump the version or retry blindly: read the registry error, check whether that version exists, then correct the cause. After success, install `pieceboard@alpha` in a fresh temporary project and run `npx pieceboard --help` and a source scan before announcing the release. Publish GitHub source only from a reviewed, clean history; local capture reports and private project screenshots must never enter that history.
 
-The package includes the [project plan](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.7/PROJECT_PLAN.md) and [synthetic evaluations](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.7/evaluation/README.md) so readers can inspect the known successes and misses. Those studies are development evidence, not product-wide accuracy claims. See [data formats](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.7/docs/data-format.md) for the current agent and CI outputs.
+The package includes the [project plan](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/PROJECT_PLAN.md) and [synthetic evaluations](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/evaluation/README.md) so readers can inspect the known successes and misses. Those studies are development evidence, not product-wide accuracy claims. See [data formats](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/docs/data-format.md) for the current agent and CI outputs.
 
-Integrations can validate the shipped [JSON contracts](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.7/docs/schema.md) locally. Source matches and visual findings require human review; they are not product-wide accuracy claims.
+Integrations can validate the shipped [JSON contracts](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/docs/schema.md) locally. Source matches and visual findings require human review; they are not product-wide accuracy claims.
 
 > **Early alpha.** The scanner supports JavaScript/TypeScript with JSX, static HTML/PHP markup, plain CSS, and local image/font files. Browser captures provide actual element previews and possible style differences. Approved references are available for native buttons and explicitly configured UI groups. Source links remain limited evidence; see the installation instructions below.
 
-![A synthetic Pieceboard report comparing two real button captures, with a gallery of observed styles](https://raw.githubusercontent.com/FrankBoyle/pieceboard/v0.1.0-alpha.7/docs/images/button-review.png)
+![A synthetic Pieceboard report comparing two real button captures, with a gallery of observed styles](https://raw.githubusercontent.com/FrankBoyle/pieceboard/v0.1.0-alpha.8/docs/images/button-review.png)
 
 The example uses synthetic content. The buttons are real browser captures; the different radius is a possible finding for a person to review.
 
@@ -124,11 +132,11 @@ npm run demo
 
 Open `.ui-sheet-demo-elements/index.html`. The default demo serves a synthetic workspace briefly, captures real fields, tabs, dropdowns, selectors and buttons, writes its offline report, and closes its server. Set `UI_SHEET_BROWSER` to an installed compatible browser path if you prefer that to the Chromium download. The generated HTML works offline; `ui-sheet.json` contains the same machine-readable evidence.
 
-For a source-only example requiring no browser, run `npm run demo:inventory` and open `.ui-sheet-demo/index.html`. [`examples/harbor`](https://github.com/FrankBoyle/pieceboard/tree/v0.1.0-alpha.7/examples/harbor) uses supplied SVG illustrations to demonstrate manual preview metadata; those illustrations are not browser captures.
+For a source-only example requiring no browser, run `npm run demo:inventory` and open `.ui-sheet-demo/index.html`. [`examples/harbor`](https://github.com/FrankBoyle/pieceboard/tree/v0.1.0-alpha.8/examples/harbor) uses supplied SVG illustrations to demonstrate manual preview metadata; those illustrations are not browser captures.
 
 ### Try a button consistency finding
 
-The synthetic [`examples/button-review`](https://github.com/FrankBoyle/pieceboard/tree/v0.1.0-alpha.7/examples/button-review) contains two similar primary buttons, a third with an intentionally different corner radius, and an intentional destructive button. Install Playwright's browser once, then run the example:
+The synthetic [`examples/button-review`](https://github.com/FrankBoyle/pieceboard/tree/v0.1.0-alpha.8/examples/button-review) contains two similar primary buttons, a third with an intentionally different corner radius, and an intentional destructive button. Install Playwright's browser once, then run the example:
 
 ```sh
 npx playwright install chromium
@@ -137,7 +145,7 @@ npm run demo:consistency
 
 Open `.ui-sheet-demo-consistency/index.html`. The script starts a temporary server for the example, captures real buttons, writes an offline report, and closes the server. Alternatively, set `UI_SHEET_BROWSER` to the path of a compatible installed browser before running the example.
 
-Run `npm run demo:cross-page` for a second synthetic example with one button on each of three pages. Open `.ui-sheet-demo-cross-page/index.html` to see the cross-page comparison, or [view the example image](https://raw.githubusercontent.com/FrankBoyle/pieceboard/v0.1.0-alpha.7/docs/images/cross-page.png).
+Run `npm run demo:cross-page` for a second synthetic example with one button on each of three pages. Open `.ui-sheet-demo-cross-page/index.html` to see the cross-page comparison, or [view the example image](https://raw.githubusercontent.com/FrankBoyle/pieceboard/v0.1.0-alpha.8/docs/images/cross-page.png).
 
 Run `npm run demo:elements` for a synthetic workspace with fields, dropdowns, tabs, selectors, and actions. Open `.ui-sheet-demo-elements/index.html` to review four configured-family differences and one native-button difference. These are genuine 2× captures; set `UI_SHEET_PIXEL_RATIO=4` for a denser capture. The single intentional destructive action remains an undersampled group until a reviewer approves a reference.
 
@@ -282,7 +290,7 @@ The sheet embeds actual PNG captures and opens on the **Captured on page** view 
 
 For small controls on a high-density screen, request more image detail with `pieceboard scan . --capture --pixel-ratio 4`, or set `"pixelRatio": 4` in the configuration. Values 1 through 4 are supported, and the CLI overrides the configuration. The CSS viewport dimensions stay the same, but changing device pixel ratio can affect a site's styles or JavaScript; compare and approve patterns using the same ratio. The viewport and ratio together are limited to 33,177,600 device pixels to keep captures manageable. A larger capture can still fall back to 1× when it exceeds the image-size limit, and a zoom control cannot create detail missing from the original image.
 
-![A synthetic button finding with a 4× capture inspected at 200% on an emulated high-density display](https://raw.githubusercontent.com/FrankBoyle/pieceboard/v0.1.0-alpha.7/docs/images/button-zoom.png)
+![A synthetic button finding with a 4× capture inspected at 200% on an emulated high-density display](https://raw.githubusercontent.com/FrankBoyle/pieceboard/v0.1.0-alpha.8/docs/images/button-zoom.png)
 
 Automatic capture focuses on UI controls, navigation, headers, headings, and likely brand assets. It skips ordinary paragraphs, generic links, content images, and oversized controls instead of treating every visible piece of page content as a reusable UI element. Repeated simple links, headings, or labels with the same detected style contribute one preview per inventory item; their source references are still retained. These heuristics may miss a custom control or a meaningful visual difference; add a screenshot manually when needed. This filter limits previews, not all source analysis: the scanner can still find many named application components, tokens, and assets. Use `--include` to narrow the source files as well.
 
@@ -317,9 +325,9 @@ Use explicit `elementGroups` to compare selected inputs, dropdowns, selectors, t
 }
 ```
 
-Then run the usual captured scan. The report shows real component previews, differences, source evidence, counts, and review controls; `check --json` includes their findings and `elementPages` coverage. Native type, semantic role, selection, checked, disabled, validation, focus, and hover states are kept separate. Composed headers and sidebars compare their own supported computed styles, rather than every descendant. Simple `.class` group selectors also classify selected static markup in the source inventory; complex selectors may need existing UI roles or `inventoryClasses` to establish source clues. See [configured UI groups](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.7/docs/element-groups.md) for limits. This extension is experimental and has no representative accuracy claim.
+Then run the usual captured scan. The report shows real component previews, differences, source evidence, counts, and review controls; `check --json` includes their findings and `elementPages` coverage. Native type, semantic role, selection, checked, disabled, validation, focus, and hover states are kept separate. Composed headers and sidebars compare their own supported computed styles, rather than every descendant. Simple `.class` group selectors also classify selected static markup in the source inventory; complex selectors may need existing UI roles or `inventoryClasses` to establish source clues. See [configured UI groups](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/docs/element-groups.md) for limits. This extension is experimental and has no representative accuracy claim.
 
-![A real captured form-field comparison with measured corner differences and source locations](https://raw.githubusercontent.com/FrankBoyle/pieceboard/v0.1.0-alpha.7/docs/images/ui-groups.png)
+![A real captured form-field comparison with measured corner differences and source locations](https://raw.githubusercontent.com/FrankBoyle/pieceboard/v0.1.0-alpha.8/docs/images/ui-groups.png)
 
 Use `element-appearances REPORT --page 1` for compact measured styles and `element-locations REPORT --family "workspace fields"` for every recorded family occurrence. In the report's configured appearance gallery, **Approve this appearance** queues a chosen page or explicit cross-page reference; **Export approved UI group appearances** imports and downloads its separate baseline file. Apply it on the next scan using `--element-baseline FILE` or the `elementBaseline` configuration path. Importing or downloading a file does not apply changes automatically.
 
@@ -407,7 +415,7 @@ The finding-identity version changed when opacity/filter measurements and repeat
 
 In the visual report, open **Browse observed button appearances**, choose **Approve this appearance** under a captured example, select the scope, enter a reason, and queue it. Open **Export approved appearances** and download the baseline file. Import your existing baseline file there first to preserve its other approvals; a later queued choice for the same group and scope replaces the earlier one. The original imported file is not modified. Supply the downloaded file with `--baseline` on the next scan, or save it inside the project and configure `"baseline"` to point to it. Imported rules are validated by the next scan.
 
-![An observed synthetic button with the visual approval controls expanded](https://raw.githubusercontent.com/FrankBoyle/pieceboard/v0.1.0-alpha.7/docs/images/approve-appearance.png)
+![An observed synthetic button with the visual approval controls expanded](https://raw.githubusercontent.com/FrankBoyle/pieceboard/v0.1.0-alpha.8/docs/images/approve-appearance.png)
 
 Visual approval requires a captured preview, a known theme, a stable group, and distinct page scopes. It is unavailable when screenshot masks are configured, because a masked preview may hide the appearance being approved. Cross-page approval also requires an explicitly named group and variant; it applies to future matching pages as well as the selected pages. Regenerate older reports to obtain the visual approval controls. You can still use the CLI when a preview is unavailable, after checking the appearance by other means.
 
@@ -469,13 +477,13 @@ The catalog returns JSON with definitions, source references, and preview availa
 
 Use opt-in `layoutChecks` to measure actual text clearance inside a container, gaps between wordmark parts, computed margins/padding/word spacing, and use of approved logo image paths without stretching. Findings appear in a separate report section with measurements and genuine previews. Run `npm run demo:layout` for seeded examples, or `pieceboard check-layout .ui-sheet --json` after a configured capture.
 
-Rules remain explicit, and missing or unsupported targets stay incomplete. Screen and print-preview contexts are separate; direct PDF auditing is planned. See [layout checks](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.7/docs/layout-checks.md) for configuration and limits.
+Rules remain explicit, and missing or unsupported targets stay incomplete. Screen and print-preview contexts are separate; direct PDF auditing is planned. See [layout checks](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/docs/layout-checks.md) for configuration and limits.
 
 ### Keep approved design-token values consistent
 
 Source-only scans record CSS custom-property declarations separately by file, selector, and enclosing at-rule. Use `pieceboard tokens .ui-sheet --name --control-radius` to inspect them, `pieceboard token-baseline` to approve a specific declaration, and `pieceboard check-tokens` to check a fresh scan against those approvals. The visual inventory also shows the separate scoped values.
 
-Light/dark overrides remain separate. Changed, missing, ambiguous, and unscanned declarations have distinct results; this check does not resolve the CSS cascade or runtime values. See the [complete token approval and CI workflow](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.7/docs/token-contracts.md).
+Light/dark overrides remain separate. Changed, missing, ambiguous, and unscanned declarations have distinct results; this check does not resolve the CSS cascade or runtime values. See the [complete token approval and CI workflow](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/docs/token-contracts.md).
 
 ### Give a coding agent the workflow
 
@@ -486,7 +494,7 @@ npx pieceboard install-skill --agent codex
 npx pieceboard install-skill --agent claude
 ```
 
-Run either or both commands from your project root. They copy the same [`ui-consistency` skill](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.7/skills/ui-consistency/SKILL.md) into the appropriate project skill directory and refuse to overwrite an existing, different skill. Start a new agent session if it does not discover the skill immediately. The skill teaches the agent to consult the catalog before a UI change and review a fresh report afterward; it does not require an AI API key or train a model. The agent still needs authorization and a reachable demo page to render a new report.
+Run either or both commands from your project root. They copy the same [`ui-consistency` skill](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/skills/ui-consistency/SKILL.md) into the appropriate project skill directory and refuse to overwrite an existing, different skill. Start a new agent session if it does not discover the skill immediately. The skill teaches the agent to consult the catalog before a UI change and review a fresh report afterward; it does not require an AI API key or train a model. The agent still needs authorization and a reachable demo page to render a new report.
 
 An automated synthetic test exercises the same CLI sequence with a matching change and a seeded regression. Independent tests of actual Codex and Claude behavior remain future work.
 
@@ -654,6 +662,6 @@ The CLI is in `bin/`, scanning and report generation are in `src/`, and the exam
 
 Pieceboard explores a smaller, local-first slice of a larger space. [Storybook](https://storybook.js.org/docs/get-started/browse-stories) renders documented component states; [zeroheight](https://zeroheight.com/features/measurement/) offers design-system documentation and usage measurement; and [Knapsack](https://docs.knapsack.cloud/code-sources) can discover components from connected code sources. They demonstrate that many parts of this idea already exist, while leaving room to experiment with a lightweight inventory and source-first workflow.
 
-For vulnerability reporting and the tool's trust boundaries, see [SECURITY.md](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.7/SECURITY.md).
+For vulnerability reporting and the tool's trust boundaries, see [SECURITY.md](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/SECURITY.md).
 
-MIT licensed; see [LICENSE](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.7/LICENSE).
+MIT licensed; see [LICENSE](https://github.com/FrankBoyle/pieceboard/blob/v0.1.0-alpha.8/LICENSE).

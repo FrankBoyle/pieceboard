@@ -85,6 +85,38 @@ test('launcher selects and scopes two repositories and opens the resulting sheet
   assert.deepEqual(errors, []);
 });
 
+test('launcher discovers linked pages and opens a site review', { skip: !browserAvailable && 'Install Playwright Chromium or set UI_SHEET_TEST_BROWSER.', timeout: 120000 }, async (t) => {
+  const { root, workspace, cleanup } = await fixture(t);
+  const site = http.createServer((request, response) => {
+    response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+    response.end(`<!doctype html><meta name="viewport" content="width=device-width"><h1>Test screen</h1>${request.url === '/' ? '<a href="/second">Second screen</a>' : ''}`);
+  });
+  await new Promise(resolve => site.listen(0, '127.0.0.1', resolve));
+  cleanup.push(() => new Promise(resolve => { site.closeAllConnections(); site.close(resolve); }));
+  const launcher = await startLauncher({ workspace, reportRoot: path.join(root, 'reports'), browserPath: browserPath || bundled });
+  cleanup.push(() => launcher.close());
+  const browser = await chromium.launch({ ...executable, headless: true });
+  cleanup.push(() => browser.close());
+  const page = await browser.newPage();
+  await page.goto(launcher.url);
+  await page.getByText('Found 3 repositories.', { exact: false }).waitFor();
+  await page.locator('.project').filter({ hasText: 'AlphaGit repository' }).locator('input[type=checkbox]').check();
+  await page.getByLabel('Inspect a test site').check();
+  await page.getByLabel('Test page URL').fill(`http://127.0.0.1:${site.address().port}/`);
+  assert.equal(await page.getByLabel('Find and inspect linked pages').isChecked(), true);
+  await page.getByLabel('Maximum pages').fill('2');
+  await page.getByRole('button', { name: /Create my sheet/ }).click();
+  await page.getByRole('link', { name: /Open my sheet/ }).waitFor({ timeout: 100000 });
+  const job = await (await fetch(new URL('api/job', launcher.url))).json();
+  const report = JSON.parse(await fs.readFile(path.join(job.output, 'ui-sheet.json'), 'utf8'));
+  assert.equal(job.status, 'complete');
+  assert.equal(report.siteScan.captured, 2);
+  assert.equal(report.siteScan.incomplete, 0);
+  const resultPage = await browser.newPage();
+  await resultPage.goto(new URL(job.report, launcher.url).href);
+  assert.match(await resultPage.locator('#site-review').innerText(), /2 pages inspected/);
+});
+
 test('launcher refuses cross-origin requests, forged projects, and paths outside a selected project', async (t) => {
   const { root, workspace, cleanup } = await fixture(t);
   const launcher = await startLauncher({ workspace, reportRoot: path.join(root, 'reports') });
